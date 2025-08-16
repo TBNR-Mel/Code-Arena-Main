@@ -1,30 +1,52 @@
-# Custom website design
+# 🚀 Code Arena
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+> **Inspired by [Edabit](https://edabit.com/)** — A platform for beginner programmers to strengthen their computational skills by solving coding challenges.  
+> Intuitive, beginner-friendly, and optimized for smooth navigation.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/melvins-projects-42a85ab8/v0-custom-website-design-hz)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/zw7eVjEGcF9)
+---
 
-## Overview
+![Version](https://img.shields.io/badge/version-1.0-blue)
+![Status](https://img.shields.io/badge/status-active-success)
+![Mobile Friendly](https://img.shields.io/badge/mobile-friendly-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-yellow)
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+---
 
-## Deployment
+## 📌 Overview
 
-Your project is live at:
+**Code Arena** is designed for **beginner programmers** to:
 
-**[https://vercel.com/melvins-projects-42a85ab8/v0-custom-website-design-hz](https://vercel.com/melvins-projects-42a85ab8/v0-custom-website-design-hz)**
+- Strengthen their computational thinking
+- Solve fun and challenging coding problems
+- Track their own progress locally
 
-## Build your app
+---
 
-Continue building your app on:
+## 📱 Version 1.0 Highlights
 
-**[https://v0.app/chat/projects/zw7eVjEGcF9](https://v0.app/chat/projects/zw7eVjEGcF9)**
+- **Authentication**: ❌ None — quick start, no sign-ups
+- **Data Storage**: 💾 Local storage for XP, completed challenges, and progress
+- **Focus**: 📲 Great experience on **mobile devices**
 
-## How It Works
+---
 
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+💡 *Future versions will include user authentication, leaderboards, and more advanced challenge categories.*
+
+---
+
+## ⚡ Installation & Usage
+
+1. **Install dependencies**  
+   Run the following command in your project directory:
+   ```bash
+   npm install
+   ```
+
+2. **Start the app**  
+   Launch the development server:
+   ```bash
+   npm start
+   ```
+
+3. **Open in browser**  
+   Visit [http://localhost:3000](http://localhost:3000) to use Code Arena locally.
