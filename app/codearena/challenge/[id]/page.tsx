@@ -1,13 +1,11 @@
 "use client"
-
-import React from "react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, ChevronLast, ChevronLeft } from "lucide-react"
+import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { XPDisplay } from "@/components/xp-display"
-import { markChallengeComplete, isChallengeCompleted } from "@/lib/storage"
+import { isChallengeCompleted } from "@/lib/storage"
 
 // Mock challenge data
 const challengeData: Record<string, any> = {
@@ -149,9 +147,8 @@ interface ChallengePageProps {
 }
 
 export default function ChallengePage({ params }: ChallengePageProps) {
-  const resolvedParams = React.use(params)
   const [isCompleted, setIsCompleted] = useState(false)
-  const challenge = challengeData[resolvedParams.id]
+  const challenge = challengeData[params.id]
 
   useEffect(() => {
     if (challenge) {

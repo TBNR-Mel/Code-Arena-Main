@@ -38,15 +38,15 @@
 
 1. **Install dependencies**  
    Run the following command in your project directory:
-   ```bash
+   \`\`\`bash
    npm install
-   ```
+   \`\`\`
 
 2. **Start the app**  
    Launch the development server:
-   ```bash
+   \`\`\`bash
    npm start
-   ```
+   \`\`\`
 
 3. **Open in browser**  
    Visit [http://localhost:3000](http://localhost:3000) to use Code Arena locally.
