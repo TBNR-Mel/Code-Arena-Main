@@ -12,7 +12,7 @@ import dynamic from "next/dynamic"
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
   loading: () => (
-    <div className="h-96 bg-muted rounded-md flex items-center justify-center">
+    <div className="h-64 sm:h-80 md:h-96 bg-muted rounded-md flex items-center justify-center">
       <div className="text-muted-foreground">Loading editor...</div>
     </div>
   ),
@@ -335,59 +335,68 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 border-border border-b mb-6">
-        <div className="flex items-center gap-4">
+      <header className="flex items-center justify-between p-3 sm:p-4 border-border border-b mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/codearena/challenges"
-            className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200"
+            className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200 min-h-[44px] min-w-[44px] justify-center sm:justify-start"
           >
-            <ChevronLeft className="h-7 w-7" />
-            <span>Challenges</span>
+            <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
+            <span className="hidden sm:inline">Challenges</span>
           </Link>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
           <XPDisplay />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="pb-8">
-        <Tabs defaultValue="instructions" className="w-full px-4">
+      <main className="pb-6 sm:pb-8">
+        <Tabs defaultValue="instructions" className="w-full px-3 sm:px-4">
           {/* Tab Navigation */}
-          <div className="w-full flex justify-center items-center">
-            <TabsList className="grid w-full grid-cols-2 mb-8 gap-1 sm:max-w-[24rem]">
-              <TabsTrigger value="instructions">Instructions</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
+          <div className="w-full flex justify-center items-center mb-4 sm:mb-8">
+            <TabsList className="grid w-full grid-cols-2 gap-1 max-w-sm sm:max-w-md h-12 sm:h-10">
+              <TabsTrigger value="instructions" className="text-sm sm:text-base h-full">
+                Instructions
+              </TabsTrigger>
+              <TabsTrigger value="code" className="text-sm sm:text-base h-full">
+                Code
+              </TabsTrigger>
             </TabsList>
           </div>
 
           {/* Instructions Tab */}
-          <TabsContent value="instructions" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] md:max-w-4xl m-auto">
+          <TabsContent
+            value="instructions"
+            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] md:max-w-4xl mx-auto"
+          >
             {/* Challenge Header */}
             <div>
-              <div className="flex items-center gap-3 mb-3">
-                <h1 className="text-3xl font-semibold">{challenge.title}</h1>
+              <div className="flex items-start gap-3 mb-3">
+                <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{challenge.title}</h1>
               </div>
               <div className="mb-4">
-                <div className="flex gap-2 mb-2">
+                <div className="flex flex-wrap gap-2 mb-2">
                   {challenge.tags.map((tag: string) => (
-                    <span key={tag} className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
+                    <span key={tag} className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
                       {tag}
                     </span>
                   ))}
                 </div>
                 {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
               </div>
-              <p className="text-foreground leading-relaxed">{challenge.description}</p>
+              <p className="text-sm sm:text-base text-foreground leading-relaxed">{challenge.description}</p>
             </div>
 
             {/* Examples Section */}
             <div>
-              <h2 className="text-lg font-semibold mb-3">Examples</h2>
-              <div className="bg-muted border-l-4 border-l-green-500 p-4 rounded-r-md">
-                <div className="space-y-1 text-sm">
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Examples</h2>
+              <div className="bg-muted border-l-4 border-l-green-500 p-3 sm:p-4 rounded-r-md overflow-x-auto">
+                <div className="space-y-1 text-xs sm:text-sm font-mono">
                   {challenge.examples.map((example: string, index: number) => (
-                    <div key={index}>{example}</div>
+                    <div key={index} className="whitespace-nowrap">
+                      {example}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -395,41 +404,46 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
             {/* Notes Section */}
             <div>
-              <h2 className="text-lg font-semibold mb-3">Notes</h2>
+              <h2 className="text-lg sm:text-xl font-semibold mb-3">Notes</h2>
               <ul className="space-y-2">
                 {challenge.notes.map((note: string, index: number) => (
                   <li key={index} className="flex items-start gap-2">
-                    <span className="text-muted-foreground mt-1">•</span>
-                    <span className="text-foreground">{note}</span>
+                    <span className="text-muted-foreground mt-1 text-sm">•</span>
+                    <span className="text-sm sm:text-base text-foreground">{note}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </TabsContent>
 
-          <TabsContent value="code" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] max-w-6xl mx-auto">
+          {/* Code Tab */}
+          <TabsContent value="code" className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] max-w-7xl mx-auto">
             <div className="space-y-4">
               {/* Code Editor Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold">Code Editor</h2>
-                  <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
+                  <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2>
+                  <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
                     {challenge.language}
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleResetCode}
-                    className="flex items-center gap-2 bg-transparent"
+                    className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
                   >
                     <RotateCcw className="h-4 w-4" />
-                    Reset
+                    <span className="text-sm">Reset</span>
                   </Button>
-                  <Button onClick={handleRunCode} disabled={isRunning} className="flex items-center gap-2">
+                  <Button
+                    onClick={handleRunCode}
+                    disabled={isRunning}
+                    className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
+                  >
                     <Play className="h-4 w-4" />
-                    {isRunning ? "Running..." : "Run Code"}
+                    <span className="text-sm">{isRunning ? "Running..." : "Run Code"}</span>
                   </Button>
                 </div>
               </div>
@@ -437,20 +451,29 @@ export default function ChallengePage({ params }: ChallengePageProps) {
               {/* Monaco Editor */}
               <div className="border border-border rounded-lg overflow-hidden">
                 <MonacoEditor
-                  height="400px"
+                  height={
+                    typeof window !== "undefined" && window.innerWidth < 640
+                      ? "300px"
+                      : typeof window !== "undefined" && window.innerWidth < 768
+                        ? "350px"
+                        : "400px"
+                  }
                   language={challenge.language === "javascript" ? "javascript" : challenge.language}
                   theme="vs-dark"
                   value={code}
                   onChange={(value) => setCode(value || "")}
                   options={{
-                    minimap: { enabled: false },
-                    fontSize: 14,
+                    minimap: { enabled: typeof window !== "undefined" && window.innerWidth >= 768 },
+                    fontSize: typeof window !== "undefined" && window.innerWidth < 640 ? 12 : 14,
                     lineNumbers: "on",
                     roundedSelection: false,
                     scrollBeyondLastLine: false,
                     automaticLayout: true,
                     tabSize: 2,
                     wordWrap: "on",
+                    folding: typeof window !== "undefined" && window.innerWidth >= 640,
+                    lineDecorationsWidth: typeof window !== "undefined" && window.innerWidth < 640 ? 10 : 20,
+                    lineNumbersMinChars: typeof window !== "undefined" && window.innerWidth < 640 ? 2 : 3,
                   }}
                 />
               </div>
@@ -458,9 +481,9 @@ export default function ChallengePage({ params }: ChallengePageProps) {
               {/* Output Section */}
               {output && (
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">Output</h3>
-                  <div className="bg-muted border border-border rounded-lg p-4">
-                    <pre className="text-sm whitespace-pre-wrap font-mono">{output}</pre>
+                  <h3 className="text-lg sm:text-xl font-semibold">Output</h3>
+                  <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                    <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">{output}</pre>
                   </div>
                 </div>
               )}
@@ -469,15 +492,13 @@ export default function ChallengePage({ params }: ChallengePageProps) {
         </Tabs>
 
         {/* Bottom Actions */}
-        <div className="flex gap-3 mt-8 pt-6 border-t border-border px-6">
-          <Button variant="outline" size="lg">
+        <div className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border px-3 sm:px-6">
+          <Button variant="outline" size="lg" className="w-full sm:w-auto h-12 sm:h-10 bg-transparent">
             Skip
           </Button>
-          <div className="flex gap-4">
-            <Button variant="ghost" size="lg">
-              Help
-            </Button>
-          </div>
+          <Button variant="ghost" size="lg" className="w-full sm:w-auto h-12 sm:h-10">
+            Help
+          </Button>
         </div>
       </main>
     </div>
