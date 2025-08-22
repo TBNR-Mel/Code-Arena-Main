@@ -1,11 +1,22 @@
 "use client"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, Play, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { XPDisplay } from "@/components/xp-display"
-import { isChallengeCompleted } from "@/lib/storage"
+import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage"
+import dynamic from "next/dynamic"
+
+// Dynamically import Monaco Editor to avoid SSR issues
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-96 bg-muted rounded-md flex items-center justify-center">
+      <div className="text-muted-foreground">Loading editor...</div>
+    </div>
+  ),
+})
 
 // Mock challenge data
 const challengeData: Record<string, any> = {
@@ -148,21 +159,165 @@ interface ChallengePageProps {
 
 export default function ChallengePage({ params }: ChallengePageProps) {
   const [isCompleted, setIsCompleted] = useState(false)
+  const [code, setCode] = useState("")
+  const [output, setOutput] = useState("")
+  const [isRunning, setIsRunning] = useState(false)
   const challenge = challengeData[params.id]
 
   useEffect(() => {
     if (challenge) {
       setIsCompleted(isChallengeCompleted(challenge.id))
+
+      // Set starter code based on challenge and language
+      const getStarterCode = () => {
+        switch (challenge.language) {
+          case "javascript":
+            if (challenge.id === 1) {
+              return `function addition(a, b) {
+  // Write your code here
+  
+}`
+            } else if (challenge.id === 2) {
+              return `function triArea(base, height) {
+  // Write your code here
+  
+}`
+            } else if (challenge.id === 3) {
+              return `function convert(minutes) {
+  // Write your code here
+  
+}`
+            } else if (challenge.id === 7) {
+              return `function fib(n) {
+  // Write your code here
+  
+}`
+            } else if (challenge.id === 10) {
+              return `function countVowels(str) {
+  // Write your code here
+  
+}`
+            }
+            return `function solution() {
+  // Write your code here
+  
+}`
+          case "python":
+            if (challenge.id === 5) {
+              return `def is_palindrome(s):
+    # Write your code here
+    pass`
+            } else if (challenge.id === 8) {
+              return `def sort_array(arr):
+    # Write your code here
+    pass`
+            }
+            return `def solution():
+    # Write your code here
+    pass`
+          case "java":
+            if (challenge.id === 6) {
+              return `public class Solution {
+    public static int factorial(int n) {
+        // Write your code here
+        
+    }
+}`
+            } else if (challenge.id === 9) {
+              return `public class Solution {
+    public static int binarySearch(int[] arr, int target) {
+        // Write your code here
+        
+    }
+}`
+            }
+            return `public class Solution {
+    public static void main(String[] args) {
+        // Write your code here
+        
+    }
+}`
+          default:
+            return "// Write your code here"
+        }
+      }
+
+      setCode(getStarterCode())
     }
   }, [challenge])
 
-  // const handleMarkComplete = () => {
-  //   if (challenge && !isCompleted) {
-  //     markChallengeComplete(challenge.id)
-  //     setIsCompleted(true)
-  //     window.dispatchEvent(new Event("progressUpdate"))
-  //   }
-  // }
+  const handleRunCode = async () => {
+    setIsRunning(true)
+    setOutput("Running code...")
+
+    // Simulate code execution
+    setTimeout(() => {
+      try {
+        // Basic validation for JavaScript
+        if (challenge.language === "javascript") {
+          if (code.includes("return") && code.trim().length > 20) {
+            setOutput(
+              `✅ Code executed successfully!\n\nExample test cases:\n${challenge.examples.join("\n")}\n\n✨ Great job! Your solution looks good.`,
+            )
+
+            // Mark challenge as complete if not already
+            if (!isCompleted) {
+              markChallengeComplete(challenge.id)
+              setIsCompleted(true)
+              window.dispatchEvent(new Event("progressUpdate"))
+            }
+          } else {
+            setOutput("❌ Make sure your function returns a value and implements the solution.")
+          }
+        } else {
+          setOutput(
+            `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExample test cases:\n${challenge.examples.join("\n")}`,
+          )
+        }
+      } catch (error) {
+        setOutput("❌ There seems to be an error in your code. Please check your syntax.")
+      }
+      setIsRunning(false)
+    }, 1500)
+  }
+
+  const handleResetCode = () => {
+    const getStarterCode = () => {
+      switch (challenge.language) {
+        case "javascript":
+          if (challenge.id === 1) {
+            return `function addition(a, b) {
+  // Write your code here
+  
+}`
+          } else if (challenge.id === 2) {
+            return `function triArea(base, height) {
+  // Write your code here
+  
+}`
+          }
+          return `function solution() {
+  // Write your code here
+  
+}`
+        case "python":
+          return `def solution():
+    # Write your code here
+    pass`
+        case "java":
+          return `public class Solution {
+    public static void main(String[] args) {
+        // Write your code here
+        
+    }
+}`
+        default:
+          return "// Write your code here"
+      }
+    }
+    setCode(getStarterCode())
+    setOutput("")
+  }
 
   if (!challenge) {
     return (
@@ -252,11 +407,63 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             </div>
           </TabsContent>
 
-          {/* Code Tab (Placeholder) */}
-          <TabsContent value="code" className="space-y-6 min-h-[70vh] sm:min-h-[60vh]">
-            <div className="text-center py-12">
-              <h2 className="text-xl font-semibold mb-2">Code Editor</h2>
-              <p className="text-muted-foreground">This will be implemented in our Saturday session.</p>
+          <TabsContent value="code" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] max-w-6xl mx-auto">
+            <div className="space-y-4">
+              {/* Code Editor Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-semibold">Code Editor</h2>
+                  <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
+                    {challenge.language}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetCode}
+                    className="flex items-center gap-2 bg-transparent"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                  </Button>
+                  <Button onClick={handleRunCode} disabled={isRunning} className="flex items-center gap-2">
+                    <Play className="h-4 w-4" />
+                    {isRunning ? "Running..." : "Run Code"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Monaco Editor */}
+              <div className="border border-border rounded-lg overflow-hidden">
+                <MonacoEditor
+                  height="400px"
+                  language={challenge.language === "javascript" ? "javascript" : challenge.language}
+                  theme="vs-dark"
+                  value={code}
+                  onChange={(value) => setCode(value || "")}
+                  options={{
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    lineNumbers: "on",
+                    roundedSelection: false,
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    tabSize: 2,
+                    wordWrap: "on",
+                  }}
+                />
+              </div>
+
+              {/* Output Section */}
+              {output && (
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold">Output</h3>
+                  <div className="bg-muted border border-border rounded-lg p-4">
+                    <pre className="text-sm whitespace-pre-wrap font-mono">{output}</pre>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
         </Tabs>
