@@ -246,39 +246,183 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     }
   }, [challenge])
 
+  const testCases: Record<string, any> = {
+    "1": {
+      functionName: "addition",
+      tests: [
+        { args: [3, 2], expected: 5 },
+        { args: [-3, -6], expected: -9 },
+        { args: [7, 3], expected: 10 },
+        { args: [0, 0], expected: 0 },
+        { args: [-1, 1], expected: 0 },
+      ],
+    },
+    "2": {
+      functionName: "triArea",
+      tests: [
+        { args: [2, 3], expected: 3 },
+        { args: [7, 4], expected: 14 },
+        { args: [10, 10], expected: 50 },
+        { args: [5, 8], expected: 20 },
+        { args: [1, 1], expected: 0.5 },
+      ],
+    },
+    "3": {
+      functionName: "convert",
+      tests: [
+        { args: [5], expected: 300 },
+        { args: [3], expected: 180 },
+        { args: [2], expected: 120 },
+        { args: [1], expected: 60 },
+        { args: [0], expected: 0 },
+      ],
+    },
+    "7": {
+      functionName: "fib",
+      tests: [
+        { args: [5], expected: [0, 1, 1, 2, 3, 5] },
+        { args: [3], expected: [0, 1, 1, 2] },
+        { args: [0], expected: [] },
+        { args: [1], expected: [0, 1] },
+        { args: [2], expected: [0, 1, 1] },
+      ],
+    },
+    "10": {
+      functionName: "countVowels",
+      tests: [
+        { args: ["hello"], expected: 2 },
+        { args: ["why"], expected: 0 },
+        { args: ["aeiou"], expected: 5 },
+        { args: ["HELLO"], expected: 2 },
+        { args: [""], expected: 0 },
+      ],
+    },
+  }
+
+  const executeJavaScriptCode = (code: string, functionName: string, args: any[]): any => {
+    try {
+      // Create a safe execution environment
+      const safeCode = `
+        ${code}
+        
+        // Return the function result
+        if (typeof ${functionName} === 'function') {
+          return ${functionName}(${args.map((arg) => JSON.stringify(arg)).join(", ")});
+        } else {
+          throw new Error('Function ${functionName} is not defined');
+        }
+      `
+
+      // Use Function constructor for safer evaluation than eval
+      const func = new Function(safeCode)
+      return func()
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const compareResults = (actual: any, expected: any): boolean => {
+    if (Array.isArray(expected) && Array.isArray(actual)) {
+      if (actual.length !== expected.length) return false
+      return actual.every((val, index) => val === expected[index])
+    }
+    return actual === expected
+  }
+
   const handleRunCode = async () => {
     setIsRunning(true)
     setOutput("Running code...")
 
-    // Simulate code execution
     setTimeout(() => {
       try {
-        // Basic validation for JavaScript
         if (challenge.language === "javascript") {
-          if (code.includes("return") && code.trim().length > 20) {
+          const challengeTests = testCases[params.id]
+
+          if (!challengeTests) {
+            setOutput("❌ No test cases available for this challenge yet.")
+            setIsRunning(false)
+            return
+          }
+
+          let passedTests = 0
+          const totalTests = challengeTests.tests.length
+          const testResults: string[] = []
+          let hasError = false
+
+          // Run each test case
+          for (let i = 0; i < challengeTests.tests.length; i++) {
+            const test = challengeTests.tests[i]
+            try {
+              const result = executeJavaScriptCode(code, challengeTests.functionName, test.args)
+              const passed = compareResults(result, test.expected)
+
+              if (passed) {
+                passedTests++
+                testResults.push(
+                  `✅ Test ${i + 1}: ${challengeTests.functionName}(${test.args.join(", ")}) → ${JSON.stringify(result)}`,
+                )
+              } else {
+                testResults.push(
+                  `❌ Test ${i + 1}: ${challengeTests.functionName}(${test.args.join(", ")}) → Expected: ${JSON.stringify(test.expected)}, Got: ${JSON.stringify(result)}`,
+                )
+              }
+            } catch (error) {
+              hasError = true
+              testResults.push(
+                `❌ Test ${i + 1}: ${challengeTests.functionName}(${test.args.join(", ")}) → Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+              )
+            }
+          }
+
+          // Generate output based on results
+          if (hasError) {
             setOutput(
-              `✅ Code executed successfully!\n\nExample test cases:\n${challenge.examples.join("\n")}\n\n✨ Great job! Your solution looks good.`,
+              `❌ Code execution failed!\n\nTest Results:\n${testResults.join("\n")}\n\n💡 Check your function name and syntax.`,
+            )
+          } else if (passedTests === totalTests) {
+            setOutput(
+              `🎉 All tests passed! (${passedTests}/${totalTests})\n\nTest Results:\n${testResults.join("\n")}\n\n✨ Excellent work! Challenge completed!`,
             )
 
-            // Mark challenge as complete if not already
+            // Mark challenge as complete
             if (!isCompleted) {
               markChallengeComplete(challenge.id)
               setIsCompleted(true)
               window.dispatchEvent(new Event("progressUpdate"))
             }
           } else {
-            setOutput("❌ Make sure your function returns a value and implements the solution.")
+            setOutput(
+              `⚠️ Some tests failed (${passedTests}/${totalTests})\n\nTest Results:\n${testResults.join("\n")}\n\n💡 Review the failed test cases and adjust your solution.`,
+            )
           }
         } else {
-          setOutput(
-            `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExample test cases:\n${challenge.examples.join("\n")}`,
-          )
+          // For non-JavaScript languages, provide syntax validation
+          if (code.trim().length < 10) {
+            setOutput("❌ Please write more code to implement the solution.")
+          } else if (challenge.language === "python" && !code.includes("def ")) {
+            setOutput("❌ Make sure to define a function in Python using 'def'.")
+          } else if (challenge.language === "java" && !code.includes("public ")) {
+            setOutput("❌ Make sure to define a public method in Java.")
+          } else {
+            setOutput(
+              `✅ Code syntax looks good!\n\n📝 Note: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join("\n")}\n\n💡 Make sure your solution handles all the example cases.`,
+            )
+
+            // Mark as complete for non-JS languages if code looks reasonable
+            if (!isCompleted && code.trim().length > 50) {
+              markChallengeComplete(challenge.id)
+              setIsCompleted(true)
+              window.dispatchEvent(new Event("progressUpdate"))
+            }
+          }
         }
       } catch (error) {
-        setOutput("❌ There seems to be an error in your code. Please check your syntax.")
+        setOutput(
+          `❌ Unexpected error occurred: ${error instanceof Error ? error.message : "Unknown error"}\n\n💡 Please check your code syntax and try again.`,
+        )
       }
       setIsRunning(false)
-    }, 1500)
+    }, 1000)
   }
 
   const handleResetCode = () => {
