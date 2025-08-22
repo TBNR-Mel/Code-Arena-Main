@@ -151,6 +151,59 @@ const challengeData: Record<string, any> = {
   },
 }
 
+const testCases: Record<string, any> = {
+  "1": {
+    functionName: "addition",
+    tests: [
+      { inputs: [3, 2], expected: 5 },
+      { inputs: [-3, -6], expected: -9 },
+      { inputs: [7, 3], expected: 10 },
+      { inputs: [0, 0], expected: 0 },
+      { inputs: [-1, 1], expected: 0 },
+    ],
+  },
+  "2": {
+    functionName: "triArea",
+    tests: [
+      { inputs: [2, 3], expected: 3 },
+      { inputs: [7, 4], expected: 14 },
+      { inputs: [10, 10], expected: 50 },
+      { inputs: [5, 6], expected: 15 },
+      { inputs: [1, 1], expected: 0.5 },
+    ],
+  },
+  "3": {
+    functionName: "convert",
+    tests: [
+      { inputs: [5], expected: 300 },
+      { inputs: [3], expected: 180 },
+      { inputs: [2], expected: 120 },
+      { inputs: [1], expected: 60 },
+      { inputs: [0], expected: 0 },
+    ],
+  },
+  "7": {
+    functionName: "fib",
+    tests: [
+      { inputs: [5], expected: [0, 1, 1, 2, 3, 5] },
+      { inputs: [3], expected: [0, 1, 1, 2] },
+      { inputs: [0], expected: [] },
+      { inputs: [1], expected: [0, 1] },
+      { inputs: [2], expected: [0, 1, 1] },
+    ],
+  },
+  "10": {
+    functionName: "countVowels",
+    tests: [
+      { inputs: ["hello"], expected: 2 },
+      { inputs: ["why"], expected: 0 },
+      { inputs: ["aeiou"], expected: 5 },
+      { inputs: ["HELLO"], expected: 2 },
+      { inputs: [""], expected: 0 },
+    ],
+  },
+}
+
 interface ChallengePageProps {
   params: {
     id: string
@@ -246,89 +299,6 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     }
   }, [challenge])
 
-  const testCases: Record<string, any> = {
-    "1": {
-      functionName: "addition",
-      tests: [
-        { args: [3, 2], expected: 5 },
-        { args: [-3, -6], expected: -9 },
-        { args: [7, 3], expected: 10 },
-        { args: [0, 0], expected: 0 },
-        { args: [-1, 1], expected: 0 },
-      ],
-    },
-    "2": {
-      functionName: "triArea",
-      tests: [
-        { args: [2, 3], expected: 3 },
-        { args: [7, 4], expected: 14 },
-        { args: [10, 10], expected: 50 },
-        { args: [5, 8], expected: 20 },
-        { args: [1, 1], expected: 0.5 },
-      ],
-    },
-    "3": {
-      functionName: "convert",
-      tests: [
-        { args: [5], expected: 300 },
-        { args: [3], expected: 180 },
-        { args: [2], expected: 120 },
-        { args: [1], expected: 60 },
-        { args: [0], expected: 0 },
-      ],
-    },
-    "7": {
-      functionName: "fib",
-      tests: [
-        { args: [5], expected: [0, 1, 1, 2, 3, 5] },
-        { args: [3], expected: [0, 1, 1, 2] },
-        { args: [0], expected: [] },
-        { args: [1], expected: [0, 1] },
-        { args: [2], expected: [0, 1, 1] },
-      ],
-    },
-    "10": {
-      functionName: "countVowels",
-      tests: [
-        { args: ["hello"], expected: 2 },
-        { args: ["why"], expected: 0 },
-        { args: ["aeiou"], expected: 5 },
-        { args: ["HELLO"], expected: 2 },
-        { args: [""], expected: 0 },
-      ],
-    },
-  }
-
-  const executeJavaScriptCode = (code: string, functionName: string, args: any[]): any => {
-    try {
-      // Create a safe execution environment
-      const safeCode = `
-        ${code}
-        
-        // Return the function result
-        if (typeof ${functionName} === 'function') {
-          return ${functionName}(${args.map((arg) => JSON.stringify(arg)).join(", ")});
-        } else {
-          throw new Error('Function ${functionName} is not defined');
-        }
-      `
-
-      // Use Function constructor for safer evaluation than eval
-      const func = new Function(safeCode)
-      return func()
-    } catch (error) {
-      throw error
-    }
-  }
-
-  const compareResults = (actual: any, expected: any): boolean => {
-    if (Array.isArray(expected) && Array.isArray(actual)) {
-      if (actual.length !== expected.length) return false
-      return actual.every((val, index) => val === expected[index])
-    }
-    return actual === expected
-  }
-
   const handleRunCode = async () => {
     setIsRunning(true)
     setOutput("Running code...")
@@ -344,45 +314,71 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             return
           }
 
-          let passedTests = 0
-          const totalTests = challengeTests.tests.length
-          const testResults: string[] = []
-          let hasError = false
+          // Execute the user's code safely
+          let userFunction: Function
+          try {
+            // Create a safe execution environment
+            const safeEval = new Function("return " + code)
+            userFunction = safeEval()
 
-          // Run each test case
+            // Check if it's actually a function
+            if (typeof userFunction !== "function") {
+              setOutput("❌ Your code should define and return a function.")
+              setIsRunning(false)
+              return
+            }
+          } catch (error) {
+            setOutput(`❌ Syntax Error: ${error instanceof Error ? error.message : "Invalid code syntax"}`)
+            setIsRunning(false)
+            return
+          }
+
+          // Run test cases
+          const results = []
+          let passedTests = 0
+
           for (let i = 0; i < challengeTests.tests.length; i++) {
             const test = challengeTests.tests[i]
             try {
-              const result = executeJavaScriptCode(code, challengeTests.functionName, test.args)
-              const passed = compareResults(result, test.expected)
+              const result = userFunction(...test.inputs)
+              const passed = JSON.stringify(result) === JSON.stringify(test.expected)
 
-              if (passed) {
-                passedTests++
-                testResults.push(
-                  `✅ Test ${i + 1}: ${challengeTests.functionName}(${test.args.join(", ")}) → ${JSON.stringify(result)}`,
-                )
-              } else {
-                testResults.push(
-                  `❌ Test ${i + 1}: ${challengeTests.functionName}(${test.args.join(", ")}) → Expected: ${JSON.stringify(test.expected)}, Got: ${JSON.stringify(result)}`,
-                )
-              }
+              results.push({
+                test: i + 1,
+                inputs: test.inputs,
+                expected: test.expected,
+                actual: result,
+                passed,
+              })
+
+              if (passed) passedTests++
             } catch (error) {
-              hasError = true
-              testResults.push(
-                `❌ Test ${i + 1}: ${challengeTests.functionName}(${test.args.join(", ")}) → Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-              )
+              results.push({
+                test: i + 1,
+                inputs: test.inputs,
+                expected: test.expected,
+                actual: `Error: ${error instanceof Error ? error.message : "Runtime error"}`,
+                passed: false,
+              })
             }
           }
 
-          // Generate output based on results
-          if (hasError) {
-            setOutput(
-              `❌ Code execution failed!\n\nTest Results:\n${testResults.join("\n")}\n\n💡 Check your function name and syntax.`,
-            )
-          } else if (passedTests === totalTests) {
-            setOutput(
-              `🎉 All tests passed! (${passedTests}/${totalTests})\n\nTest Results:\n${testResults.join("\n")}\n\n✨ Excellent work! Challenge completed!`,
-            )
+          // Generate detailed output
+          let outputText = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
+
+          results.forEach((result) => {
+            const status = result.passed ? "✅" : "❌"
+            const inputStr = result.inputs
+              .map((inp) => (typeof inp === "string" ? `"${inp}"` : JSON.stringify(inp)))
+              .join(", ")
+
+            outputText += `${status} Test ${result.test}: ${challengeTests.functionName}(${inputStr})\n`
+            outputText += `   Expected: ${JSON.stringify(result.expected)}\n`
+            outputText += `   Got: ${JSON.stringify(result.actual)}\n\n`
+          })
+
+          if (passedTests === challengeTests.tests.length) {
+            outputText += "🎉 All tests passed! Challenge completed!"
 
             // Mark challenge as complete
             if (!isCompleted) {
@@ -391,35 +387,26 @@ export default function ChallengePage({ params }: ChallengePageProps) {
               window.dispatchEvent(new Event("progressUpdate"))
             }
           } else {
-            setOutput(
-              `⚠️ Some tests failed (${passedTests}/${totalTests})\n\nTest Results:\n${testResults.join("\n")}\n\n💡 Review the failed test cases and adjust your solution.`,
-            )
+            outputText += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`
           }
+
+          setOutput(outputText)
         } else {
           // For non-JavaScript languages, provide syntax validation
           if (code.trim().length < 10) {
             setOutput("❌ Please write more code to implement the solution.")
           } else if (challenge.language === "python" && !code.includes("def ")) {
-            setOutput("❌ Make sure to define a function in Python using 'def'.")
+            setOutput("❌ Python code should define a function using 'def'.")
           } else if (challenge.language === "java" && !code.includes("public ")) {
-            setOutput("❌ Make sure to define a public method in Java.")
+            setOutput("❌ Java code should include a public method or class.")
           } else {
             setOutput(
-              `✅ Code syntax looks good!\n\n📝 Note: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join("\n")}\n\n💡 Make sure your solution handles all the example cases.`,
+              `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join("\n")}`,
             )
-
-            // Mark as complete for non-JS languages if code looks reasonable
-            if (!isCompleted && code.trim().length > 50) {
-              markChallengeComplete(challenge.id)
-              setIsCompleted(true)
-              window.dispatchEvent(new Event("progressUpdate"))
-            }
           }
         }
       } catch (error) {
-        setOutput(
-          `❌ Unexpected error occurred: ${error instanceof Error ? error.message : "Unknown error"}\n\n💡 Please check your code syntax and try again.`,
-        )
+        setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`)
       }
       setIsRunning(false)
     }, 1000)
