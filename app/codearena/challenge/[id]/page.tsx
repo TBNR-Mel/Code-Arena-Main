@@ -210,12 +210,32 @@ interface ChallengePageProps {
   }
 }
 
+"use client";
+
+import { useState } from "react";
+
+interface ChallengePageProps {
+  params: { id: string };
+}
+
 export default function ChallengePage({ params }: ChallengePageProps) {
-  const [isCompleted, setIsCompleted] = useState(false)
-  const [code, setCode] = useState("")
-  const [output, setOutput] = useState("")
-  const [isRunning, setIsRunning] = useState(false)
-  const challenge = challengeData[params.id]
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [code, setCode] = useState("");
+  const [output, setOutput] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+
+  // Example usage of params.id
+  // You can remove this if not needed
+  console.log("Challenge ID:", params.id);
+
+  return (
+    <div>
+      <h1>Challenge: {params.id}</h1>
+      {/* Your UI goes here */}
+    </div>
+  );
+}
+}
 
   useEffect(() => {
     if (challenge) {
