@@ -37,8 +37,9 @@ type TestCase = {
   tests: { inputs: any[]; expected: any }[];
 };
 
+// Updated interface to match Next.js 15 requirements
 interface ChallengePageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // ---------- Mock challenge data ----------
@@ -258,93 +259,57 @@ const testCases: Record<string, TestCase> = {
 
 // ---------- Component ----------
 export default function ChallengePage({ params }: ChallengePageProps) {
-  const challenge = challengeData[params.id];
-
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [challengeId, setChallengeId] = useState<string>("");
   const [isCompleted, setIsCompleted] = useState(false);
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
 
+  // Handle async params
+  useEffect(() => {
+    const loadParams = async () => {
+      const resolvedParams = await params;
+      const id = resolvedParams.id;
+      setChallengeId(id);
+      
+      const challengeData_challenge = challengeData[id];
+      setChallenge(challengeData_challenge || null);
+      
+      if (challengeData_challenge) {
+        setIsCompleted(isChallengeCompleted(challengeData_challenge.id));
+        setCode(getStarterCode(challengeData_challenge));
+      }
+    };
+    
+    loadParams();
+  }, [params]);
+
   const getStarterCode = (c: Challenge): string => {
     switch (c.language) {
       case "javascript":
-        if (c.id === 1) {
-          return `function addition(a, b) {
-  // Write your code here
-}`;
-        }
-        if (c.id === 2) {
-          return `function triArea(base, height) {
-  // Write your code here
-}`;
-        }
-        if (c.id === 3) {
-          return `function convert(minutes) {
-  // Write your code here
-}`;
-        }
-        if (c.id === 7) {
-          return `function fib(n) {
-  // Write your code here
-}`;
-        }
-        if (c.id === 10) {
-          return `function countVowels(str) {
-  // Write your code here
-}`;
-        }
-        return `function solution() {
-  // Write your code here
-}`;
+        if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`;
+        if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`;
+        if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`;
+        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`;
+        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`;
+        return `function solution() {\n  // Write your code here\n}`;
       case "python":
-        if (c.id === 5) {
-          return `def is_palindrome(s):
-    # Write your code here
-    pass`;
-        }
-        if (c.id === 8) {
-          return `def sort_array(arr):
-    # Write your code here
-    pass`;
-        }
-        return `def solution():
-    # Write your code here
-    pass`;
+        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`;
+        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`;
+        return `def solution():\n    # Write your code here\n    pass`;
       case "java":
-        if (c.id === 6) {
-          return `public class Solution {
-    public static int factorial(int n) {
-        // Write your code here
-        return 0;
-    }
-}`;
-        }
-        if (c.id === 9) {
-          return `public class Solution {
-    public static int binarySearch(int[] arr, int target) {
-        // Write your code here
-        return -1;
-    }
-}`;
-        }
-        return `public class Solution {
-    public static void main(String[] args) {
-        // Write your code here
-    }
-}`;
+        if (c.id === 6)
+          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`;
+        if (c.id === 9)
+          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`;
+        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`;
       default:
         return "// Write your code here";
     }
   };
 
-  useEffect(() => {
-    if (challenge) {
-      setIsCompleted(isChallengeCompleted(challenge.id));
-      setCode(getStarterCode(challenge));
-    }
-  }, [challenge]);
-
-  const handleRunCode = async () => {
+  const handleRunCode = () => {
     if (!challenge) return;
 
     setIsRunning(true);
@@ -353,7 +318,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     setTimeout(() => {
       try {
         if (challenge.language === "javascript") {
-          const challengeTests = testCases[params.id];
+          const challengeTests = testCases[challengeId];
           if (!challengeTests) {
             setOutput("❌ No test cases available for this challenge yet.");
             setIsRunning(false);
@@ -362,20 +327,16 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
           const fnName = challengeTests.functionName;
 
-          // Try to return a named function if it exists; otherwise treat the code as an expression that evaluates to a function
           let userFunction: (...args: any[]) => any;
           try {
+            // If the user defined the named function, return it; otherwise treat the code as an expression returning a function
             if (new RegExp(`\\bfunction\\s+${fnName}\\b`).test(code) || code.includes(`${fnName} =`)) {
               userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any;
             } else {
               userFunction = new Function(`return (${code});`)() as (...a: any[]) => any;
             }
           } catch (e) {
-            setOutput(
-              `❌ Syntax Error: ${
-                e instanceof Error ? e.message : "Invalid code syntax"
-              }`,
-            );
+            setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`);
             setIsRunning(false);
             return;
           }
@@ -386,27 +347,15 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             return;
           }
 
-          const results: {
-            inputs: any[];
-            expected: any;
-            actual: any;
-            passed: boolean;
-          }[] = [];
-
+          const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = [];
           let passedTests = 0;
-          for (let i = 0; i < challengeTests.tests.length; i++) {
-            const t = challengeTests.tests[i];
+
+          for (const t of challengeTests.tests) {
             try {
               const actual = userFunction(...t.inputs);
-              const passed =
-                JSON.stringify(actual) === JSON.stringify(t.expected);
+              const passed = JSON.stringify(actual) === JSON.stringify(t.expected);
               if (passed) passedTests++;
-              results.push({
-                inputs: t.inputs,
-                expected: t.expected,
-                actual,
-                passed,
-              });
+              results.push({ inputs: t.inputs, expected: t.expected, actual, passed });
             } catch (err) {
               results.push({
                 inputs: t.inputs,
@@ -419,11 +368,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
           let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`;
           results.forEach((r, idx) => {
-            const inputStr = r.inputs
-              .map((v) =>
-                typeof v === "string" ? `"${v}"` : JSON.stringify(v),
-              )
-              .join(", ");
+            const inputStr = r.inputs.map(v => (typeof v === "string" ? `"${v}"` : JSON.stringify(v))).join(", ");
             out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`;
             out += `   Expected: ${JSON.stringify(r.expected)}\n`;
             out += `   Got:      ${JSON.stringify(r.actual)}\n\n`;
@@ -460,11 +405,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           }
         }
       } catch (error) {
-        setOutput(
-          `❌ Unexpected error: ${
-            error instanceof Error ? error.message : "Something went wrong"
-          }`,
-        );
+        setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`);
       } finally {
         setIsRunning(false);
       }
@@ -477,6 +418,17 @@ export default function ChallengePage({ params }: ChallengePageProps) {
       setOutput("");
     }
   };
+
+  // Show loading state while params are being resolved
+  if (!challenge && !challengeId) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-muted-foreground">Loading challenge...</div>
+        </div>
+      </div>
+    );
+  }
 
   if (!challenge) {
     return (
@@ -531,9 +483,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           >
             <div>
               <div className="flex items-start gap-3 mb-3">
-                <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">
-                  {challenge.title}
-                </h1>
+                <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{challenge.title}</h1>
               </div>
               <div className="mb-4">
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -546,13 +496,9 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     </span>
                   ))}
                 </div>
-                {isCompleted && (
-                  <span className="text-sm text-green-400 font-medium">✓ Completed</span>
-                )}
+                {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
               </div>
-              <p className="text-sm sm:text-base text-foreground leading-relaxed">
-                {challenge.description}
-              </p>
+              <p className="text-sm sm:text-base text-foreground leading-relaxed">{challenge.description}</p>
             </div>
 
             {/* Examples */}
