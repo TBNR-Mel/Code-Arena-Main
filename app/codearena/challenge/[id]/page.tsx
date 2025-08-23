@@ -369,7 +369,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           results.forEach((result) => {
             const status = result.passed ? "✅" : "❌"
             const inputStr = result.inputs
-              .map((inp) => (typeof inp === "string" ? `"${inp}"` : JSON.stringify(inp)))
+              .map((inp: any) => (typeof inp === "string" ? `"${inp}"` : JSON.stringify(inp)))
               .join(", ")
 
             outputText += `${status} Test ${result.test}: ${challengeTests.functionName}(${inputStr})\n`
