@@ -1,12 +1,13 @@
-"use client"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { ChevronLeft, Play, RotateCcw } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { XPDisplay } from "@/components/xp-display"
-import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage"
-import dynamic from "next/dynamic"
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ChevronLeft, Play, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { XPDisplay } from "@/components/xp-display";
+import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage";
+import dynamic from "next/dynamic";
 
 // Dynamically import Monaco Editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -16,14 +17,37 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
       <div className="text-muted-foreground">Loading editor...</div>
     </div>
   ),
-})
+});
 
-// Mock challenge data
-const challengeData: Record<string, any> = {
+// ---------- Types ----------
+type Language = "javascript" | "python" | "java";
+
+type Challenge = {
+  id: number;
+  title: string;
+  description: string;
+  tags: string[];
+  examples: string[];
+  notes: string[];
+  language: Language;
+};
+
+type TestCase = {
+  functionName: string;
+  tests: { inputs: any[]; expected: any }[];
+};
+
+interface ChallengePageProps {
+  params: { id: string };
+}
+
+// ---------- Mock challenge data ----------
+const challengeData: Record<string, Challenge> = {
   "1": {
     id: 1,
     title: "Return the Sum of Two Numbers",
-    description: "Create a function that takes two numbers as arguments and returns their sum.",
+    description:
+      "Create a function that takes two numbers as arguments and returns their sum.",
     tags: ["geometry", "maths", "numbers"],
     examples: ["addition(3, 2) → 5", "addition(-3, -6) → -9", "addition(7, 3) → 10"],
     notes: [
@@ -35,7 +59,8 @@ const challengeData: Record<string, any> = {
   "2": {
     id: 2,
     title: "Area of a Triangle",
-    description: "Write a function that takes the base and height of a triangle and return its area.",
+    description:
+      "Write a function that takes the base and height of a triangle and return its area.",
     tags: ["geometry", "maths", "numbers"],
     examples: ["triArea(2, 3) → 3", "triArea(7, 4) → 14", "triArea(10, 10) → 50"],
     notes: [
@@ -48,7 +73,8 @@ const challengeData: Record<string, any> = {
   "3": {
     id: 3,
     title: "Convert Minutes into Seconds",
-    description: "Write a function that takes an integer minutes and converts it to seconds.",
+    description:
+      "Write a function that takes an integer minutes and converts it to seconds.",
     tags: ["maths", "numbers"],
     examples: ["convert(5) → 300", "convert(3) → 180", "convert(2) → 120"],
     notes: [
@@ -61,9 +87,14 @@ const challengeData: Record<string, any> = {
   "4": {
     id: 4,
     title: "Find the Maximum Number in an Array",
-    description: "Create a function that finds and returns the maximum number in a given array.",
+    description:
+      "Create a function that finds and returns the maximum number in a given array.",
     tags: ["arrays", "maths"],
-    examples: ["findMax([1, 2, 3]) → 3", "findMax([-1, 0, 5]) → 5", "findMax([10]) → 10"],
+    examples: [
+      "findMax([1, 2, 3]) → 3",
+      "findMax([-1, 0, 5]) → 5",
+      "findMax([10]) → 10",
+    ],
     notes: [
       "You can use Math.max or iterate through the array.",
       "Handle empty arrays if needed, but assume non-empty for simplicity.",
@@ -76,7 +107,11 @@ const challengeData: Record<string, any> = {
     title: "Check if a String is a Palindrome",
     description: "Write a function that checks if a given string is a palindrome.",
     tags: ["strings", "logic"],
-    examples: ["is_palindrome('racecar') → True", "is_palindrome('hello') → False", "is_palindrome('a') → True"],
+    examples: [
+      "is_palindrome('racecar') → True",
+      "is_palindrome('hello') → False",
+      "is_palindrome('a') → True",
+    ],
     notes: [
       "A palindrome reads the same forwards and backwards.",
       "Ignore case and non-alphanumeric characters if advanced, but keep simple.",
@@ -102,7 +137,11 @@ const challengeData: Record<string, any> = {
     title: "Fibonacci Sequence",
     description: "Generate the Fibonacci sequence up to a given number.",
     tags: ["maths", "sequences"],
-    examples: ["fib(5) → [0, 1, 1, 2, 3, 5]", "fib(3) → [0, 1, 1, 2]", "fib(0) → []"],
+    examples: [
+      "fib(5) → [0, 1, 1, 2, 3, 5]",
+      "fib(3) → [0, 1, 1, 2]",
+      "fib(0) → []",
+    ],
     notes: [
       "Fibonacci: each number is the sum of the two preceding ones.",
       "Start with 0 and 1.",
@@ -115,7 +154,11 @@ const challengeData: Record<string, any> = {
     title: "Sort an Array",
     description: "Implement a function to sort an array in ascending order.",
     tags: ["arrays", "sorting"],
-    examples: ["sort_array([3, 1, 2]) → [1, 2, 3]", "sort_array([5]) → [5]", "sort_array([]) → []"],
+    examples: [
+      "sort_array([3, 1, 2]) → [1, 2, 3]",
+      "sort_array([5]) → [5]",
+      "sort_array([]) → []",
+    ],
     notes: [
       "You can use built-in sort or implement bubble/insertion sort.",
       "Handle numbers or strings as needed.",
@@ -128,7 +171,11 @@ const challengeData: Record<string, any> = {
     title: "Binary Search",
     description: "Implement binary search on a sorted array.",
     tags: ["arrays", "searching"],
-    examples: ["binarySearch([1,2,3,4], 3) → 2", "binarySearch([1,2], 5) → -1", "binarySearch([], 1) → -1"],
+    examples: [
+      "binarySearch([1,2,3,4], 3) → 2",
+      "binarySearch([1,2], 5) → -1",
+      "binarySearch([], 1) → -1",
+    ],
     notes: [
       "Binary search halves the search interval each time.",
       "Assume the array is sorted.",
@@ -141,7 +188,11 @@ const challengeData: Record<string, any> = {
     title: "Count Vowels in a String",
     description: "Count the number of vowels in a given string.",
     tags: ["strings"],
-    examples: ["countVowels('hello') → 2", "countVowels('why') → 0", "countVowels('aeiou') → 5"],
+    examples: [
+      "countVowels('hello') → 2",
+      "countVowels('why') → 0",
+      "countVowels('aeiou') → 5",
+    ],
     notes: [
       "Vowels are a, e, i, o, u (lowercase and uppercase).",
       "Iterate through the string and count.",
@@ -149,9 +200,10 @@ const challengeData: Record<string, any> = {
     ],
     language: "javascript",
   },
-}
+};
 
-const testCases: Record<string, any> = {
+// ---------- Test cases ----------
+const testCases: Record<string, TestCase> = {
   "1": {
     functionName: "addition",
     tests: [
@@ -202,273 +254,229 @@ const testCases: Record<string, any> = {
       { inputs: [""], expected: 0 },
     ],
   },
-}
+};
 
-interface ChallengePageProps {
-  params: {
-    id: string
-  }
-}
-
-"use client";
-
-import { useState } from "react";
-
-interface ChallengePageProps {
-  params: { id: string };
-}
-
+// ---------- Component ----------
 export default function ChallengePage({ params }: ChallengePageProps) {
+  const challenge = challengeData[params.id];
+
   const [isCompleted, setIsCompleted] = useState(false);
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
 
-  // Example usage of params.id
-  // You can remove this if not needed
-  console.log("Challenge ID:", params.id);
-
-  return (
-    <div>
-      <h1>Challenge: {params.id}</h1>
-      {/* Your UI goes here */}
-    </div>
-  );
-}
-}
+  const getStarterCode = (c: Challenge): string => {
+    switch (c.language) {
+      case "javascript":
+        if (c.id === 1) {
+          return `function addition(a, b) {
+  // Write your code here
+}`;
+        }
+        if (c.id === 2) {
+          return `function triArea(base, height) {
+  // Write your code here
+}`;
+        }
+        if (c.id === 3) {
+          return `function convert(minutes) {
+  // Write your code here
+}`;
+        }
+        if (c.id === 7) {
+          return `function fib(n) {
+  // Write your code here
+}`;
+        }
+        if (c.id === 10) {
+          return `function countVowels(str) {
+  // Write your code here
+}`;
+        }
+        return `function solution() {
+  // Write your code here
+}`;
+      case "python":
+        if (c.id === 5) {
+          return `def is_palindrome(s):
+    # Write your code here
+    pass`;
+        }
+        if (c.id === 8) {
+          return `def sort_array(arr):
+    # Write your code here
+    pass`;
+        }
+        return `def solution():
+    # Write your code here
+    pass`;
+      case "java":
+        if (c.id === 6) {
+          return `public class Solution {
+    public static int factorial(int n) {
+        // Write your code here
+        return 0;
+    }
+}`;
+        }
+        if (c.id === 9) {
+          return `public class Solution {
+    public static int binarySearch(int[] arr, int target) {
+        // Write your code here
+        return -1;
+    }
+}`;
+        }
+        return `public class Solution {
+    public static void main(String[] args) {
+        // Write your code here
+    }
+}`;
+      default:
+        return "// Write your code here";
+    }
+  };
 
   useEffect(() => {
     if (challenge) {
-      setIsCompleted(isChallengeCompleted(challenge.id))
-
-      // Set starter code based on challenge and language
-      const getStarterCode = () => {
-        switch (challenge.language) {
-          case "javascript":
-            if (challenge.id === 1) {
-              return `function addition(a, b) {
-  // Write your code here
-  
-}`
-            } else if (challenge.id === 2) {
-              return `function triArea(base, height) {
-  // Write your code here
-  
-}`
-            } else if (challenge.id === 3) {
-              return `function convert(minutes) {
-  // Write your code here
-  
-}`
-            } else if (challenge.id === 7) {
-              return `function fib(n) {
-  // Write your code here
-  
-}`
-            } else if (challenge.id === 10) {
-              return `function countVowels(str) {
-  // Write your code here
-  
-}`
-            }
-            return `function solution() {
-  // Write your code here
-  
-}`
-          case "python":
-            if (challenge.id === 5) {
-              return `def is_palindrome(s):
-    # Write your code here
-    pass`
-            } else if (challenge.id === 8) {
-              return `def sort_array(arr):
-    # Write your code here
-    pass`
-            }
-            return `def solution():
-    # Write your code here
-    pass`
-          case "java":
-            if (challenge.id === 6) {
-              return `public class Solution {
-    public static int factorial(int n) {
-        // Write your code here
-        
+      setIsCompleted(isChallengeCompleted(challenge.id));
+      setCode(getStarterCode(challenge));
     }
-}`
-            } else if (challenge.id === 9) {
-              return `public class Solution {
-    public static int binarySearch(int[] arr, int target) {
-        // Write your code here
-        
-    }
-}`
-            }
-            return `public class Solution {
-    public static void main(String[] args) {
-        // Write your code here
-        
-    }
-}`
-          default:
-            return "// Write your code here"
-        }
-      }
-
-      setCode(getStarterCode())
-    }
-  }, [challenge])
+  }, [challenge]);
 
   const handleRunCode = async () => {
-    setIsRunning(true)
-    setOutput("Running code...")
+    if (!challenge) return;
+
+    setIsRunning(true);
+    setOutput("Running code...");
 
     setTimeout(() => {
       try {
         if (challenge.language === "javascript") {
-          const challengeTests = testCases[params.id]
-
+          const challengeTests = testCases[params.id];
           if (!challengeTests) {
-            setOutput("❌ No test cases available for this challenge yet.")
-            setIsRunning(false)
-            return
+            setOutput("❌ No test cases available for this challenge yet.");
+            setIsRunning(false);
+            return;
           }
 
-          // Execute the user's code safely
-          let userFunction: Function
+          const fnName = challengeTests.functionName;
+
+          // Try to return a named function if it exists; otherwise treat the code as an expression that evaluates to a function
+          let userFunction: (...args: any[]) => any;
           try {
-            // Create a safe execution environment
-            const safeEval = new Function("return " + code)
-            userFunction = safeEval()
-
-            // Check if it's actually a function
-            if (typeof userFunction !== "function") {
-              setOutput("❌ Your code should define and return a function.")
-              setIsRunning(false)
-              return
+            if (new RegExp(`\\bfunction\\s+${fnName}\\b`).test(code) || code.includes(`${fnName} =`)) {
+              userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any;
+            } else {
+              userFunction = new Function(`return (${code});`)() as (...a: any[]) => any;
             }
-          } catch (error) {
-            setOutput(`❌ Syntax Error: ${error instanceof Error ? error.message : "Invalid code syntax"}`)
-            setIsRunning(false)
-            return
+          } catch (e) {
+            setOutput(
+              `❌ Syntax Error: ${
+                e instanceof Error ? e.message : "Invalid code syntax"
+              }`,
+            );
+            setIsRunning(false);
+            return;
           }
 
-          // Run test cases
-          const results = []
-          let passedTests = 0
+          if (typeof userFunction !== "function") {
+            setOutput("❌ Your code should define and return a function.");
+            setIsRunning(false);
+            return;
+          }
 
+          const results: {
+            inputs: any[];
+            expected: any;
+            actual: any;
+            passed: boolean;
+          }[] = [];
+
+          let passedTests = 0;
           for (let i = 0; i < challengeTests.tests.length; i++) {
-            const test = challengeTests.tests[i]
+            const t = challengeTests.tests[i];
             try {
-              const result = userFunction(...test.inputs)
-              const passed = JSON.stringify(result) === JSON.stringify(test.expected)
-
+              const actual = userFunction(...t.inputs);
+              const passed =
+                JSON.stringify(actual) === JSON.stringify(t.expected);
+              if (passed) passedTests++;
               results.push({
-                test: i + 1,
-                inputs: test.inputs,
-                expected: test.expected,
-                actual: result,
+                inputs: t.inputs,
+                expected: t.expected,
+                actual,
                 passed,
-              })
-
-              if (passed) passedTests++
-            } catch (error) {
+              });
+            } catch (err) {
               results.push({
-                test: i + 1,
-                inputs: test.inputs,
-                expected: test.expected,
-                actual: `Error: ${error instanceof Error ? error.message : "Runtime error"}`,
+                inputs: t.inputs,
+                expected: t.expected,
+                actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
                 passed: false,
-              })
+              });
             }
           }
 
-          // Generate detailed output
-          let outputText = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
-
-          results.forEach((result) => {
-            const status = result.passed ? "✅" : "❌"
-            const inputStr = result.inputs
-              .map((inp: any) => (typeof inp === "string" ? `"${inp}"` : JSON.stringify(inp)))
-              .join(", ")
-
-            outputText += `${status} Test ${result.test}: ${challengeTests.functionName}(${inputStr})\n`
-            outputText += `   Expected: ${JSON.stringify(result.expected)}\n`
-            outputText += `   Got: ${JSON.stringify(result.actual)}\n\n`
-          })
+          let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`;
+          results.forEach((r, idx) => {
+            const inputStr = r.inputs
+              .map((v) =>
+                typeof v === "string" ? `"${v}"` : JSON.stringify(v),
+              )
+              .join(", ");
+            out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`;
+            out += `   Expected: ${JSON.stringify(r.expected)}\n`;
+            out += `   Got:      ${JSON.stringify(r.actual)}\n\n`;
+          });
 
           if (passedTests === challengeTests.tests.length) {
-            outputText += "🎉 All tests passed! Challenge completed!"
-
-            // Mark challenge as complete
+            out += "🎉 All tests passed! Challenge completed!";
             if (!isCompleted) {
-              markChallengeComplete(challenge.id)
-              setIsCompleted(true)
-              window.dispatchEvent(new Event("progressUpdate"))
+              markChallengeComplete(challenge.id);
+              setIsCompleted(true);
+              if (typeof window !== "undefined") {
+                window.dispatchEvent(new Event("progressUpdate"));
+              }
             }
           } else {
-            outputText += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`
+            out += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`;
           }
 
-          setOutput(outputText)
+          setOutput(out);
         } else {
-          // For non-JavaScript languages, provide syntax validation
+          // Non-JS languages: basic feedback only
           if (code.trim().length < 10) {
-            setOutput("❌ Please write more code to implement the solution.")
+            setOutput("❌ Please write more code to implement the solution.");
           } else if (challenge.language === "python" && !code.includes("def ")) {
-            setOutput("❌ Python code should define a function using 'def'.")
+            setOutput("❌ Python code should define a function using 'def'.");
           } else if (challenge.language === "java" && !code.includes("public ")) {
-            setOutput("❌ Java code should include a public method or class.")
+            setOutput("❌ Java code should include a public method or class.");
           } else {
             setOutput(
-              `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join("\n")}`,
-            )
+              `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join(
+                "\n",
+              )}`,
+            );
           }
         }
       } catch (error) {
-        setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`)
+        setOutput(
+          `❌ Unexpected error: ${
+            error instanceof Error ? error.message : "Something went wrong"
+          }`,
+        );
+      } finally {
+        setIsRunning(false);
       }
-      setIsRunning(false)
-    }, 1000)
-  }
+    }, 500);
+  };
 
   const handleResetCode = () => {
-    const getStarterCode = () => {
-      switch (challenge.language) {
-        case "javascript":
-          if (challenge.id === 1) {
-            return `function addition(a, b) {
-  // Write your code here
-  
-}`
-          } else if (challenge.id === 2) {
-            return `function triArea(base, height) {
-  // Write your code here
-  
-}`
-          }
-          return `function solution() {
-  // Write your code here
-  
-}`
-        case "python":
-          return `def solution():
-    # Write your code here
-    pass`
-        case "java":
-          return `public class Solution {
-    public static void main(String[] args) {
-        // Write your code here
-        
+    if (challenge) {
+      setCode(getStarterCode(challenge));
+      setOutput("");
     }
-}`
-        default:
-          return "// Write your code here"
-      }
-    }
-    setCode(getStarterCode())
-    setOutput("")
-  }
+  };
 
   if (!challenge) {
     return (
@@ -480,7 +488,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -490,7 +498,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
         <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/codearena/challenges"
-            className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200 min-h-[44px] min-w-[44px] justify-center sm:justify-start"
+            className="flex items-center hover:text-foreground/80 transition-colors duration-200 min-h-[44px] min-w-[44px] justify-center sm:justify-start"
           >
             <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
             <span className="hidden sm:inline">Challenges</span>
@@ -521,31 +529,39 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             value="instructions"
             className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] md:max-w-4xl mx-auto"
           >
-            {/* Challenge Header */}
             <div>
               <div className="flex items-start gap-3 mb-3">
-                <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{challenge.title}</h1>
+                <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">
+                  {challenge.title}
+                </h1>
               </div>
               <div className="mb-4">
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {challenge.tags.map((tag: string) => (
-                    <span key={tag} className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
+                  {challenge.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded"
+                    >
                       {tag}
                     </span>
                   ))}
                 </div>
-                {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
+                {isCompleted && (
+                  <span className="text-sm text-green-400 font-medium">✓ Completed</span>
+                )}
               </div>
-              <p className="text-sm sm:text-base text-foreground leading-relaxed">{challenge.description}</p>
+              <p className="text-sm sm:text-base text-foreground leading-relaxed">
+                {challenge.description}
+              </p>
             </div>
 
-            {/* Examples Section */}
+            {/* Examples */}
             <div>
               <h2 className="text-lg sm:text-xl font-semibold mb-3">Examples</h2>
               <div className="bg-muted border-l-4 border-l-green-500 p-3 sm:p-4 rounded-r-md overflow-x-auto">
                 <div className="space-y-1 text-xs sm:text-sm font-mono">
-                  {challenge.examples.map((example: string, index: number) => (
-                    <div key={index} className="whitespace-nowrap">
+                  {challenge.examples.map((example, idx) => (
+                    <div key={idx} className="whitespace-nowrap">
                       {example}
                     </div>
                   ))}
@@ -553,12 +569,12 @@ export default function ChallengePage({ params }: ChallengePageProps) {
               </div>
             </div>
 
-            {/* Notes Section */}
+            {/* Notes */}
             <div>
               <h2 className="text-lg sm:text-xl font-semibold mb-3">Notes</h2>
               <ul className="space-y-2">
-                {challenge.notes.map((note: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2">
+                {challenge.notes.map((note, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
                     <span className="text-muted-foreground mt-1 text-sm">•</span>
                     <span className="text-sm sm:text-base text-foreground">{note}</span>
                   </li>
@@ -568,7 +584,10 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           </TabsContent>
 
           {/* Code Tab */}
-          <TabsContent value="code" className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] max-w-7xl mx-auto">
+          <TabsContent
+            value="code"
+            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] max-w-7xl mx-auto"
+          >
             <div className="space-y-4">
               {/* Code Editor Header */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
@@ -606,8 +625,8 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     typeof window !== "undefined" && window.innerWidth < 640
                       ? "300px"
                       : typeof window !== "undefined" && window.innerWidth < 768
-                        ? "350px"
-                        : "400px"
+                      ? "350px"
+                      : "400px"
                   }
                   language={challenge.language === "javascript" ? "javascript" : challenge.language}
                   theme="vs-dark"
@@ -629,12 +648,14 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                 />
               </div>
 
-              {/* Output Section */}
+              {/* Output */}
               {output && (
                 <div className="space-y-2">
                   <h3 className="text-lg sm:text-xl font-semibold">Output</h3>
                   <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                    <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">{output}</pre>
+                    <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">
+                      {output}
+                    </pre>
                   </div>
                 </div>
               )}
@@ -653,5 +674,5 @@ export default function ChallengePage({ params }: ChallengePageProps) {
         </div>
       </main>
     </div>
-  )
+  );
 }
