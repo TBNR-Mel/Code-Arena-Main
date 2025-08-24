@@ -39,11 +39,14 @@ export function markChallengeComplete(challengeId: number): UserProgress {
 
   if (!progress.completedChallenges.includes(challengeId)) {
     progress.completedChallenges.push(challengeId)
-    progress.xp += 10 // Award 10 XP per completed challenge
+    progress.xp += 10
     progress.currentStreak += 1
   }
 
   saveUserProgress(progress)
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event("progressUpdate"))
+  }
   return progress
 }
 

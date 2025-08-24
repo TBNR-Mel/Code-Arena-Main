@@ -93,11 +93,19 @@ const challenges = [
 
 export default function ChallengesPage() {
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
-  const [selectedLanguage, setSelectedLanguage] = useState(() => localStorage.getItem('challengeLanguage') || 'javascript')
-  const [selectedDifficulty, setSelectedDifficulty] = useState(() => localStorage.getItem('challengeDifficulty') || 'very-easy')
+  // Initialize with default values, not localStorage
+  const [selectedLanguage, setSelectedLanguage] = useState('javascript')
+  const [selectedDifficulty, setSelectedDifficulty] = useState('very-easy')
   const [filteredChallenges, setFilteredChallenges] = useState(challenges)
 
   useEffect(() => {
+    // Access localStorage only in the browser
+    const storedLanguage = typeof window !== 'undefined' ? localStorage.getItem('challengeLanguage') || 'javascript' : 'javascript'
+    const storedDifficulty = typeof window !== 'undefined' ? localStorage.getItem('challengeDifficulty') || 'very-easy' : 'very-easy'
+    
+    setSelectedLanguage(storedLanguage)
+    setSelectedDifficulty(storedDifficulty)
+
     const progress = getUserProgress()
     setCompletedChallenges(progress.completedChallenges)
 
@@ -121,12 +129,16 @@ export default function ChallengesPage() {
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
-    localStorage.setItem('challengeLanguage', value)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('challengeLanguage', value)
+    }
   }
 
   const handleDifficultyChange = (value: string) => {
     setSelectedDifficulty(value)
-    localStorage.setItem('challengeDifficulty', value)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('challengeDifficulty', value)
+    }
   }
 
   return (
