@@ -657,14 +657,14 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="flex items-center justify-between p-3 sm:p-4 border-border border-b mb-4 sm:mb-6">
+      <header className="flex items-center justify-between p-4 border-border border-b mb-4 sm:mb-6">
         <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/codearena/challenges"
-            className="flex items-center hover:text-foreground/80 transition-colors duration-200 min-h-[44px] min-w-[44px] justify-center sm:justify-start"
+            className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200"
           >
             <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
-            <span className="hidden sm:inline">Challenges</span>
+            <span>Challenges</span>
           </Link>
         </div>
         <div className="flex items-center gap-4 sm:gap-6">
@@ -674,10 +674,10 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
       {/* Main Content */}
       <main className="pb-6 sm:pb-8">
-        <Tabs 
-        defaultValue="instructions" 
-        onValueChange={(value) => setActiveTab(value as "instructions" | "code")}
-        className="w-full px-3 sm:px-4">
+        <Tabs
+          defaultValue="instructions"
+          onValueChange={(value) => setActiveTab(value as "instructions" | "code")}
+          className="w-full px-3 sm:px-4">
           {/* Tab Navigation */}
           <div className="w-full flex justify-center items-center">
             <TabsList className="grid w-full grid-cols-2 mb-8 gap-1 sm:max-w-[24rem]">
@@ -826,7 +826,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 // Bottom Actions Component
 const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ activeTab, challenge }) => {
   const [isHelpOpen, setIsHelpOpen] = useState(false)
-const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const handleHelpClick = () => {
     setIsHelpOpen(true)
   }
