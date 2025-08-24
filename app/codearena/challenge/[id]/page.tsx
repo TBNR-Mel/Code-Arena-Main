@@ -37,59 +37,114 @@ type TestCase = {
   tests: { inputs: any[]; expected: any }[];
 };
 
-// Updated interface to match Next.js 15 requirements
-interface ChallengePageProps {
-  params: Promise<{ id: string }>;
-}
-
 // ---------- Mock challenge data ----------
-const challengeData: Record<string, Challenge> = {
+const challengeData: Record<string, any> = {
+
   "1": {
     id: 1,
     title: "Return the Sum of Two Numbers",
-    description:
-      "Create a function that takes two numbers as arguments and returns their sum.",
+    description: "Create a function that takes two numbers as arguments and returns their sum.",
     tags: ["geometry", "maths", "numbers"],
     examples: ["addition(3, 2) → 5", "addition(-3, -6) → -9", "addition(7, 3) → 10"],
     notes: [
       "Don't forget to return the result.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "javascript",
+    help: {
+      quickTips: [
+        "Ensure your function accepts two parameters (e.g., `a` and `b`).",
+        "Use the `+` operator to add the numbers.",
+        "Return the result using the `return` statement.",
+        "Handle both positive and negative numbers as shown in the examples."
+      ],
+      resources: [
+        {
+          title: "JavaScript Functions",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+          description: "Learn how to define and use functions in JavaScript."
+        },
+        {
+          title: "JavaScript Operators",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators",
+          description: "Understand arithmetic operators like `+` for addition."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, consider reviewing the examples in the Instructions tab or ask a question in the community forum on X."
+    }
   },
   "2": {
     id: 2,
     title: "Area of a Triangle",
-    description:
-      "Write a function that takes the base and height of a triangle and return its area.",
+    description: "Write a function that takes the base and height of a triangle and return its area.",
     tags: ["geometry", "maths", "numbers"],
     examples: ["triArea(2, 3) → 3", "triArea(7, 4) → 14", "triArea(10, 10) → 50"],
     notes: [
       "The area of a triangle is: (base * height) / 2",
       "Don't forget to return the result.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "javascript",
+    help: {
+      quickTips: [
+        "Use the formula `(base * height) / 2` to calculate the area.",
+        "Ensure your function accepts two parameters: `base` and `height`.",
+        "Return the result using the `return` statement.",
+        "Handle positive numbers as inputs."
+      ],
+      resources: [
+        {
+          title: "JavaScript Arithmetic",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#arithmetic_operators",
+          description: "Learn about arithmetic operators for multiplication and division."
+        },
+        {
+          title: "JavaScript Functions",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+          description: "Understand how to create functions in JavaScript."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the formula in the notes or ask for help in the community forum on X."
+    }
   },
   "3": {
     id: 3,
     title: "Convert Minutes into Seconds",
-    description:
-      "Write a function that takes an integer minutes and converts it to seconds.",
+    description: "Write a function that takes an integer minutes and converts it to seconds.",
     tags: ["maths", "numbers"],
     examples: ["convert(5) → 300", "convert(3) → 180", "convert(2) → 120"],
     notes: [
       "There are 60 seconds in a minute.",
       "Don't forget to return the result.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "javascript",
+    help: {
+      quickTips: [
+        "Multiply the input minutes by 60 to convert to seconds.",
+        "Ensure your function accepts one parameter for minutes.",
+        "Return the result using the `return` statement.",
+        "Handle positive integers as inputs."
+      ],
+      resources: [
+        {
+          title: "JavaScript Arithmetic",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#arithmetic_operators",
+          description: "Learn about multiplication in JavaScript."
+        },
+        {
+          title: "JavaScript Functions",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+          description: "Understand how to define functions in JavaScript."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, check the examples or ask a question in the community forum on X."
+    }
   },
   "4": {
     id: 4,
     title: "Find the Maximum Number in an Array",
-    description:
-      "Create a function that finds and returns the maximum number in a given array.",
+    description: "Create a function that finds and returns the maximum number in a given array.",
     tags: ["arrays", "maths"],
     examples: [
       "findMax([1, 2, 3]) → 3",
@@ -99,9 +154,30 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "You can use Math.max or iterate through the array.",
       "Handle empty arrays if needed, but assume non-empty for simplicity.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "javascript",
+    help: {
+      quickTips: [
+        "Use `Math.max(...array)` or loop through the array to find the largest number.",
+        "Ensure your function accepts an array as a parameter.",
+        "Return the maximum value using the `return` statement.",
+        "Handle arrays with positive and negative numbers."
+      ],
+      resources: [
+        {
+          title: "JavaScript Math Object",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max",
+          description: "Learn how to use Math.max to find the maximum value."
+        },
+        {
+          title: "JavaScript Arrays",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+          description: "Understand how to work with arrays in JavaScript."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, try the examples or ask for help in the community forum on X."
+    }
   },
   "5": {
     id: 5,
@@ -116,9 +192,30 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "A palindrome reads the same forwards and backwards.",
       "Ignore case and non-alphanumeric characters if advanced, but keep simple.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "python",
+    help: {
+      quickTips: [
+        "Compare the string with its reverse using slicing (`string[::-1]`).",
+        "Return `True` if they match, `False` otherwise.",
+        "Handle single-character strings, which are always palindromes.",
+        "Consider converting the string to lowercase for simplicity."
+      ],
+      resources: [
+        {
+          title: "Python String Methods",
+          url: "https://docs.python.org/3/library/stdtypes.html#string-methods",
+          description: "Learn about string manipulation in Python."
+        },
+        {
+          title: "Python Slicing",
+          url: "https://docs.python.org/3/tutorial/introduction.html#strings",
+          description: "Understand how to use slicing to reverse a string."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
   },
   "6": {
     id: 6,
@@ -129,9 +226,30 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "Factorial of n is n * (n-1) * ... * 1.",
       "Use recursion or a loop.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "java",
+    help: {
+      quickTips: [
+        "Use a loop or recursion to multiply numbers from 1 to n.",
+        "Handle the base case of 0, which returns 1.",
+        "Ensure your function returns an integer or long for larger factorials.",
+        "Test with the provided examples to verify correctness."
+      ],
+      resources: [
+        {
+          title: "Java Methods",
+          url: "https://docs.oracle.com/javase/tutorial/java/javaOO/methods.html",
+          description: "Learn how to define methods in Java."
+        },
+        {
+          title: "Java Recursion",
+          url: "https://www.w3schools.com/java/java_recursion.asp",
+          description: "Understand how to implement recursion in Java."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, try the examples or ask for help in the community forum on X."
+    }
   },
   "7": {
     id: 7,
@@ -146,9 +264,30 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "Fibonacci: each number is the sum of the two preceding ones.",
       "Start with 0 and 1.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "javascript",
+    help: {
+      quickTips: [
+        "Use a loop to generate numbers, starting with 0 and 1.",
+        "Add the last two numbers to get the next one.",
+        "Return an array containing the sequence.",
+        "Handle edge cases like n = 0, which returns an empty array."
+      ],
+      resources: [
+        {
+          title: "JavaScript Arrays",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+          description: "Learn how to work with arrays in JavaScript."
+        },
+        {
+          title: "JavaScript Loops",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration",
+          description: "Understand how to use loops to generate sequences."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, check the examples or ask for help in the community forum on X."
+    }
   },
   "8": {
     id: 8,
@@ -163,9 +302,30 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "You can use built-in sort or implement bubble/insertion sort.",
       "Handle numbers or strings as needed.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "python",
+    help: {
+      quickTips: [
+        "Use Python's `sorted()` function or `list.sort()` for simplicity.",
+        "If implementing manually, try bubble sort or insertion sort.",
+        "Return the sorted array.",
+        "Handle empty arrays and single-element arrays as shown in examples."
+      ],
+      resources: [
+        {
+          title: "Python Sorting",
+          url: "https://docs.python.org/3/howto/sorting.html",
+          description: "Learn about sorting lists in Python."
+        },
+        {
+          title: "Python Lists",
+          url: "https://docs.python.org/3/tutorial/introduction.html#lists",
+          description: "Understand how to work with lists in Python."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
   },
   "9": {
     id: 9,
@@ -180,9 +340,30 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "Binary search halves the search interval each time.",
       "Assume the array is sorted.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "java",
+    help: {
+      quickTips: [
+        "Use two pointers (low, high) to track the search range.",
+        "Calculate the middle index and compare with the target.",
+        "Return the index if found, or -1 if not found.",
+        "Ensure the array is sorted before applying binary search."
+      ],
+      resources: [
+        {
+          title: "Java Arrays",
+          url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html",
+          description: "Learn how to work with arrays in Java."
+        },
+        {
+          title: "Binary Search in Java",
+          url: "https://www.geeksforgeeks.org/binary-search-in-java/",
+          description: "Understand how to implement binary search in Java."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, try the examples or ask for help in the community forum on X."
+    }
   },
   "10": {
     id: 10,
@@ -197,11 +378,37 @@ const challengeData: Record<string, Challenge> = {
     notes: [
       "Vowels are a, e, i, o, u (lowercase and uppercase).",
       "Iterate through the string and count.",
-      "If you get stuck on a challenge, find help by tap on the help button.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
     ],
     language: "javascript",
-  },
+    help: {
+      quickTips: [
+        "Loop through each character in the string.",
+        "Check if the character is in a list of vowels (e.g., ['a', 'e', 'i', 'o', 'u']).",
+        "Increment a counter for each vowel found.",
+        "Consider converting the string to lowercase to handle both cases."
+      ],
+      resources: [
+        {
+          title: "JavaScript String Methods",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+          description: "Learn how to manipulate strings in JavaScript."
+        },
+        {
+          title: "JavaScript Loops",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration",
+          description: "Understand how to iterate through strings."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
+  }
 };
+
+// Updated interface to match Next.js 15 requirements
+interface ChallengePageProps {
+  params: Promise<{ id: string }>;
+}
 
 // ---------- Test cases ----------
 const testCases: Record<string, TestCase> = {
@@ -272,16 +479,16 @@ export default function ChallengePage({ params }: ChallengePageProps) {
       const resolvedParams = await params;
       const id = resolvedParams.id;
       setChallengeId(id);
-      
+
       const challengeData_challenge = challengeData[id];
       setChallenge(challengeData_challenge || null);
-      
+
       if (challengeData_challenge) {
         setIsCompleted(isChallengeCompleted(challengeData_challenge.id));
         setCode(getStarterCode(challengeData_challenge));
       }
     };
-    
+
     loadParams();
   }, [params]);
 
@@ -465,67 +672,61 @@ export default function ChallengePage({ params }: ChallengePageProps) {
       <main className="pb-6 sm:pb-8">
         <Tabs defaultValue="instructions" className="w-full px-3 sm:px-4">
           {/* Tab Navigation */}
-          <div className="w-full flex justify-center items-center mb-4 sm:mb-8">
-            <TabsList className="grid w-full grid-cols-2 gap-1 max-w-sm sm:max-w-md h-12 sm:h-10">
-              <TabsTrigger value="instructions" className="text-sm sm:text-base h-full">
-                Instructions
-              </TabsTrigger>
-              <TabsTrigger value="code" className="text-sm sm:text-base h-full">
-                Code
-              </TabsTrigger>
+          <div className="w-full flex justify-center items-center">
+            <TabsList className="grid w-full grid-cols-2 mb-8 gap-1 sm:max-w-[24rem]">
+              <TabsTrigger value="instructions">Instructions</TabsTrigger>
+              <TabsTrigger value="code">Code</TabsTrigger>
             </TabsList>
           </div>
 
           {/* Instructions Tab */}
-          <TabsContent
-            value="instructions"
-            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] md:max-w-4xl mx-auto"
-          >
+          <TabsContent value="instructions" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] md:max-w-4xl m-auto">
+            {/* Challenge Header */}
             <div>
-              <div className="flex items-start gap-3 mb-3">
-                <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{challenge.title}</h1>
+              <div className="flex items-center gap-3 mb-3">
+                <h1 className="text-2xl font-semibold">{challenge.title}</h1>
               </div>
               <div className="mb-4">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {challenge.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
                 {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
               </div>
-              <p className="text-sm sm:text-base text-foreground leading-relaxed">{challenge.description}</p>
+              <p className="text-foreground leading-relaxed text-base">{challenge.description}</p>
             </div>
 
-            {/* Examples */}
+            {/* Examples Section */}
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">Examples</h2>
-              <div className="bg-muted border-l-4 border-l-green-500 p-3 sm:p-4 rounded-r-md overflow-x-auto">
-                <div className="space-y-1 text-xs sm:text-sm font-mono">
-                  {challenge.examples.map((example, idx) => (
-                    <div key={idx} className="whitespace-nowrap">
-                      {example}
-                    </div>
+              <h2 className="text-lg font-semibold mb-3">Examples</h2>
+              <div className="bg-muted border-l-4 border-l-green-500 p-4 rounded-r-md">
+                <div className="space-y-1 text-sm">
+                  {challenge.examples.map((example: string, index: number) => (
+                    <div key={index}>{example}</div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Notes */}
+            {/* Notes Section */}
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-3">Notes</h2>
+              <h2 className="text-lg font-semibold mb-3">Notes</h2>
               <ul className="space-y-2">
-                {challenge.notes.map((note, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="text-muted-foreground mt-1 text-sm">•</span>
-                    <span className="text-sm sm:text-base text-foreground">{note}</span>
+                {challenge.notes.map((note: string, index: number) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <span className="text-muted-foreground mt-1">•</span>
+                    <span className="text-foreground">{note}</span>
                   </li>
                 ))}
               </ul>
+            </div>
+
+            {/* Tags Section */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Tags</h2>
+              <div className="flex gap-2 mb-2">
+                {challenge.tags.map((tag: string) => (
+                  <span key={tag} className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </TabsContent>
 
@@ -571,8 +772,8 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     typeof window !== "undefined" && window.innerWidth < 640
                       ? "300px"
                       : typeof window !== "undefined" && window.innerWidth < 768
-                      ? "350px"
-                      : "400px"
+                        ? "350px"
+                        : "400px"
                   }
                   language={challenge.language === "javascript" ? "javascript" : challenge.language}
                   theme="vs-dark"
@@ -618,7 +819,150 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             Help
           </Button>
         </div>
+        {/* Bottom Actions */}
+        <BottomActions activeTab={activeTab} challenge={challenge} />
       </main>
     </div>
   );
+}
+
+// Bottom Actions Component
+const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ activeTab, challenge }) => {
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
+  const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  const handleHelpClick = () => {
+    setIsHelpOpen(true)
+  }
+
+  return (
+    <div className="flex justify-between gap-3 mt-8 pt-6 border-t border-border px-6">
+      <div className="flex gap-3">
+        <Button variant="outline" size="lg" className="text-base border-gray-200">
+          Skip
+        </Button>
+        <Button variant="ghost" size="lg" className="text-base" onClick={handleHelpClick}>
+          Help
+        </Button>
+      </div>
+      <div className="flex gap-4">
+        {activeTab === "code" && (
+          <Button variant="default" size="lg" className="bg-black dark:bg-white text-base">
+            Check
+          </Button>
+        )}
+      </div>
+
+      {/* Desktop: Dialog */}
+      {isDesktop ? (
+        <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader className="sr-only">
+              <DialogTitle>Help: {challenge.title}</DialogTitle>
+            </DialogHeader>
+            <Tabs defaultValue="quick-tips" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="quick-tips">Quick Tips</TabsTrigger>
+                <TabsTrigger value="resources">Resources</TabsTrigger>
+                <TabsTrigger value="further-assistance">Assistance</TabsTrigger>
+              </TabsList>
+              <TabsContent value="quick-tips" className="mt-4">
+                <ul className="space-y-2 text-sm text-foreground">
+                  {challenge.help?.quickTips.map((tip: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-muted-foreground mt-1">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+              <TabsContent value="resources" className="mt-4">
+                <div className="space-y-4 text-sm text-foreground">
+                  {challenge.help?.resources.map((resource: any, index: number) => (
+                    <div key={index}>
+                      <a
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {resource.title}
+                      </a>
+                      <p className="text-muted-foreground">{resource.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+              <TabsContent value="further-assistance" className="mt-4">
+                <p className="text-sm text-foreground">{challenge.help?.furtherAssistance}</p>
+              </TabsContent>
+            </Tabs>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        /* Mobile: Drawer */
+        <Drawer open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+          <DrawerContent>
+            <DialogHeader className="sr-only">
+              <DialogTitle>Help: {challenge.title}</DialogTitle>
+            </DialogHeader>
+            <Tabs defaultValue="quick-tips" className="w-full pb-4">
+              <TabsList className="flex gap-10 h-12 w-full grid-cols-3 justify-center items-center text-base rounded-none bg-transparent border-b border-border">
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-min data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="quick-tips"
+                >
+                  Quick Tips
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-min data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="resources"
+                >
+                  Resources
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-min data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="further-assistance"
+                >
+                  Assistance
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="quick-tips" className="mt-4 min-h-[80vh] text-base">
+                <ul className="space-y-2 text-foreground px-4">
+                  {challenge.help?.quickTips.map((tip: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-muted-foreground mt-1">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+              <TabsContent value="resources" className="mt-4 min-h-[94vh] text-base">
+                <div className="space-y-4 text-foreground px-4">
+                  {challenge.help?.resources.map((resource: any, index: number) => (
+                    <div key={index}>
+                      <a
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {resource.title}
+                      </a>
+                      <p className="text-muted-foreground">{resource.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+              <TabsContent value="further-assistance" className="mt-4 min-h-[80vh] text-base">
+                <div className="px-4">
+                  <p className="text-foreground">{challenge.help?.furtherAssistance}</p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </DrawerContent>
+        </Drawer>
+      )}
+    </div>
+  )
 }
