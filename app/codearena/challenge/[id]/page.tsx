@@ -751,7 +751,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     {challenge.language}
                   </span>
                 </div>
-                <div className="flex gap-2 w-full sm:w-auto">
+                <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
                   <Button
                     variant="outline"
                     size="sm"
@@ -759,7 +759,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
                   >
                     <RotateCcw className="h-4 w-4" />
-                    <span className="text-sm">Reset</span>
+                    <span>Reset</span>
                   </Button>
                   <Button
                     onClick={handleRunCode}
@@ -767,7 +767,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
                   >
                     <Play className="h-4 w-4" />
-                    <span className="text-sm">{isRunning ? "Running..." : "Run Code"}</span>
+                    <span>{isRunning ? "Running..." : "Run Code"}</span>
                   </Button>
                 </div>
               </div>
