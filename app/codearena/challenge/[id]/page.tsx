@@ -657,13 +657,13 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 border-border border-b mb-4 sm:mb-6">
+      <header className="flex items-center justify-between py-4 pr-4 pl-2 md:p-4 border-border border-b mb-4 sm:mb-6">
         <div className="flex items-center gap-2 sm:gap-4">
           <Link
             href="/codearena/challenges"
             className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200"
           >
-            <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
+            <ChevronLeft className="h-8 w-8 sm:h-7 sm:w-7" />
             <span>Challenges</span>
           </Link>
         </div>
