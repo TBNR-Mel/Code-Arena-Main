@@ -833,20 +833,13 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
 
   return (
     <div className="flex justify-between gap-3 mt-8 pt-6 border-t border-border px-6">
-      <div className="flex gap-3">
+      <div className="flex justify-between gap-3 w-full">
         <Button variant="outline" size="lg" className="text-base border-gray-200">
           Skip
         </Button>
         <Button variant="ghost" size="lg" className="text-base" onClick={handleHelpClick}>
           Help
         </Button>
-      </div>
-      <div className="flex gap-4">
-        {activeTab === "code" && (
-          <Button variant="default" size="lg" className="bg-black dark:bg-white text-base">
-            Check
-          </Button>
-        )}
       </div>
 
       {/* Desktop: Dialog */}
