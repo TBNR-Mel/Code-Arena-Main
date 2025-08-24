@@ -9,6 +9,7 @@ import { XPDisplay } from "@/components/xp-display";
 import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { useMediaQuery } from 'react-responsive'
 import dynamic from "next/dynamic";
 
 // Dynamically import Monaco Editor to avoid SSR issues
@@ -474,6 +475,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
 
   // Handle async params
   useEffect(() => {
@@ -672,7 +674,10 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
       {/* Main Content */}
       <main className="pb-6 sm:pb-8">
-        <Tabs defaultValue="instructions" className="w-full px-3 sm:px-4">
+        <Tabs 
+        defaultValue="instructions" 
+        onValueChange={(value) => setActiveTab(value as "instructions" | "code")}
+        className="w-full px-3 sm:px-4">
           {/* Tab Navigation */}
           <div className="w-full flex justify-center items-center">
             <TabsList className="grid w-full grid-cols-2 mb-8 gap-1 sm:max-w-[24rem]">
@@ -811,16 +816,6 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             </div>
           </TabsContent>
         </Tabs>
-
-        {/* Bottom Actions */}
-        <div className="flex flex-col sm:flex-row gap-3 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border px-3 sm:px-6">
-          <Button variant="outline" size="lg" className="w-full sm:w-auto h-12 sm:h-10 bg-transparent">
-            Skip
-          </Button>
-          <Button variant="ghost" size="lg" className="w-full sm:w-auto h-12 sm:h-10">
-            Help
-          </Button>
-        </div>
         {/* Bottom Actions */}
         <BottomActions activeTab={activeTab} challenge={challenge} />
       </main>
@@ -831,8 +826,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 // Bottom Actions Component
 const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ activeTab, challenge }) => {
   const [isHelpOpen, setIsHelpOpen] = useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
-
+const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
   const handleHelpClick = () => {
     setIsHelpOpen(true)
   }
