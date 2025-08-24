@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { XPDisplay } from "@/components/xp-display";
 import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import dynamic from "next/dynamic";
 
 // Dynamically import Monaco Editor to avoid SSR issues
