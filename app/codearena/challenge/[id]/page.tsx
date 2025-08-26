@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Play, RotateCcw } from "lucide-react";
+import { ChevronLeft, HelpCircle, Play, RotateCcw, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { XPDisplay } from "@/components/xp-display";
@@ -687,7 +687,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           </div>
 
           {/* Instructions Tab */}
-          <TabsContent value="instructions" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] md:max-w-4xl m-auto">
+          <TabsContent value="instructions" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] md:max-w-7xl m-auto">
             {/* Challenge Header */}
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -740,79 +740,95 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           {/* Code Tab */}
           <TabsContent
             value="code"
-            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] max-w-7xl mx-auto"
+            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto"
           >
-            <div className="space-y-4">
-              {/* Code Editor Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2>
-                  <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
-                    {challenge.language}
-                  </span>
-                </div>
-                <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleResetCode}
-                    className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    <span>Reset</span>
-                  </Button>
-                  <Button
-                    onClick={handleRunCode}
-                    disabled={isRunning}
-                    className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
-                  >
-                    <Play className="h-4 w-4" />
-                    <span>{isRunning ? "Running..." : "Run Code"}</span>
-                  </Button>
-                </div>
+            {/* Code Editor Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2>
+                <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
+                  {challenge.language}
+                </span>
               </div>
+              <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetCode}
+                  className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  <span>Reset</span>
+                </Button>
+                <Button
+                  onClick={handleRunCode}
+                  disabled={isRunning}
+                  className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
+                >
+                  <Play className="h-4 w-4" />
+                  <span>{isRunning ? "Running..." : "Run Code"}</span>
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-4 md:flex md:space-y-0 md:gap-6">
+              <div>
 
-              {/* Monaco Editor */}
-              <div className="border border-border rounded-lg overflow-hidden">
-                <MonacoEditor
-                  height={
-                    typeof window !== "undefined" && window.innerWidth < 640
-                      ? "300px"
-                      : typeof window !== "undefined" && window.innerWidth < 768
-                        ? "350px"
-                        : "400px"
-                  }
-                  language={challenge.language === "javascript" ? "javascript" : challenge.language}
-                  theme="vs-dark"
-                  value={code}
-                  onChange={(value) => setCode(value || "")}
-                  options={{
-                    minimap: { enabled: typeof window !== "undefined" && window.innerWidth >= 768 },
-                    fontSize: typeof window !== "undefined" && window.innerWidth < 640 ? 12 : 14,
-                    lineNumbers: "on",
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    automaticLayout: true,
-                    tabSize: 2,
-                    wordWrap: "on",
-                    folding: typeof window !== "undefined" && window.innerWidth >= 640,
-                    lineDecorationsWidth: typeof window !== "undefined" && window.innerWidth < 640 ? 10 : 20,
-                    lineNumbersMinChars: typeof window !== "undefined" && window.innerWidth < 640 ? 2 : 3,
-                  }}
-                />
+
+                {/* Monaco Editor */}
+                <div className="border-border border rounded-sm p-4 flex-1 md:min-w-2xl 2xl:min-w-3xl overflow-hidden">
+                  <MonacoEditor
+                    height={
+                      typeof window !== "undefined" && window.innerWidth < 640
+                        ? "300px"
+                        : typeof window !== "undefined" && window.innerWidth < 768
+                          ? "350px"
+                          : "400px"
+                    }
+                    language={challenge.language === "javascript" ? "javascript" : challenge.language}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || "")}
+                    options={{
+                      minimap: { enabled: typeof window !== "undefined" && window.innerWidth >= 768 },
+                      fontSize: typeof window !== "undefined" && window.innerWidth < 640 ? 12 : 14,
+                      lineNumbers: "on",
+                      roundedSelection: false,
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      tabSize: 2,
+                      wordWrap: "on",
+                      folding: typeof window !== "undefined" && window.innerWidth >= 640,
+                      lineDecorationsWidth: typeof window !== "undefined" && window.innerWidth < 640 ? 10 : 20,
+                      lineNumbersMinChars: typeof window !== "undefined" && window.innerWidth < 640 ? 2 : 3,
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Output */}
-              {output && (
-                <div className="space-y-2">
-                  <h3 className="text-lg sm:text-xl font-semibold">Output</h3>
-                  <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                    <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">
-                      {output}
-                    </pre>
+
+              <div className="border-border border rounded-sm p-4 flex-1 md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl">
+                    {/* <h2 className="text-lg sm:text-xl font-semibold">Output</h2> */}
+                {output ? (
+                  <div className="space-y-2">
+                    <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                      <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">
+                        {output}
+                      </pre>
+                    </div>
                   </div>
-                </div>
-              )}
+                ) :
+                  (
+                      <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                        <div className="bg-muted p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                          <p className="text-xs sm:text-sm text-foreground/25">
+                            Run code: You will see test outputs here.
+                          </p>
+                        </div>
+                      </div>
+                  )
+                }
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -832,14 +848,25 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
   }
 
   return (
-    <div className="flex justify-between gap-3 mt-8 pt-6 border-t border-border px-6">
+    <div className="flex justify-between gap-3 mt-8 pt-6 border-t border-border max-w-7xl m-auto">
       <div className="flex justify-between gap-3 w-full">
-        <Button variant="outline" size="lg" className="text-base border-gray-200">
-          Skip
-        </Button>
-        <Button variant="ghost" size="lg" className="text-base" onClick={handleHelpClick}>
-          Help
-        </Button>
+        <Button 
+        variant="ghost" 
+        size="lg" 
+        className="text-base text-foreground/50 hover:text-foreground hover:bg-accent/90 flex items-center gap-2"
+      >
+        <SkipForward className="w-5 h-5" />
+        Skip
+      </Button>
+      <Button 
+        variant="outline" 
+        size="lg" 
+        className="text-base text-foreground/50 hover:text-foreground flex items-center gap-2" 
+        onClick={handleHelpClick}
+      >
+        <HelpCircle className="w-5 h-5" />
+        Help
+      </Button>
       </div>
 
       {/* Desktop: Dialog */}
