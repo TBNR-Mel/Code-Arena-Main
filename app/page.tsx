@@ -28,7 +28,7 @@ export default function HomePage() {
 
           {/* Rocket Illustration */}
           <div className="py-8">
-            <img src="/colorful-rocket-launch.png" alt="Rocket launching illustration" className="mx-auto h-48 w-48" />
+            <div className="text-8xl">🚀</div>
           </div>
 
           {/* Get Started Button */}
