@@ -845,18 +845,33 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
       {/* Desktop: Dialog */}
       {isDesktop ? (
         <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[825px]">
             <DialogHeader className="sr-only">
               <DialogTitle>Help: {challenge.title}</DialogTitle>
             </DialogHeader>
             <Tabs defaultValue="quick-tips" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="quick-tips">Quick Tips</TabsTrigger>
-                <TabsTrigger value="resources">Resources</TabsTrigger>
-                <TabsTrigger value="further-assistance">Assistance</TabsTrigger>
+              <TabsList className="flex gap-10 h-12 w-full grid-cols-3 justify-center items-center text-base rounded-none bg-transparent border-b border-border">
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-full data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="quick-tips"
+                >
+                  Quick Tips
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-full data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="resources"
+                >
+                  Resources
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-full data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="further-assistance"
+                >
+                  Assistance
+                </TabsTrigger>
               </TabsList>
-              <TabsContent value="quick-tips" className="mt-4">
-                <ul className="space-y-2 text-sm text-foreground">
+              <TabsContent value="quick-tips" className="mt-4 min-h-[65vh] text-base">
+                <ul className="space-y-2 text-foreground">
                   {challenge.help?.quickTips.map((tip: string, index: number) => (
                     <li key={index} className="flex items-start gap-2">
                       <span className="text-muted-foreground mt-1">•</span>
@@ -865,8 +880,8 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
                   ))}
                 </ul>
               </TabsContent>
-              <TabsContent value="resources" className="mt-4">
-                <div className="space-y-4 text-sm text-foreground">
+              <TabsContent value="resources" className="mt-4 min-h-[65vh] text-base">
+                <div className="space-y-4 text-foreground">
                   {challenge.help?.resources.map((resource: any, index: number) => (
                     <div key={index}>
                       <a
@@ -882,8 +897,8 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
                   ))}
                 </div>
               </TabsContent>
-              <TabsContent value="further-assistance" className="mt-4">
-                <p className="text-sm text-foreground">{challenge.help?.furtherAssistance}</p>
+              <TabsContent value="further-assistance" className="mt-4 min-h-[65vh] text-base">
+                <p className="text-foreground">{challenge.help?.furtherAssistance}</p>
               </TabsContent>
             </Tabs>
           </DialogContent>
