@@ -49,4 +49,11 @@
    \`\`\`
 
 3. **Open in browser**  
-   Visit [http://localhost:3000](http://localhost:3000) to use Code Arena locally.
+   Visit [http://localhost:3000](http://localhost:3000) to use Code Arena local 
+
+   **Newest Additions**
+   The most recent additions : 
+A. There will be a daily difficult code question for more XP 
+B. There is a leaderboard for the players with the most XP 
+C. Introduction of daily streaks acquired by using the app everyday 
+D. The introduction of gifts like 2x XP ,more XP etc depending on the number of day streaks the user has which will all be recorded in local storage 
