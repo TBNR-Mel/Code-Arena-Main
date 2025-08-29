@@ -51,9 +51,10 @@
 3. **Open in browser**  
    Visit [http://localhost:3000](http://localhost:3000) to use Code Arena local 
 
-   **Newest Additions**
-   The most recent additions : 
-A. There will be a daily difficult code question for more XP 
-B. There is a leaderboard for the players with the most XP 
-C. Introduction of daily streaks acquired by using the app everyday 
-D. The introduction of gifts like 2x XP ,more XP etc depending on the number of day streaks the user has which will all be recorded in local storage 
+**Todo: Newest Additions**
+Check out the latest features: coming soon:
+
+- A. **Daily Challenges** – Take on a tough coding question each day to earn extra XP.
+- B. **Leaderboard** – Compete with others and see who’s leading with the highest XP.
+- C. **Daily Streaks** – Build streaks by using the app every day and track your progress.
+- D. **Streak Rewards** – Unlock special bonuses like 2x XP and extra rewards based on your streak length, all saved in local storage.
