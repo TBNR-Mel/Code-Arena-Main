@@ -467,11 +467,26 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     nextChallenge?: { id: number; title: string; difficulty: string }
   } | null>(null)
   const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [isMediumScreen, setIsMediumScreen] = useState(false)
+
+  // Handle responsive breakpoints
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 640)
+      setIsMediumScreen(window.innerWidth >= 640 && window.innerWidth < 768)
+    }
+
+    updateScreenSize()
+    window.addEventListener("resize", updateScreenSize)
+    return () => window.removeEventListener("resize", updateScreenSize)
+  }, [])
+
 
 
   // ------------------------------------------------------------------------------
   // SAMPLE COMPLETION DATA VARIATIONS
-// ------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------
 
   /*  
   Repeat Completion (No XP Earned, No Level Up) Simulates a user repeating a challenge they've already completed.
@@ -489,83 +504,83 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   // }
 
 
-    /*  
-  High XP Earned with Level Up
-  Simulates a significant XP gain that triggers a level-up.
-  */
-//  const completionData = {
-//   xpEarned: 75,
-//   totalXp: 425,
-//   currentLevel: 4,
-//   isLevelUp: true,
-//   nextChallenge: {
-//     id: 3,
-//     title: "Advanced Algorithm",
-//     difficulty: "Hard",
-//   },
-// }
+  /*  
+High XP Earned with Level Up
+Simulates a significant XP gain that triggers a level-up.
+*/
+  //  const completionData = {
+  //   xpEarned: 75,
+  //   totalXp: 425,
+  //   currentLevel: 4,
+  //   isLevelUp: true,
+  //   nextChallenge: {
+  //     id: 3,
+  //     title: "Advanced Algorithm",
+  //     difficulty: "Hard",
+  //   },
+  // }
 
-/**
- * No Next Challenge
-Simulates the last challenge in a series, where no next challenge is available.
- */
-// const completionData = {
-//   xpEarned: 30,
-//   totalXp: 280,
-//   currentLevel: 2,
-//   isLevelUp: false,
-//   nextChallenge: null,
-// }
+  /**
+   * No Next Challenge
+  Simulates the last challenge in a series, where no next challenge is available.
+   */
+  // const completionData = {
+  //   xpEarned: 30,
+  //   totalXp: 280,
+  //   currentLevel: 2,
+  //   isLevelUp: false,
+  //   nextChallenge: null,
+  // }
 
-/**
- * Close to Next Level
-Simulates a scenario where the user is very close to leveling up.
- */
-// const completionData = {
-//   xpEarned: 20,
-//   totalXp: 395,
-//   currentLevel: 3,
-//   isLevelUp: false,
-//   nextChallenge: {
-//     id: 4,
-//     title: "Data Structures Intro",
-//     difficulty: "Easy",
-//   },
-// }
-
-
-/**
- * New User, Low Level, First Completion
-Simulates a beginner user completing their first challenge.
- */
-// const completionData = {
-//   xpEarned: 25,
-//   totalXp: 25,
-//   currentLevel: 1,
-//   isLevelUp: false,
-//   nextChallenge: {
-//     id: 1,
-//     title: "Beginner Challenge",
-//     difficulty: "Easy",
-//   },
-// }
+  /**
+   * Close to Next Level
+  Simulates a scenario where the user is very close to leveling up.
+   */
+  // const completionData = {
+  //   xpEarned: 20,
+  //   totalXp: 395,
+  //   currentLevel: 3,
+  //   isLevelUp: false,
+  //   nextChallenge: {
+  //     id: 4,
+  //     title: "Data Structures Intro",
+  //     difficulty: "Easy",
+  //   },
+  // }
 
 
-/**
- * High Level, Large XP Total
-Simulates an advanced user with a high level and large XP total.
- */
-// const completionData = {
-//   xpEarned: 100,
-//   totalXp: 1525,
-//   currentLevel: 15,
-//   isLevelUp: true,
-//   nextChallenge: {
-//     id: 5,
-//     title: "Expert Optimization",
-//     difficulty: "Expert",
-//   },
-// }
+  /**
+   * New User, Low Level, First Completion
+  Simulates a beginner user completing their first challenge.
+   */
+  // const completionData = {
+  //   xpEarned: 25,
+  //   totalXp: 25,
+  //   currentLevel: 1,
+  //   isLevelUp: false,
+  //   nextChallenge: {
+  //     id: 1,
+  //     title: "Beginner Challenge",
+  //     difficulty: "Easy",
+  //   },
+  // }
+
+
+  /**
+   * High Level, Large XP Total
+  Simulates an advanced user with a high level and large XP total.
+   */
+  // const completionData = {
+  //   xpEarned: 100,
+  //   totalXp: 1525,
+  //   currentLevel: 15,
+  //   isLevelUp: true,
+  //   nextChallenge: {
+  //     id: 5,
+  //     title: "Expert Optimization",
+  //     difficulty: "Expert",
+  //   },
+  // }
 
   // Handle async params
   useEffect(() => {
@@ -803,13 +818,6 @@ Simulates an advanced user with a high level and large XP total.
                 <h1 className="text-2xl font-semibold">{challenge.title}</h1>
               </div>
               <div className="mb-4">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {challenge.tags.map((tag) => (
-                    <span key={tag} className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
                 {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
               </div>
               <p className="text-foreground leading-relaxed text-base">{challenge.description}</p>
@@ -886,64 +894,59 @@ Simulates an advanced user with a high level and large XP total.
                 </Button>
               </div>
             </div>
-            <div className="space-y-4 md:flex md:space-y-0 md:gap-6">
-              <div>
-
-
-                {/* Monaco Editor */}
-                <div className="border-border border rounded-sm p-4 flex-1 md:min-w-2xl 2xl:min-w-3xl overflow-hidden">
-                  <MonacoEditor
-                    height={
-                      typeof window !== "undefined" && window.innerWidth < 640
-                        ? "300px"
-                        : typeof window !== "undefined" && window.innerWidth < 768
-                          ? "350px"
-                          : "400px"
-                    }
-                    language={challenge.language === "javascript" ? "javascript" : challenge.language}
-                    theme="vs-dark"
-                    value={code}
-                    onChange={(value) => setCode(value || "")}
-                    options={{
-                      minimap: { enabled: typeof window !== "undefined" && window.innerWidth >= 768 },
-                      fontSize: typeof window !== "undefined" && window.innerWidth < 640 ? 12 : 14,
-                      lineNumbers: "on",
-                      roundedSelection: false,
-                      scrollBeyondLastLine: false,
-                      automaticLayout: true,
-                      tabSize: 2,
-                      wordWrap: "on",
-                      folding: typeof window !== "undefined" && window.innerWidth >= 640,
-                      lineDecorationsWidth: typeof window !== "undefined" && window.innerWidth < 640 ? 10 : 20,
-                      lineNumbersMinChars: typeof window !== "undefined" && window.innerWidth < 640 ? 2 : 3,
-                    }}
-                  />
-                </div>
+            <div
+              className="
+                grid
+                grid-cols-1
+                sm:grid-cols-[minmax(0,1fr)]
+                md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]
+                lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]
+                gap-4
+              "
+            >
+              {/* Monaco Editor */}
+              <div className="border-border border rounded-sm p-2 md:p-4">
+                <MonacoEditor
+                  height={isSmallScreen ? "300px" : isMediumScreen ? "350px" : "400px"}
+                  language={challenge.language === "javascript" ? "javascript" : challenge.language}
+                  theme="vs-dark"
+                  value={code}
+                  onChange={(value) => setCode(value || "")}
+                  options={{
+                    minimap: { enabled: !isSmallScreen },
+                    fontSize: isSmallScreen ? 16 : 16,
+                    lineNumbers: "on",
+                    roundedSelection: false,
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    tabSize: 2,
+                    wordWrap: "off",
+                    folding: !isSmallScreen,
+                    lineDecorationsWidth: isSmallScreen ? 10 : 20,
+                    lineNumbersMinChars: isSmallScreen ? 2 : 3,
+                  }}
+                />
               </div>
 
               {/* Output */}
-
-              <div className="border-border border rounded-sm p-4 flex-1 md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl">
-                {/* <h2 className="text-lg sm:text-xl font-semibold">Output</h2> */}
+              <div className="border-border border rounded-sm p-2 md:p-4">
                 {output ? (
-                  <div className="space-y-2">
-                    <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                      <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">
+                  <div className="space-y-2 h-full">
+                    <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                      <pre className="text-base whitespace-pre-wrap font-mono break-words">
                         {output}
                       </pre>
                     </div>
                   </div>
-                ) :
-                  (
-                    <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
-                      <div className="bg-muted p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
-                        <p className="text-xs sm:text-sm text-foreground/25">
-                          Run code: You will see test outputs here.
-                        </p>
-                      </div>
+                ) : (
+                  <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                    <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                      <p className="text-base text-center sm:text-sm text-foreground/25">
+                        Run Code: <br />You will see test outputs here.
+                      </p>
                     </div>
-                  )
-                }
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>
@@ -953,21 +956,21 @@ Simulates an advanced user with a high level and large XP total.
       </main>
 
       {completionData && (
-      <CompletionModal
-        isOpen={showCompletionModal}
-        onClose={() => {
-          console.log("[v0] Modal closing")
-          setShowCompletionModal(false)
-        }}
-        challengeTitle={challenge.title}
-        xpEarned={completionData.xpEarned}
-        totalXp={completionData.totalXp}
-        currentLevel={completionData.currentLevel}
-        isLevelUp={completionData.isLevelUp}
-        nextChallenge={completionData.nextChallenge}
-        allowBackgroundScroll={true}
-      />
-       )}
+        <CompletionModal
+          isOpen={showCompletionModal}
+          onClose={() => {
+            console.log("[v0] Modal closing")
+            setShowCompletionModal(false)
+          }}
+          challengeTitle={challenge.title}
+          xpEarned={completionData.xpEarned}
+          totalXp={completionData.totalXp}
+          currentLevel={completionData.currentLevel}
+          isLevelUp={completionData.isLevelUp}
+          nextChallenge={completionData.nextChallenge}
+          allowBackgroundScroll={true}
+        />
+      )}
     </div>
   )
 }
