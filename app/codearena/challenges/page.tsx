@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { XPDisplay } from "@/components/xp-display"
 import { getUserProgress } from "@/lib/storage"
-import { ArrowLeft, ChevronLeft, ChevronRight, ChevronsLeftRight, ChevronsRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // Mock challenge data
 const challenges = [
@@ -39,7 +39,7 @@ const challenges = [
     description: "Create a function that finds and returns the maximum number in a given array.",
     difficulty: "Easy",
     tags: ["arrays", "maths"],
-    language: "javascript",
+    language: "java",
   },
   {
     id: 5,
@@ -94,15 +94,17 @@ const challenges = [
 export default function ChallengesPage() {
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
   // Initialize with default values, not localStorage
-  const [selectedLanguage, setSelectedLanguage] = useState('javascript')
-  const [selectedDifficulty, setSelectedDifficulty] = useState('very-easy')
+  const [selectedLanguage, setSelectedLanguage] = useState("javascript")
+  const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
   const [filteredChallenges, setFilteredChallenges] = useState(challenges)
 
   useEffect(() => {
     // Access localStorage only in the browser
-    const storedLanguage = typeof window !== 'undefined' ? localStorage.getItem('challengeLanguage') || 'javascript' : 'javascript'
-    const storedDifficulty = typeof window !== 'undefined' ? localStorage.getItem('challengeDifficulty') || 'very-easy' : 'very-easy'
-    
+    const storedLanguage =
+      typeof window !== "undefined" ? localStorage.getItem("challengeLanguage") || "javascript" : "javascript"
+    const storedDifficulty =
+      typeof window !== "undefined" ? localStorage.getItem("challengeDifficulty") || "very-easy" : "very-easy"
+
     setSelectedLanguage(storedLanguage)
     setSelectedDifficulty(storedDifficulty)
 
@@ -120,8 +122,9 @@ export default function ChallengesPage() {
 
   useEffect(() => {
     const filtered = challenges.filter((challenge) => {
-      const langMatch = selectedLanguage === 'all' || challenge.language.toLowerCase() === selectedLanguage
-      const diffMatch = selectedDifficulty === 'all' || challenge.difficulty.toLowerCase() === selectedDifficulty.replace('-', ' ')
+      const langMatch = selectedLanguage === "all" || challenge.language.toLowerCase() === selectedLanguage
+      const diffMatch =
+        selectedDifficulty === "all" || challenge.difficulty.toLowerCase() === selectedDifficulty.replace("-", " ")
       return langMatch && diffMatch
     })
     setFilteredChallenges(filtered)
@@ -129,32 +132,50 @@ export default function ChallengesPage() {
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('challengeLanguage', value)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("challengeLanguage", value)
     }
   }
 
   const handleDifficultyChange = (value: string) => {
     setSelectedDifficulty(value)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('challengeDifficulty', value)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("challengeDifficulty", value)
     }
   }
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 py-4 pr-4 pl-2 md:p-4 border-border border-b">
+      <header className="flex items-center justify-between p-4 border-border border-b mb-">
         <div className="flex items-center gap-4">
           <Link
             href="/"
             className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200"
           >
-            <ChevronLeft className="h-8 w-8 sm:h-7 sm:w-7sm:h-7 sm:w-7" />
+            <ChevronLeft className="h-7 w-7" />
             <span>Home</span>
           </Link>
         </div>
         <div className="flex items-center gap-6">
+          <Link
+            href="/codearena/daily"
+            className="text-yellow-500 hover:text-yellow-400 font-semibold transition-colors"
+          >
+            Daily Challenge
+          </Link>
+          <Link
+            href="/codearena/leaderboard"
+            className="text-purple-500 hover:text-purple-400 font-semibold transition-colors"
+          >
+            Leaderboard
+          </Link>
+          <Link
+            href="/codearena/streaks"
+            className="text-orange-500 hover:text-orange-400 font-semibold transition-colors"
+          >
+            Streaks
+          </Link>
           <XPDisplay />
         </div>
       </header>
@@ -205,7 +226,6 @@ export default function ChallengesPage() {
                   <div className="border-b border-border p-6 sm:p-8 hover:bg-accent/40 transition-colors cursor-pointer flex flex-col h-full">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg sm:text-xl font-semibold">{challenge.title}</h3>
-
                     </div>
                     <p className="text-muted-foreground text-base mb-4">{challenge.description}</p>
                     <div className="flex gap-2 mb-4">
