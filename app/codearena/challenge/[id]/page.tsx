@@ -468,6 +468,105 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   } | null>(null)
   const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
 
+
+  // ------------------------------------------------------------------------------
+  // SAMPLE COMPLETION DATA VARIATIONS
+// ------------------------------------------------------------------------------
+
+  /*  
+  Repeat Completion (No XP Earned, No Level Up) Simulates a user repeating a challenge they've already completed.
+  */
+  // const completionData = {
+  //   xpEarned: 0,
+  //   totalXp: 350,
+  //   currentLevel: 3,
+  //   isLevelUp: false,
+  //   nextChallenge: {
+  //     id: 2,
+  //     title: "Next Sample Challenge",
+  //     difficulty: "Medium",
+  //   },
+  // }
+
+
+    /*  
+  High XP Earned with Level Up
+  Simulates a significant XP gain that triggers a level-up.
+  */
+//  const completionData = {
+//   xpEarned: 75,
+//   totalXp: 425,
+//   currentLevel: 4,
+//   isLevelUp: true,
+//   nextChallenge: {
+//     id: 3,
+//     title: "Advanced Algorithm",
+//     difficulty: "Hard",
+//   },
+// }
+
+/**
+ * No Next Challenge
+Simulates the last challenge in a series, where no next challenge is available.
+ */
+// const completionData = {
+//   xpEarned: 30,
+//   totalXp: 280,
+//   currentLevel: 2,
+//   isLevelUp: false,
+//   nextChallenge: null,
+// }
+
+/**
+ * Close to Next Level
+Simulates a scenario where the user is very close to leveling up.
+ */
+// const completionData = {
+//   xpEarned: 20,
+//   totalXp: 395,
+//   currentLevel: 3,
+//   isLevelUp: false,
+//   nextChallenge: {
+//     id: 4,
+//     title: "Data Structures Intro",
+//     difficulty: "Easy",
+//   },
+// }
+
+
+/**
+ * New User, Low Level, First Completion
+Simulates a beginner user completing their first challenge.
+ */
+// const completionData = {
+//   xpEarned: 25,
+//   totalXp: 25,
+//   currentLevel: 1,
+//   isLevelUp: false,
+//   nextChallenge: {
+//     id: 1,
+//     title: "Beginner Challenge",
+//     difficulty: "Easy",
+//   },
+// }
+
+
+/**
+ * High Level, Large XP Total
+Simulates an advanced user with a high level and large XP total.
+ */
+// const completionData = {
+//   xpEarned: 100,
+//   totalXp: 1525,
+//   currentLevel: 15,
+//   isLevelUp: true,
+//   nextChallenge: {
+//     id: 5,
+//     title: "Expert Optimization",
+//     difficulty: "Expert",
+//   },
+// }
+
   // Handle async params
   useEffect(() => {
     const loadParams = async () => {
@@ -825,7 +924,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
               {/* Output */}
 
               <div className="border-border border rounded-sm p-4 flex-1 md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl">
-                    {/* <h2 className="text-lg sm:text-xl font-semibold">Output</h2> */}
+                {/* <h2 className="text-lg sm:text-xl font-semibold">Output</h2> */}
                 {output ? (
                   <div className="space-y-2">
                     <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
@@ -836,13 +935,13 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                   </div>
                 ) :
                   (
-                      <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
-                        <div className="bg-muted p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
-                          <p className="text-xs sm:text-sm text-foreground/25">
-                            Run code: You will see test outputs here.
-                          </p>
-                        </div>
+                    <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                      <div className="bg-muted p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                        <p className="text-xs sm:text-sm text-foreground/25">
+                          Run code: You will see test outputs here.
+                        </p>
                       </div>
+                    </div>
                   )
                 }
               </div>
@@ -854,21 +953,21 @@ export default function ChallengePage({ params }: ChallengePageProps) {
       </main>
 
       {completionData && (
-        <CompletionModal
-          isOpen={showCompletionModal}
-          onClose={() => {
-            console.log("[v0] Modal closing")
-            setShowCompletionModal(false)
-          }}
-          challengeTitle={challenge?.title || ""}
-          xpEarned={completionData.xpEarned}
-          totalXp={completionData.totalXp}
-          currentLevel={completionData.currentLevel}
-          isLevelUp={completionData.isLevelUp}
-          nextChallenge={completionData.nextChallenge}
-          allowBackgroundScroll={true}
-        />
-      )}
+      <CompletionModal
+        isOpen={showCompletionModal}
+        onClose={() => {
+          console.log("[v0] Modal closing")
+          setShowCompletionModal(false)
+        }}
+        challengeTitle={challenge.title}
+        xpEarned={completionData.xpEarned}
+        totalXp={completionData.totalXp}
+        currentLevel={completionData.currentLevel}
+        isLevelUp={completionData.isLevelUp}
+        nextChallenge={completionData.nextChallenge}
+        allowBackgroundScroll={true}
+      />
+       )}
     </div>
   )
 }
@@ -900,23 +999,23 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
   return (
     <div className="flex justify-between gap-3 mt-8 pt-6 border-t border-border max-w-7xl m-auto">
       <div className="flex justify-between gap-3 w-full">
-        <Button 
-        variant="ghost" 
-        size="lg" 
-        className="text-base text-foreground/50 hover:text-foreground hover:bg-accent/90 flex items-center gap-2"
-      >
-        <SkipForward className="w-5 h-5" />
-        Skip
-      </Button>
-      <Button 
-        variant="outline" 
-        size="lg" 
-        className="text-base text-foreground/50 hover:text-foreground flex items-center gap-2" 
-        onClick={handleHelpClick}
-      >
-        <HelpCircle className="w-5 h-5" />
-        Help
-      </Button>
+        <Button
+          variant="ghost"
+          size="lg"
+          className="text-base text-foreground/50 hover:text-foreground hover:bg-accent/90 flex items-center gap-2"
+        >
+          <SkipForward className="w-5 h-5" />
+          Skip
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          className="text-base text-foreground/50 hover:text-foreground flex items-center gap-2"
+          onClick={handleHelpClick}
+        >
+          <HelpCircle className="w-5 h-5" />
+          Help
+        </Button>
       </div>
 
       {/* Desktop: Dialog */}
