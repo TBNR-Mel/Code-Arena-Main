@@ -1,5 +1,6 @@
-"use client";
+"use client"
 
+import { CompletionModal } from "@/components/completion-modal"
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, HelpCircle, Play, RotateCcw, SkipForward } from "lucide-react";
@@ -11,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { useMediaQuery } from 'react-responsive'
 import dynamic from "next/dynamic";
+import { getNextChallenge } from "@/lib/storage";
 
 // Dynamically import Monaco Editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -20,25 +22,30 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
       <div className="text-muted-foreground">Loading editor...</div>
     </div>
   ),
-});
+})
 
 // ---------- Types ----------
-type Language = "javascript" | "python" | "java";
+type Language = "javascript" | "python" | "java"
 
 type Challenge = {
-  id: number;
-  title: string;
-  description: string;
-  tags: string[];
-  examples: string[];
-  notes: string[];
-  language: Language;
-};
+  id: number
+  title: string
+  description: string
+  tags: string[]
+  examples: string[]
+  notes: string[]
+  language: Language
+}
 
 type TestCase = {
-  functionName: string;
-  tests: { inputs: any[]; expected: any }[];
-};
+  functionName: string
+  tests: { inputs: any[]; expected: any }[]
+}
+
+// Updated interface to match Next.js 15 requirements
+interface ChallengePageProps {
+  params: Promise<{ id: string }>
+}
 
 // ---------- Mock challenge data ----------
 const challengeData: Record<string, any> = {
@@ -149,11 +156,7 @@ const challengeData: Record<string, any> = {
     title: "Find the Maximum Number in an Array",
     description: "Create a function that finds and returns the maximum number in a given array.",
     tags: ["arrays", "maths"],
-    examples: [
-      "findMax([1, 2, 3]) → 3",
-      "findMax([-1, 0, 5]) → 5",
-      "findMax([10]) → 10",
-    ],
+    examples: ["findMax([1, 2, 3]) → 3", "findMax([-1, 0, 5]) → 5", "findMax([10]) → 10"],
     notes: [
       "You can use Math.max or iterate through the array.",
       "Handle empty arrays if needed, but assume non-empty for simplicity.",
@@ -187,11 +190,7 @@ const challengeData: Record<string, any> = {
     title: "Check if a String is a Palindrome",
     description: "Write a function that checks if a given string is a palindrome.",
     tags: ["strings", "logic"],
-    examples: [
-      "is_palindrome('racecar') → True",
-      "is_palindrome('hello') → False",
-      "is_palindrome('a') → True",
-    ],
+    examples: ["is_palindrome('racecar') → True", "is_palindrome('hello') → False", "is_palindrome('a') → True"],
     notes: [
       "A palindrome reads the same forwards and backwards.",
       "Ignore case and non-alphanumeric characters if advanced, but keep simple.",
@@ -259,11 +258,7 @@ const challengeData: Record<string, any> = {
     title: "Fibonacci Sequence",
     description: "Generate the Fibonacci sequence up to a given number.",
     tags: ["maths", "sequences"],
-    examples: [
-      "fib(5) → [0, 1, 1, 2, 3, 5]",
-      "fib(3) → [0, 1, 1, 2]",
-      "fib(0) → []",
-    ],
+    examples: ["fib(5) → [0, 1, 1, 2, 3, 5]", "fib(3) → [0, 1, 1, 2]", "fib(0) → []"],
     notes: [
       "Fibonacci: each number is the sum of the two preceding ones.",
       "Start with 0 and 1.",
@@ -297,11 +292,7 @@ const challengeData: Record<string, any> = {
     title: "Sort an Array",
     description: "Implement a function to sort an array in ascending order.",
     tags: ["arrays", "sorting"],
-    examples: [
-      "sort_array([3, 1, 2]) → [1, 2, 3]",
-      "sort_array([5]) → [5]",
-      "sort_array([]) → []",
-    ],
+    examples: ["sort_array([3, 1, 2]) → [1, 2, 3]", "sort_array([5]) → [5]", "sort_array([]) → []"],
     notes: [
       "You can use built-in sort or implement bubble/insertion sort.",
       "Handle numbers or strings as needed.",
@@ -335,11 +326,7 @@ const challengeData: Record<string, any> = {
     title: "Binary Search",
     description: "Implement binary search on a sorted array.",
     tags: ["arrays", "searching"],
-    examples: [
-      "binarySearch([1,2,3,4], 3) → 2",
-      "binarySearch([1,2], 5) → -1",
-      "binarySearch([], 1) → -1",
-    ],
+    examples: ["binarySearch([1,2,3,4], 3) → 2", "binarySearch([1,2], 5) → -1", "binarySearch([], 1) → -1"],
     notes: [
       "Binary search halves the search interval each time.",
       "Assume the array is sorted.",
@@ -373,11 +360,7 @@ const challengeData: Record<string, any> = {
     title: "Count Vowels in a String",
     description: "Count the number of vowels in a given string.",
     tags: ["strings"],
-    examples: [
-      "countVowels('hello') → 2",
-      "countVowels('why') → 0",
-      "countVowels('aeiou') → 5",
-    ],
+    examples: ["countVowels('hello') → 2", "countVowels('why') → 0", "countVowels('aeiou') → 5"],
     notes: [
       "Vowels are a, e, i, o, u (lowercase and uppercase).",
       "Iterate through the string and count.",
@@ -465,170 +448,197 @@ const testCases: Record<string, TestCase> = {
       { inputs: [""], expected: 0 },
     ],
   },
-};
+}
 
 // ---------- Component ----------
 export default function ChallengePage({ params }: ChallengePageProps) {
-  const [challenge, setChallenge] = useState<Challenge | null>(null);
-  const [challengeId, setChallengeId] = useState<string>("");
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [code, setCode] = useState("");
-  const [output, setOutput] = useState("");
-  const [isRunning, setIsRunning] = useState(false);
+  const [challenge, setChallenge] = useState<Challenge | null>(null)
+  const [challengeId, setChallengeId] = useState<string>("")
+  const [isCompleted, setIsCompleted] = useState(false)
+  const [code, setCode] = useState("")
+  const [output, setOutput] = useState("")
+  const [isRunning, setIsRunning] = useState(false)
+  const [showCompletionModal, setShowCompletionModal] = useState(false)
+  const [completionData, setCompletionData] = useState<{
+    xpEarned: number
+    totalXp: number
+    currentLevel: number
+    isLevelUp: boolean
+    nextChallenge?: { id: number; title: string; difficulty: string }
+  } | null>(null)
   const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
 
   // Handle async params
   useEffect(() => {
     const loadParams = async () => {
-      const resolvedParams = await params;
-      const id = resolvedParams.id;
-      setChallengeId(id);
+      const resolvedParams = await params
+      const id = resolvedParams.id
+      setChallengeId(id)
 
-      const challengeData_challenge = challengeData[id];
-      setChallenge(challengeData_challenge || null);
+      const challengeData_challenge = challengeData[id]
+      setChallenge(challengeData_challenge || null)
 
       if (challengeData_challenge) {
-        setIsCompleted(isChallengeCompleted(challengeData_challenge.id));
-        setCode(getStarterCode(challengeData_challenge));
+        setIsCompleted(isChallengeCompleted(challengeData_challenge.id))
+        setCode(getStarterCode(challengeData_challenge))
       }
-    };
+    }
 
-    loadParams();
-  }, [params]);
+    loadParams()
+  }, [params])
 
   const getStarterCode = (c: Challenge): string => {
     switch (c.language) {
       case "javascript":
-        if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`;
-        if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`;
-        if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`;
-        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`;
-        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`;
-        return `function solution() {\n  // Write your code here\n}`;
+        if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`
+        if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`
+        if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`
+        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`
+        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`
+        return `function solution() {\n  // Write your code here\n}`
       case "python":
-        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`;
-        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`;
-        return `def solution():\n    # Write your code here\n    pass`;
+        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`
+        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`
+        return `def solution():\n    # Write your code here\n    pass`
       case "java":
         if (c.id === 6)
-          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`;
+          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`
         if (c.id === 9)
-          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`;
-        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`;
+          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`
+        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`
       default:
-        return "// Write your code here";
+        return "// Write your code here"
     }
-  };
+  }
 
   const handleRunCode = () => {
-    if (!challenge) return;
+    if (!challenge) return
 
-    setIsRunning(true);
-    setOutput("Running code...");
+    setIsRunning(true)
+    setOutput("Running code...")
 
     setTimeout(() => {
       try {
         if (challenge.language === "javascript") {
-          const challengeTests = testCases[challengeId];
+          const challengeTests = testCases[challengeId]
           if (!challengeTests) {
-            setOutput("❌ No test cases available for this challenge yet.");
-            setIsRunning(false);
-            return;
+            setOutput("❌ No test cases available for this challenge yet.")
+            setIsRunning(false)
+            return
           }
 
-          const fnName = challengeTests.functionName;
+          const fnName = challengeTests.functionName
 
-          let userFunction: (...args: any[]) => any;
+          let userFunction: (...args: any[]) => any
           try {
             // If the user defined the named function, return it; otherwise treat the code as an expression returning a function
             if (new RegExp(`\\bfunction\\s+${fnName}\\b`).test(code) || code.includes(`${fnName} =`)) {
-              userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any;
+              userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any
             } else {
-              userFunction = new Function(`return (${code});`)() as (...a: any[]) => any;
+              userFunction = new Function(`return (${code});`)() as (...a: any[]) => any
             }
           } catch (e) {
-            setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`);
-            setIsRunning(false);
-            return;
+            setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`)
+            setIsRunning(false)
+            return
           }
 
           if (typeof userFunction !== "function") {
-            setOutput("❌ Your code should define and return a function.");
-            setIsRunning(false);
-            return;
+            setOutput("❌ Your code should define and return a function.")
+            setIsRunning(false)
+            return
           }
 
-          const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = [];
-          let passedTests = 0;
+          const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = []
+          let passedTests = 0
 
           for (const t of challengeTests.tests) {
             try {
-              const actual = userFunction(...t.inputs);
-              const passed = JSON.stringify(actual) === JSON.stringify(t.expected);
-              if (passed) passedTests++;
-              results.push({ inputs: t.inputs, expected: t.expected, actual, passed });
+              const actual = userFunction(...t.inputs)
+              const passed = JSON.stringify(actual) === JSON.stringify(t.expected)
+              if (passed) passedTests++
+              results.push({ inputs: t.inputs, expected: t.expected, actual, passed })
             } catch (err) {
               results.push({
                 inputs: t.inputs,
                 expected: t.expected,
                 actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
                 passed: false,
-              });
+              })
             }
           }
 
-          let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`;
+          let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
           results.forEach((r, idx) => {
-            const inputStr = r.inputs.map(v => (typeof v === "string" ? `"${v}"` : JSON.stringify(v))).join(", ");
-            out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`;
-            out += `   Expected: ${JSON.stringify(r.expected)}\n`;
-            out += `   Got:      ${JSON.stringify(r.actual)}\n\n`;
-          });
+            const inputStr = r.inputs.map((v) => (typeof v === "string" ? `"${v}"` : JSON.stringify(v))).join(", ")
+            out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`
+            out += `   Expected: ${JSON.stringify(r.expected)}\n`
+            out += `   Got:      ${JSON.stringify(r.actual)}\n\n`
+          })
 
           if (passedTests === challengeTests.tests.length) {
-            out += "🎉 All tests passed! Challenge completed!";
+            out += "🎉 All tests passed! Challenge completed!"
+            console.log("[v0] All tests passed, triggering modal")
+            const result = markChallengeComplete(challenge.id, getDifficultyFromId(challenge.id))
+
+            // Update completion status if it wasn't completed before
             if (!isCompleted) {
-              markChallengeComplete(challenge.id);
-              setIsCompleted(true);
-              if (typeof window !== "undefined") {
-                window.dispatchEvent(new Event("progressUpdate"));
-              }
+              setIsCompleted(true)
+            }
+
+            const nextChallenge = getNextChallenge(challenge.id)
+            const completionDataObj = {
+              xpEarned: isCompleted ? 0 : result.xpEarned, // No XP for already completed challenges
+              totalXp: result.progress.xp,
+              currentLevel: result.progress.level,
+              isLevelUp: !isCompleted && result.isLevelUp, // Only level up if not previously completed
+              nextChallenge: nextChallenge || undefined,
+            }
+
+            console.log("[v0] Setting completion data:", completionDataObj)
+            setCompletionData(completionDataObj)
+
+            console.log("[v0] Setting showCompletionModal to true")
+            setShowCompletionModal(true)
+
+            if (typeof window !== "undefined" && !isCompleted) {
+              window.dispatchEvent(new Event("progressUpdate"))
             }
           } else {
-            out += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`;
+            out += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`
           }
 
-          setOutput(out);
+          setOutput(out)
         } else {
           // Non-JS languages: basic feedback only
           if (code.trim().length < 10) {
-            setOutput("❌ Please write more code to implement the solution.");
+            setOutput("❌ Please write more code to implement the solution.")
           } else if (challenge.language === "python" && !code.includes("def ")) {
-            setOutput("❌ Python code should define a function using 'def'.");
+            setOutput("❌ Python code should define a function using 'def'.")
           } else if (challenge.language === "java" && !code.includes("public ")) {
-            setOutput("❌ Java code should include a public method or class.");
+            setOutput("❌ Java code should include a public method or class.")
           } else {
             setOutput(
               `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join(
                 "\n",
               )}`,
-            );
+            )
           }
         }
       } catch (error) {
-        setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`);
+        setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`)
       } finally {
-        setIsRunning(false);
+        setIsRunning(false)
       }
-    }, 500);
-  };
+    }, 500)
+  }
 
   const handleResetCode = () => {
     if (challenge) {
-      setCode(getStarterCode(challenge));
-      setOutput("");
+      setCode(getStarterCode(challenge))
+      setOutput("")
     }
-  };
+  }
 
   // Show loading state while params are being resolved
   if (!challenge && !challengeId) {
@@ -638,7 +648,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           <div className="text-muted-foreground">Loading challenge...</div>
         </div>
       </div>
-    );
+    )
   }
 
   if (!challenge) {
@@ -651,7 +661,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           </Link>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -694,6 +704,13 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                 <h1 className="text-2xl font-semibold">{challenge.title}</h1>
               </div>
               <div className="mb-4">
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {challenge.tags.map((tag) => (
+                    <span key={tag} className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
                 {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
               </div>
               <p className="text-foreground leading-relaxed text-base">{challenge.description}</p>
@@ -835,8 +852,41 @@ export default function ChallengePage({ params }: ChallengePageProps) {
         {/* Bottom Actions */}
         <BottomActions activeTab={activeTab} challenge={challenge} />
       </main>
+
+      {completionData && (
+        <CompletionModal
+          isOpen={showCompletionModal}
+          onClose={() => {
+            console.log("[v0] Modal closing")
+            setShowCompletionModal(false)
+          }}
+          challengeTitle={challenge?.title || ""}
+          xpEarned={completionData.xpEarned}
+          totalXp={completionData.totalXp}
+          currentLevel={completionData.currentLevel}
+          isLevelUp={completionData.isLevelUp}
+          nextChallenge={completionData.nextChallenge}
+          allowBackgroundScroll={true}
+        />
+      )}
     </div>
-  );
+  )
+}
+
+const getDifficultyFromId = (id: number): string => {
+  const difficultyMap: Record<number, string> = {
+    1: "very easy",
+    2: "very easy",
+    3: "very easy",
+    10: "very easy",
+    4: "easy",
+    6: "easy",
+    5: "medium",
+    7: "medium",
+    8: "medium",
+    9: "hard",
+  }
+  return difficultyMap[id] || "very easy"
 }
 
 // Bottom Actions Component
