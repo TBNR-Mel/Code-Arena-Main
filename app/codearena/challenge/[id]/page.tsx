@@ -547,60 +547,59 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     <RotateCcw className="h-4 w-4" />
                     <span className="text-sm">Reset</span>
                   </Button>
+                  <Button
+                    onClick={handleRunCode}
+                    disabled={isRunning}
+                    className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
+                  >
+                    <Play className="h-4 w-4" />
+                    <span className="text-sm">{isRunning ? "Running..." : "Run Code"}</span>
+                  </Button>
                 </div>
               </div>
 
-              {/* Monaco Editor */}
-              <div className="border border-border rounded-lg overflow-hidden">
-                <MonacoEditor
-                  height={
-                    typeof window !== "undefined" && window.innerWidth < 640
-                      ? "300px"
-                      : typeof window !== "undefined" && window.innerWidth < 768
-                        ? "350px"
-                        : "400px"
-                  }
-                  language={challenge.language === "javascript" ? "javascript" : challenge.language}
-                  theme="vs-dark"
-                  value={code}
-                  onChange={(value) => setCode(value || "")}
-                  options={{
-                    minimap: { enabled: typeof window !== "undefined" && window.innerWidth >= 768 },
-                    fontSize: typeof window !== "undefined" && window.innerWidth < 640 ? 12 : 14,
-                    lineNumbers: "on",
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    automaticLayout: true,
-                    tabSize: 2,
-                    wordWrap: "on",
-                    folding: typeof window !== "undefined" && window.innerWidth >= 640,
-                    lineDecorationsWidth: typeof window !== "undefined" && window.innerWidth < 640 ? 10 : 20,
-                    lineNumbersMinChars: typeof window !== "undefined" && window.innerWidth < 640 ? 2 : 3,
-                  }}
-                />
-              </div>
+              {/* Split Layout: Code Editor + Output */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[500px]">
+                {/* Code Editor Panel */}
+                <div className="border border-border rounded-lg overflow-hidden">
+                  <MonacoEditor
+                    height="500px"
+                    language={challenge.language === "javascript" ? "javascript" : challenge.language}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || "")}
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      roundedSelection: false,
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      tabSize: 2,
+                      wordWrap: "on",
+                      folding: true,
+                      lineDecorationsWidth: 20,
+                      lineNumbersMinChars: 3,
+                    }}
+                  />
+                </div>
 
-              {/* Run Code Button */}
-              <div className="flex justify-center">
-                <Button
-                  onClick={handleRunCode}
-                  disabled={isRunning}
-                  className="flex items-center gap-2 w-full sm:w-auto h-12 sm:h-10"
-                >
-                  <Play className="h-4 w-4" />
-                  <span className="text-sm">{isRunning ? "Running..." : "Run Code"}</span>
-                </Button>
-              </div>
-
-              {/* Output */}
-              {output && (
-                <div className="space-y-2">
-                  <h3 className="text-lg sm:text-xl font-semibold">Output</h3>
-                  <div className="bg-muted border border-border rounded-lg p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                    <pre className="text-xs sm:text-sm whitespace-pre-wrap font-mono break-words">{output}</pre>
+                {/* Output Panel */}
+                <div className="border border-border rounded-lg bg-muted/30 flex flex-col">
+                  <div className="p-4 border-b border-border">
+                    <h3 className="font-semibold">Output</h3>
+                  </div>
+                  <div className="flex-1 p-4 overflow-y-auto">
+                    {output ? (
+                      <pre className="text-sm whitespace-pre-wrap font-mono break-words">{output}</pre>
+                    ) : (
+                      <div className="text-muted-foreground text-sm">
+                        Run code: You will see test outputs here.
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </TabsContent>
         </Tabs>
