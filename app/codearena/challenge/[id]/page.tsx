@@ -428,6 +428,36 @@ const testCases: Record<string, TestCase> = {
       { inputs: [0], expected: 0 },
     ],
   },
+  "4": {
+    functionName: "findMax",
+    tests: [
+      { inputs: [[1, 2, 3]], expected: 3 },
+      { inputs: [[-1, 0, 5]], expected: 5 },
+      { inputs: [[10]], expected: 10 },
+      { inputs: [[-5, -10, -2]], expected: -2 },
+      { inputs: [[1, 1, 1]], expected: 1 },
+    ],
+  },
+  "5": {
+    functionName: "is_palindrome",
+    tests: [
+      { inputs: ["racecar"], expected: true },
+      { inputs: ["hello"], expected: false },
+      { inputs: ["a"], expected: true },
+      { inputs: [""], expected: true },
+      { inputs: ["Racecar"], expected: true },
+    ],
+  },
+  "6": {
+    functionName: "factorial",
+    tests: [
+      { inputs: [5], expected: 120 },
+      { inputs: [0], expected: 1 },
+      { inputs: [3], expected: 6 },
+      { inputs: [1], expected: 1 },
+      { inputs: [4], expected: 24 },
+    ],
+  },
   "7": {
     functionName: "fib",
     tests: [
@@ -436,6 +466,26 @@ const testCases: Record<string, TestCase> = {
       { inputs: [0], expected: [] },
       { inputs: [1], expected: [0, 1] },
       { inputs: [2], expected: [0, 1, 1] },
+    ],
+  },
+  "8": {
+    functionName: "sort_array",
+    tests: [
+      { inputs: [[3, 1, 2]], expected: [1, 2, 3] },
+      { inputs: [[5]], expected: [5] },
+      { inputs: [[]], expected: [] },
+      { inputs: [[4, 4, 4]], expected: [4, 4, 4] },
+      { inputs: [[-1, 0, -5]], expected: [-5, -1, 0] },
+    ],
+  },
+  "9": {
+    functionName: "binarySearch",
+    tests: [
+      { inputs: [[1, 2, 3, 4], 3], expected: 2 },
+      { inputs: [[1, 2], 5], expected: -1 },
+      { inputs: [[], 1], expected: -1 },
+      { inputs: [[1], 1], expected: 0 },
+      { inputs: [[1, 2, 3], 1], expected: 0 },
     ],
   },
   "10": {
@@ -448,7 +498,7 @@ const testCases: Record<string, TestCase> = {
       { inputs: [""], expected: 0 },
     ],
   },
-}
+};
 
 // ---------- Component ----------
 export default function ChallengePage({ params }: ChallengePageProps) {
