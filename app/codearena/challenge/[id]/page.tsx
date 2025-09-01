@@ -208,6 +208,36 @@ const testCases: Record<string, TestCase> = {
       { inputs: [0], expected: 0 },
     ],
   },
+  "4": {
+    functionName: "findMax",
+    tests: [
+      { inputs: [[1, 2, 3]], expected: 3 },
+      { inputs: [[-1, 0, 5]], expected: 5 },
+      { inputs: [[10]], expected: 10 },
+      { inputs: [[-5, -10, -2]], expected: -2 },
+      { inputs: [[1, 1, 1]], expected: 1 },
+    ],
+  },
+  "5": {
+    functionName: "is_palindrome",
+    tests: [
+      { inputs: ["racecar"], expected: true },
+      { inputs: ["hello"], expected: false },
+      { inputs: ["a"], expected: true },
+      { inputs: [""], expected: true },
+      { inputs: ["Racecar"], expected: true },
+    ],
+  },
+  "6": {
+    functionName: "factorial",
+    tests: [
+      { inputs: [5], expected: 120 },
+      { inputs: [0], expected: 1 },
+      { inputs: [3], expected: 6 },
+      { inputs: [1], expected: 1 },
+      { inputs: [4], expected: 24 },
+    ],
+  },
   "7": {
     functionName: "fib",
     tests: [
@@ -216,6 +246,26 @@ const testCases: Record<string, TestCase> = {
       { inputs: [0], expected: [] },
       { inputs: [1], expected: [0, 1] },
       { inputs: [2], expected: [0, 1, 1] },
+    ],
+  },
+  "8": {
+    functionName: "sort_array",
+    tests: [
+      { inputs: [[3, 1, 2]], expected: [1, 2, 3] },
+      { inputs: [[5]], expected: [5] },
+      { inputs: [[]], expected: [] },
+      { inputs: [[4, 4, 4]], expected: [4, 4, 4] },
+      { inputs: [[-1, 0, -5]], expected: [-5, -1, 0] },
+    ],
+  },
+  "9": {
+    functionName: "binarySearch",
+    tests: [
+      { inputs: [[1, 2, 3, 4], 3], expected: 2 },
+      { inputs: [[1, 2], 5], expected: -1 },
+      { inputs: [[], 1], expected: -1 },
+      { inputs: [[1], 1], expected: 0 },
+      { inputs: [[1, 2, 3], 1], expected: 0 },
     ],
   },
   "10": {
@@ -228,7 +278,7 @@ const testCases: Record<string, TestCase> = {
       { inputs: [""], expected: 0 },
     ],
   },
-}
+};
 
 // ---------- Component ----------
 export default function ChallengePage({ params }: ChallengePageProps) {
@@ -246,6 +296,121 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     isLevelUp: boolean
     nextChallenge?: { id: number; title: string; difficulty: string }
   } | null>(null)
+  const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
+  const [isMediumScreen, setIsMediumScreen] = useState(false)
+
+  // Handle responsive breakpoints
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 640)
+      setIsMediumScreen(window.innerWidth >= 640 && window.innerWidth < 768)
+    }
+
+    updateScreenSize()
+    window.addEventListener("resize", updateScreenSize)
+    return () => window.removeEventListener("resize", updateScreenSize)
+  }, [])
+
+
+
+  // ------------------------------------------------------------------------------
+  // SAMPLE COMPLETION DATA VARIATIONS
+  // ------------------------------------------------------------------------------
+
+  /*  
+  Repeat Completion (No XP Earned, No Level Up) Simulates a user repeating a challenge they've already completed.
+  */
+  // const completionData = {
+  //   xpEarned: 0,
+  //   totalXp: 350,
+  //   currentLevel: 3,
+  //   isLevelUp: false,
+  //   nextChallenge: {
+  //     id: 2,
+  //     title: "Next Sample Challenge",
+  //     difficulty: "Medium",
+  //   },
+  // }
+
+
+  /*  
+High XP Earned with Level Up
+Simulates a significant XP gain that triggers a level-up.
+*/
+  //  const completionData = {
+  //   xpEarned: 75,
+  //   totalXp: 425,
+  //   currentLevel: 4,
+  //   isLevelUp: true,
+  //   nextChallenge: {
+  //     id: 3,
+  //     title: "Advanced Algorithm",
+  //     difficulty: "Hard",
+  //   },
+  // }
+
+  /**
+   * No Next Challenge
+  Simulates the last challenge in a series, where no next challenge is available.
+   */
+  // const completionData = {
+  //   xpEarned: 30,
+  //   totalXp: 280,
+  //   currentLevel: 2,
+  //   isLevelUp: false,
+  //   nextChallenge: null,
+  // }
+
+  /**
+   * Close to Next Level
+  Simulates a scenario where the user is very close to leveling up.
+   */
+  // const completionData = {
+  //   xpEarned: 20,
+  //   totalXp: 395,
+  //   currentLevel: 3,
+  //   isLevelUp: false,
+  //   nextChallenge: {
+  //     id: 4,
+  //     title: "Data Structures Intro",
+  //     difficulty: "Easy",
+  //   },
+  // }
+
+
+  /**
+   * New User, Low Level, First Completion
+  Simulates a beginner user completing their first challenge.
+   */
+  // const completionData = {
+  //   xpEarned: 25,
+  //   totalXp: 25,
+  //   currentLevel: 1,
+  //   isLevelUp: false,
+  //   nextChallenge: {
+  //     id: 1,
+  //     title: "Beginner Challenge",
+  //     difficulty: "Easy",
+  //   },
+  // }
+
+
+  /**
+   * High Level, Large XP Total
+  Simulates an advanced user with a high level and large XP total.
+   */
+  // const completionData = {
+  //   xpEarned: 100,
+  //   totalXp: 1525,
+  //   currentLevel: 15,
+  //   isLevelUp: true,
+  //   nextChallenge: {
+  //     id: 5,
+  //     title: "Expert Optimization",
+  //     difficulty: "Expert",
+  //   },
+  // }
 
   // Handle async params
   useEffect(() => {
@@ -486,13 +651,6 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                 <h1 className="text-2xl sm:text-3xl font-semibold leading-tight">{challenge.title}</h1>
               </div>
               <div className="mb-4">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {challenge.tags.map((tag) => (
-                    <span key={tag} className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
                 {isCompleted && <span className="text-sm text-green-400 font-medium">✓ Completed</span>}
               </div>
               <p className="text-sm sm:text-base text-foreground leading-relaxed">{challenge.description}</p>
@@ -527,78 +685,91 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           </TabsContent>
 
           {/* Code Tab */}
-          <TabsContent value="code" className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[70vh] max-w-7xl mx-auto">
-            <div className="space-y-4">
-              {/* Code Editor Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-                <div className="flex items-center gap-2">
-                  <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2>
-                  <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
-                    {challenge.language}
-                  </span>
-                </div>
-                <div className="flex gap-2 w-full sm:w-auto">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleResetCode}
-                    className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                    <span className="text-sm">Reset</span>
-                  </Button>
-                  <Button
-                    onClick={handleRunCode}
-                    disabled={isRunning}
-                    className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
-                  >
-                    <Play className="h-4 w-4" />
-                    <span className="text-sm">{isRunning ? "Running..." : "Run Code"}</span>
-                  </Button>
-                </div>
+          <TabsContent
+            value="code"
+            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto"
+          >
+            {/* Code Editor Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2>
+                <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
+                  {challenge.language}
+                </span>
+              </div>
+              <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResetCode}
+                  className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  <span>Reset</span>
+                </Button>
+                <Button
+                  onClick={handleRunCode}
+                  disabled={isRunning}
+                  className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
+                >
+                  <Play className="h-4 w-4" />
+                  <span>{isRunning ? "Running..." : "Run Code"}</span>
+                </Button>
+              </div>
+            </div>
+            <div
+              className="
+                grid
+                grid-cols-1
+                sm:grid-cols-[minmax(0,1fr)]
+                md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]
+                lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]
+                gap-4
+              "
+            >
+              {/* Monaco Editor */}
+              <div className="border-border border rounded-sm p-2 md:p-4">
+                <MonacoEditor
+                  height={isSmallScreen ? "300px" : isMediumScreen ? "350px" : "400px"}
+                  language={challenge.language === "javascript" ? "javascript" : challenge.language}
+                  theme="vs-dark"
+                  value={code}
+                  onChange={(value) => setCode(value || "")}
+                  options={{
+                    minimap: { enabled: !isSmallScreen },
+                    fontSize: isSmallScreen ? 16 : 16,
+                    lineNumbers: "on",
+                    roundedSelection: false,
+                    scrollBeyondLastLine: false,
+                    automaticLayout: true,
+                    tabSize: 2,
+                    wordWrap: "off",
+                    folding: !isSmallScreen,
+                    lineDecorationsWidth: isSmallScreen ? 10 : 20,
+                    lineNumbersMinChars: isSmallScreen ? 2 : 3,
+                  }}
+                />
               </div>
 
-              {/* Split Layout: Code Editor + Output */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[500px]">
-                {/* Code Editor Panel */}
-                <div className="border border-border rounded-lg overflow-hidden">
-                  <MonacoEditor
-                    height="500px"
-                    language={challenge.language === "javascript" ? "javascript" : challenge.language}
-                    theme="vs-dark"
-                    value={code}
-                    onChange={(value) => setCode(value || "")}
-                    options={{
-                      minimap: { enabled: false },
-                      fontSize: 14,
-                      lineNumbers: "on",
-                      roundedSelection: false,
-                      scrollBeyondLastLine: false,
-                      automaticLayout: true,
-                      tabSize: 2,
-                      wordWrap: "on",
-                      folding: true,
-                      lineDecorationsWidth: 20,
-                      lineNumbersMinChars: 3,
-                    }}
-                  />
-                </div>
-
-                {/* Output Panel */}
-                <div className="border border-border rounded-lg bg-muted/30 flex flex-col">
-                  <div className="p-4 border-b border-border">
-                    <h3 className="font-semibold">Output</h3>
+              {/* Output */}
+              <div className="border-border border rounded-sm p-2 md:p-4">
+                {output ? (
+                  <div className="space-y-2 h-full">
+                    <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                      <pre className="text-base whitespace-pre-wrap font-mono break-words">
+                        {output}
+                      </pre>
+                    </div>
                   </div>
-                  <div className="flex-1 p-4 overflow-y-auto">
-                    {output ? (
-                      <pre className="text-sm whitespace-pre-wrap font-mono break-words">{output}</pre>
-                    ) : (
-                      <div className="text-muted-foreground text-sm">
-                        Run code: You will see test outputs here.
-                      </div>
-                    )}
+                ) : (
+                  <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                    <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                      <p className="text-base text-center sm:text-sm text-foreground/25">
+                        Run Code: <br />You will see test outputs here.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </TabsContent>
@@ -622,7 +793,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             console.log("[v0] Modal closing")
             setShowCompletionModal(false)
           }}
-          challengeTitle={challenge?.title || ""}
+          challengeTitle={challenge.title}
           xpEarned={completionData.xpEarned}
           totalXp={completionData.totalXp}
           currentLevel={completionData.currentLevel}
@@ -649,4 +820,163 @@ const getDifficultyFromId = (id: number): string => {
     9: "hard",
   }
   return difficultyMap[id] || "very easy"
+}
+
+// Bottom Actions Component
+const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ activeTab, challenge }) => {
+  const [isHelpOpen, setIsHelpOpen] = useState(false)
+  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const handleHelpClick = () => {
+    setIsHelpOpen(true)
+  }
+
+  return (
+    <div className="flex justify-between gap-3 mt-8 pt-6 border-t border-border max-w-7xl m-auto">
+      <div className="flex justify-between gap-3 w-full">
+        <Button
+          variant="ghost"
+          size="lg"
+          className="text-base text-foreground/50 hover:text-foreground hover:bg-accent/90 flex items-center gap-2"
+        >
+          <SkipForward className="w-5 h-5" />
+          Skip
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          className="text-base text-foreground/50 hover:text-foreground flex items-center gap-2"
+          onClick={handleHelpClick}
+        >
+          <HelpCircle className="w-5 h-5" />
+          Help
+        </Button>
+      </div>
+
+      {/* Desktop: Dialog */}
+      {isDesktop ? (
+        <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+          <DialogContent className="sm:max-w-[825px]">
+            <DialogHeader className="sr-only">
+              <DialogTitle>Help: {challenge.title}</DialogTitle>
+            </DialogHeader>
+            <Tabs defaultValue="quick-tips" className="w-full">
+              <TabsList className="flex gap-10 h-12 w-full grid-cols-3 justify-center items-center text-base rounded-none bg-transparent border-b border-border">
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-full data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="quick-tips"
+                >
+                  Quick Tips
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-full data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="resources"
+                >
+                  Resources
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-full data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="further-assistance"
+                >
+                  Assistance
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="quick-tips" className="mt-4 min-h-[65vh] text-base">
+                <ul className="space-y-2 text-foreground">
+                  {challenge.help?.quickTips.map((tip: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-muted-foreground mt-1">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+              <TabsContent value="resources" className="mt-4 min-h-[65vh] text-base">
+                <div className="space-y-4 text-foreground">
+                  {challenge.help?.resources.map((resource: any, index: number) => (
+                    <div key={index}>
+                      <a
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {resource.title}
+                      </a>
+                      <p className="text-muted-foreground">{resource.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+              <TabsContent value="further-assistance" className="mt-4 min-h-[65vh] text-base">
+                <p className="text-foreground">{challenge.help?.furtherAssistance}</p>
+              </TabsContent>
+            </Tabs>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        /* Mobile: Drawer */
+        <Drawer open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+          <DrawerContent>
+            <DialogHeader className="sr-only">
+              <DialogTitle>Help: {challenge.title}</DialogTitle>
+            </DialogHeader>
+            <Tabs defaultValue="quick-tips" className="w-full pb-4">
+              <TabsList className="flex gap-10 h-12 w-full grid-cols-3 justify-center items-center text-base rounded-none bg-transparent border-b border-border">
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-min data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="quick-tips"
+                >
+                  Quick Tips
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-min data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="resources"
+                >
+                  Resources
+                </TabsTrigger>
+                <TabsTrigger
+                  className="rounded-none relative data-[state=active]:text-foreground pb-2 px-0 w-min data-[state=active]:shadow-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:h-[4px] data-[state=active]:after:bg-primary data-[state=active]:after:rounded-full"
+                  value="further-assistance"
+                >
+                  Assistance
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="quick-tips" className="mt-4 min-h-[80vh] text-base">
+                <ul className="space-y-2 text-foreground px-4">
+                  {challenge.help?.quickTips.map((tip: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-muted-foreground mt-1">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+              <TabsContent value="resources" className="mt-4 min-h-[94vh] text-base">
+                <div className="space-y-4 text-foreground px-4">
+                  {challenge.help?.resources.map((resource: any, index: number) => (
+                    <div key={index}>
+                      <a
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        {resource.title}
+                      </a>
+                      <p className="text-muted-foreground">{resource.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </TabsContent>
+              <TabsContent value="further-assistance" className="mt-4 min-h-[80vh] text-base">
+                <div className="px-4">
+                  <p className="text-foreground">{challenge.help?.furtherAssistance}</p>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </DrawerContent>
+        </Drawer>
+      )}
+    </div>
+  )
 }
