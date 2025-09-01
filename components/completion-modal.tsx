@@ -68,7 +68,7 @@ export function CompletionModal({
               <Trophy className="w-8 h-8 text-green-500" />
             )}
           </div>
-          <DialogTitle className="text-2xl font-bold">
+          <DialogTitle className="text-2xl font-bold text-center">
             {isRepeatCompletion ? "🎯 Great Practice!" : "🎉 Challenge Complete!"}
           </DialogTitle>
         </DialogHeader>
@@ -124,7 +124,7 @@ export function CompletionModal({
               <div className="text-xs text-muted-foreground text-center">{100 - (totalXp % 100)} XP to next level</div>
             </div>
 
-            {nextChallenge && (
+            {/* {nextChallenge && (
               <div className="border border-border rounded-lg p-4">
                 <h4 className="font-semibold mb-2">Next Challenge</h4>
                 <div className="flex items-center justify-between">
@@ -135,7 +135,7 @@ export function CompletionModal({
                   <ArrowRight className="w-4 h-4 text-muted-foreground" />
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
