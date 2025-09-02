@@ -63,6 +63,10 @@ Check out the latest features: coming soon:
 AI response: "The provided code snippet ``` ``` attempts to... However, ..."
 
 # Todo
-- `getNextChallenge` to consider the selected language. Only load challenges from the selected language
-- Add console tab
+## Testing:
+- Verify the fix by completing all challenges in a language (e.g., JavaScript: IDs 1, 2, 3, 4, 7, 10, 11, 12, 13). The CompletionModal should display “🏆 All Challenges Conquered!” with a “Back to Challenges” button and no “Next Challenge” option.
+- Ensure TypeScript compiles without errors by running tsc or your build command.
+- Check that getNextChallenge skips completed challenges and returns null when all challenges in the selected language are completed.
+
+- Add console tab in the code tab
 - Add Get Started / Continue btn, with the title, "Challenge" (/codearena/challenges)
