@@ -63,5 +63,6 @@ Check out the latest features: coming soon:
 AI response: "The provided code snippet ``` ``` attempts to... However, ..."
 
 # Todo
+- `getNextChallenge` to consider the selected language. Only load challenges from the selected language
 - Add console tab
 - Add Get Started / Continue btn, with the title, "Challenge" (/codearena/challenges)

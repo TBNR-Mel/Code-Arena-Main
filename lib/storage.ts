@@ -171,28 +171,28 @@ export function isChallengeCompleted(challengeId: number): boolean {
 }
 
 /**
- * Function prioritize challenges of the same or similar difficulty level before moving to the next sequential challenge, ensuring a smoother progression.
+ * Filter challenges by the language of the current challenge and prioritize those with the same or similar difficulty, ensuring a smoother progression.
  * @param currentChallengeId
  * @returns 
  */
-export function getNextChallenge(currentChallengeId: number): { id: number; title: string; difficulty: string } | null {
+export function getNextChallenge(currentChallengeId: number, language: string = 'javascript'): { id: number; title: string; difficulty: string } | null {
   const challenges = [
-    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy" },
-    { id: 2, title: "Area of a Triangle", difficulty: "very easy" },
-    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy" },
-    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy" },
-    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium" },
-    { id: 6, title: "Factorial of a Number", difficulty: "easy" },
-    { id: 7, title: "Fibonacci Sequence", difficulty: "medium" },
-    { id: 8, title: "Sort an Array", difficulty: "medium" },
-    { id: 9, title: "Binary Search", difficulty: "hard" },
-    { id: 10, title: "Count Vowels in a String", difficulty: "very easy" },
-    { id: 11, title: "Reverse a String", difficulty: "easy" },
-    { id: 12, title: "Check for Prime Number", difficulty: "medium" },
-    { id: 13, title: "Sum of Array Elements", difficulty: "easy" },
-    { id: 14, title: "Check for Anagram", difficulty: "medium" },
-    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium" },
-    { id: 16, title: "Power of a Number", difficulty: "easy" },
+    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
+    { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
+    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy", language: "javascript" },
+    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy", language: "javascript" },
+    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium", language: "python" },
+    { id: 6, title: "Factorial of a Number", difficulty: "easy", language: "java" },
+    { id: 7, title: "Fibonacci Sequence", difficulty: "medium", language: "javascript" },
+    { id: 8, title: "Sort an Array", difficulty: "medium", language: "python" },
+    { id: 9, title: "Binary Search", difficulty: "hard", language: "java" },
+    { id: 10, title: "Count Vowels in a String", difficulty: "very easy", language: "javascript" },
+    { id: 11, title: "Reverse a String", difficulty: "easy", language: "javascript" },
+    { id: 12, title: "Check for Prime Number", difficulty: "medium", language: "javascript" },
+    { id: 13, title: "Sum of Array Elements", difficulty: "easy", language: "javascript" },
+    { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
+    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
+    { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
   ];
 
   // Define difficulty hierarchy for fallback
@@ -205,18 +205,21 @@ export function getNextChallenge(currentChallengeId: number): { id: number; titl
   const currentDifficulty = currentChallenge.difficulty;
   const currentDifficultyIndex = difficultyOrder.indexOf(currentDifficulty);
 
-  // Step 1: Find next challenge with the same difficulty
-  const sameDifficultyChallenge = challenges.find(
+  // Filter challenges by the provided language
+  const languageFilteredChallenges = challenges.filter((c) => c.language === language);
+
+  // Step 1: Find next challenge with the same difficulty and language
+  const sameDifficultyChallenge = languageFilteredChallenges.find(
     (c) => c.id > currentChallengeId && c.difficulty === currentDifficulty
   );
   if (sameDifficultyChallenge) return sameDifficultyChallenge;
 
-  // Step 2: Find next challenge with closest difficulty
+  // Step 2: Find next challenge with closest difficulty and same language
   for (let i = 1; i < difficultyOrder.length; i++) {
     const nextDifficultyUp = difficultyOrder[currentDifficultyIndex + i];
     const nextDifficultyDown = difficultyOrder[currentDifficultyIndex - i];
     
-    const nextChallenge = challenges.find(
+    const nextChallenge = languageFilteredChallenges.find(
       (c) =>
         c.id > currentChallengeId &&
         (c.difficulty === nextDifficultyUp || c.difficulty === nextDifficultyDown)
@@ -224,9 +227,9 @@ export function getNextChallenge(currentChallengeId: number): { id: number; titl
     if (nextChallenge) return nextChallenge;
   }
 
-  // Step 3: Fallback to next sequential challenge
+  // Step 3: Fallback to next sequential challenge in the same language
   const nextId = currentChallengeId + 1;
-  return challenges.find((c) => c.id === nextId) || null;
+  return languageFilteredChallenges.find((c) => c.id === nextId) || null;
 }
 
 // export function getNextChallenge(currentChallengeId: number): { id: number; title: string; difficulty: string } | null {

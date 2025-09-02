@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { XPDisplay } from "@/components/xp-display"
 import { getUserProgress } from "@/lib/storage"
 import { ArrowLeft, ChevronLeft, ChevronRight, ChevronsLeftRight, ChevronsRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 // Mock challenge data
 const challenges = [
@@ -244,6 +245,7 @@ export default function ChallengesPage() {
         <main className="flex-1 py-6 sm:px-12 sm:py-10">
           <div className="flex items-center justify-between px-4 mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold">Challenges</h1>
+            <Button>Get Started</Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 sm:gap-8">
             {filteredChallenges.map((challenge) => {
