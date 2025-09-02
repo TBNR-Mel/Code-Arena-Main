@@ -490,6 +490,108 @@ const challengeData: Record<string, any> = {
       ],
       furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
     }
+  },
+  "14": {
+    id: 14,
+    title: "Check for Anagram",
+    description: "Write a function that checks if two strings are anagrams of each other.",
+    tags: ["strings", "logic"],
+    examples: ["isAnagram('listen', 'silent') → True", "isAnagram('hello', 'world') → False", "isAnagram('rat', 'tar') → True"],
+    notes: [
+      "Anagrams are words with the same characters and frequency, ignoring order.",
+      "Ignore case for simplicity.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
+    ],
+    language: "python",
+    help: {
+      quickTips: [
+        "Convert strings to lowercase and sort their characters.",
+        "Compare the sorted strings for equality.",
+        "Handle empty strings or strings of different lengths.",
+        "Return True if anagrams, False otherwise."
+      ],
+      resources: [
+        {
+          title: "Python String Methods",
+          url: "https://docs.python.org/3/library/stdtypes.html#string-methods",
+          description: "Learn about string manipulation in Python."
+        },
+        {
+          title: "Python Sorting",
+          url: "https://docs.python.org/3/howto/sorting.html",
+          description: "Understand how to sort data in Python."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
+  },
+  "15": {
+    id: 15,
+    title: "Find First Non-Repeated Character",
+    description: "Write a function that returns the first non-repeated character in a string.",
+    tags: ["strings", "logic"],
+    examples: ["firstNonRepeated('swiss') → 'w'", "firstNonRepeated('hello') → 'h'", "firstNonRepeated('aabb') → None"],
+    notes: [
+      "Use a dictionary or counter to track character frequencies.",
+      "Return None if no non-repeated character exists.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
+    ],
+    language: "python",
+    help: {
+      quickTips: [
+        "Use a dictionary to count character occurrences.",
+        "Iterate through the string to find the first character with a count of 1.",
+        "Handle empty strings by returning None.",
+        "Consider case sensitivity as per examples."
+      ],
+      resources: [
+        {
+          title: "Python Dictionaries",
+          url: "https://docs.python.org/3/tutorial/datastructures.html#dictionaries",
+          description: "Learn how to use dictionaries in Python."
+        },
+        {
+          title: "Python Collections Counter",
+          url: "https://docs.python.org/3/library/collections.html#collections.Counter",
+          description: "Understand how to use Counter for frequency counting."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
+  },
+  "16": {
+    id: 16,
+    title: "Power of a Number",
+    description: "Write a function that calculates the power of a number (base raised to exponent).",
+    tags: ["maths", "numbers"],
+    examples: ["power(2, 3) → 8", "power(5, 0) → 1", "power(3, 2) → 9"],
+    notes: [
+      "Use a loop or recursion for calculation.",
+      "Handle zero exponent (returns 1).",
+      "If you get stuck on a challenge, find help by tapping the help button.",
+    ],
+    language: "python",
+    help: {
+      quickTips: [
+        "Use the ** operator or a loop for exponentiation.",
+        "Handle edge cases like exponent = 0.",
+        "Assume positive integers for simplicity.",
+        "Return the result as an integer."
+      ],
+      resources: [
+        {
+          title: "Python Operators",
+          url: "https://docs.python.org/3/reference/lexical_analysis.html#operators",
+          description: "Learn about Python's arithmetic operators."
+        },
+        {
+          title: "Python Loops",
+          url: "https://docs.python.org/3/tutorial/controlflow.html#for-statements",
+          description: "Understand how to use loops in Python."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
   }
 };
 
@@ -628,6 +730,36 @@ const testCases: Record<string, TestCase> = {
       { inputs: [[-1, 1]], expected: 0 },
       { inputs: [[5, 5]], expected: 10 },
       { inputs: [[-2, -3, -4]], expected: -9 },
+    ],
+  },
+  "14": {
+    functionName: "isAnagram",
+    tests: [
+      { inputs: ["listen", "silent"], expected: true },
+      { inputs: ["hello", "world"], expected: false },
+      { inputs: ["rat", "tar"], expected: true },
+      { inputs: ["", ""], expected: true },
+      { inputs: ["abc", "abcd"], expected: false },
+    ],
+  },
+  "15": {
+    functionName: "firstNonRepeated",
+    tests: [
+      { inputs: ["swiss"], expected: "w" },
+      { inputs: ["hello"], expected: "h" },
+      { inputs: ["aabb"], expected: null },
+      { inputs: [""], expected: null },
+      { inputs: ["aabbccde"], expected: "d" },
+    ],
+  },
+  "16": {
+    functionName: "power",
+    tests: [
+      { inputs: [2, 3], expected: 8 },
+      { inputs: [5, 0], expected: 1 },
+      { inputs: [3, 2], expected: 9 },
+      { inputs: [1, 5], expected: 1 },
+      { inputs: [4, 1], expected: 4 },
     ],
   },
 };

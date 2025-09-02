@@ -185,6 +185,9 @@ export function getNextChallenge(currentChallengeId: number): { id: number; titl
     { id: 11, title: "Reverse a String", difficulty: "easy" },
     { id: 12, title: "Check for Prime Number", difficulty: "medium" },
     { id: 13, title: "Sum of Array Elements", difficulty: "easy" },
+    { id: 14, title: "Check for Anagram", difficulty: "medium" },
+    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium" },
+    { id: 16, title: "Power of a Number", difficulty: "easy" },
   ]
 
   const nextId = currentChallengeId + 1
