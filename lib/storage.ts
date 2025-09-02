@@ -182,6 +182,9 @@ export function getNextChallenge(currentChallengeId: number): { id: number; titl
     { id: 8, title: "Sort an Array", difficulty: "medium" },
     { id: 9, title: "Binary Search", difficulty: "hard" },
     { id: 10, title: "Count Vowels in a String", difficulty: "very easy" },
+    { id: 11, title: "Reverse a String", difficulty: "easy" },
+    { id: 12, title: "Check for Prime Number", difficulty: "medium" },
+    { id: 13, title: "Sum of Array Elements", difficulty: "easy" },
   ]
 
   const nextId = currentChallengeId + 1

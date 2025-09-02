@@ -388,6 +388,108 @@ const challengeData: Record<string, any> = {
       ],
       furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
     }
+  },
+  "11": {
+    id: 11,
+    title: "Reverse a String",
+    description: "Write a function that takes a string and returns it reversed.",
+    tags: ["strings"],
+    examples: ["reverseString('hello') → 'olleh'", "reverseString('world') → 'dlrow'", "reverseString('') → ''"],
+    notes: [
+      "Iterate through the string or use built-in methods.",
+      "Handle empty strings.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
+    ],
+    language: "javascript",
+    help: {
+      quickTips: [
+        "Use `split('')`, `reverse()`, and `join('')` for a simple solution.",
+        "Alternatively, loop through the string from end to start.",
+        "Return the reversed string.",
+        "Handle empty strings as shown in the examples."
+      ],
+      resources: [
+        {
+          title: "JavaScript String Methods",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+          description: "Learn how to manipulate strings in JavaScript."
+        },
+        {
+          title: "JavaScript Array Methods",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+          description: "Understand array methods like reverse and join."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
+  },
+  "12": {
+    id: 12,
+    title: "Check for Prime Number",
+    description: "Write a function that checks if a given number is prime.",
+    tags: ["maths", "numbers"],
+    examples: ["isPrime(11) → true", "isPrime(4) → false", "isPrime(1) → false"],
+    notes: [
+      "A prime number is only divisible by 1 and itself.",
+      "Numbers less than 2 are not prime.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
+    ],
+    language: "javascript",
+    help: {
+      quickTips: [
+        "Check divisibility from 2 to the square root of the number.",
+        "Return `true` if no divisors are found, `false` otherwise.",
+        "Handle edge cases like 1, 0, and negative numbers.",
+        "Use a loop to test divisibility."
+      ],
+      resources: [
+        {
+          title: "JavaScript Math Object",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math",
+          description: "Learn about Math functions like sqrt."
+        },
+        {
+          title: "JavaScript Loops",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration",
+          description: "Understand how to use loops for iteration."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
+  },
+  "13": {
+    id: 13,
+    title: "Sum of Array Elements",
+    description: "Write a function that returns the sum of all numbers in an array.",
+    tags: ["arrays", "maths"],
+    examples: ["arraySum([1, 2, 3]) → 6", "arraySum([]) → 0", "arraySum([-1, 1]) → 0"],
+    notes: [
+      "Use a loop or array methods like reduce.",
+      "Handle empty arrays.",
+      "If you get stuck on a challenge, find help by tapping the help button.",
+    ],
+    language: "javascript",
+    help: {
+      quickTips: [
+        "Use `reduce()` or a for loop to sum the array elements.",
+        "Return 0 for an empty array.",
+        "Handle both positive and negative numbers.",
+        "Ensure the function accepts an array as input."
+      ],
+      resources: [
+        {
+          title: "JavaScript Array Reduce",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce",
+          description: "Learn how to use reduce to sum array elements."
+        },
+        {
+          title: "JavaScript Arrays",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+          description: "Understand how to work with arrays in JavaScript."
+        }
+      ],
+      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
+    }
   }
 };
 
@@ -496,6 +598,36 @@ const testCases: Record<string, TestCase> = {
       { inputs: ["aeiou"], expected: 5 },
       { inputs: ["HELLO"], expected: 2 },
       { inputs: [""], expected: 0 },
+    ],
+  },
+  "11": {
+    functionName: "reverseString",
+    tests: [
+      { inputs: ["hello"], expected: "olleh" },
+      { inputs: ["world"], expected: "dlrow" },
+      { inputs: [""], expected: "" },
+      { inputs: ["a"], expected: "a" },
+      { inputs: ["JavaScript"], expected: "tpircSavaJ" },
+    ],
+  },
+  "12": {
+    functionName: "isPrime",
+    tests: [
+      { inputs: [11], expected: true },
+      { inputs: [4], expected: false },
+      { inputs: [1], expected: false },
+      { inputs: [2], expected: true },
+      { inputs: [0], expected: false },
+    ],
+  },
+  "13": {
+    functionName: "arraySum",
+    tests: [
+      { inputs: [[1, 2, 3]], expected: 6 },
+      { inputs: [[]], expected: 0 },
+      { inputs: [[-1, 1]], expected: 0 },
+      { inputs: [[5, 5]], expected: 10 },
+      { inputs: [[-2, -3, -4]], expected: -9 },
     ],
   },
 };
