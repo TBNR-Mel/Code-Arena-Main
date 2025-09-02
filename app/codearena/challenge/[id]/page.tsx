@@ -773,12 +773,13 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   const [output, setOutput] = useState("")
   const [isRunning, setIsRunning] = useState(false)
   const [showCompletionModal, setShowCompletionModal] = useState(false)
-  const [completionData, setCompletionData] = useState<{
+const [completionData, setCompletionData] = useState<{
     xpEarned: number
     totalXp: number
     currentLevel: number
     isLevelUp: boolean
     nextChallenge?: { id: number; title: string; difficulty: string }
+    allChallengesCompleted: boolean
   } | null>(null)
   const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
   const [isSmallScreen, setIsSmallScreen] = useState(false)
@@ -815,36 +816,36 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     loadParams()
   }, [params])
 
-const getStarterCode = (c: Challenge): string => {
-  switch (c.language) {
-    case "javascript":
-      if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`;
-      if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`;
-      if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`;
-      if (c.id === 4) return `function findMax(arr) {\n  // Write your code here\n}`;
-      if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`;
-      if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`;
-      if (c.id === 11) return `function reverseString(str) {\n  // Write your code here\n}`;
-      if (c.id === 12) return `function isPrime(num) {\n  // Write your code here\n}`;
-      if (c.id === 13) return `function arraySum(arr) {\n  // Write your code here\n}`;
-      return `function solution() {\n  // Write your code here\n}`;
-    case "python":
-      if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`;
-      if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`;
-      if (c.id === 14) return `def isAnagram(s1, s2):\n    # Write your code here\n    pass`;
-      if (c.id === 15) return `def firstNonRepeated(s):\n    # Write your code here\n    pass`;
-      if (c.id === 16) return `def power(base, exponent):\n    # Write your code here\n    pass`;
-      return `def solution():\n    # Write your code here\n    pass`;
-    case "java":
-      if (c.id === 6)
-        return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`;
-      if (c.id === 9)
-        return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`;
-      return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`;
-    default:
-      return "// Write your code here";
-  }
-};
+  const getStarterCode = (c: Challenge): string => {
+    switch (c.language) {
+      case "javascript":
+        if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`;
+        if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`;
+        if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`;
+        if (c.id === 4) return `function findMax(arr) {\n  // Write your code here\n}`;
+        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`;
+        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`;
+        if (c.id === 11) return `function reverseString(str) {\n  // Write your code here\n}`;
+        if (c.id === 12) return `function isPrime(num) {\n  // Write your code here\n}`;
+        if (c.id === 13) return `function arraySum(arr) {\n  // Write your code here\n}`;
+        return `function solution() {\n  // Write your code here\n}`;
+      case "python":
+        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`;
+        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`;
+        if (c.id === 14) return `def isAnagram(s1, s2):\n    # Write your code here\n    pass`;
+        if (c.id === 15) return `def firstNonRepeated(s):\n    # Write your code here\n    pass`;
+        if (c.id === 16) return `def power(base, exponent):\n    # Write your code here\n    pass`;
+        return `def solution():\n    # Write your code here\n    pass`;
+      case "java":
+        if (c.id === 6)
+          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`;
+        if (c.id === 9)
+          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`;
+        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`;
+      default:
+        return "// Write your code here";
+    }
+  };
 
   const handleRunCode = () => {
     if (!challenge) return
@@ -921,13 +922,23 @@ const getStarterCode = (c: Challenge): string => {
               setIsCompleted(true)
             }
 
-            const nextChallenge = getNextChallenge(challenge.id)
-            const completionDataObj = {
-              xpEarned: isCompleted ? 0 : result.xpEarned, // No XP for already completed challenges
+            // Get the selected language from localStorage
+            const selectedLanguage = typeof window !== "undefined" ? localStorage.getItem('challengeLanguage') || challenge.language : challenge.language;
+            const nextChallenge = getNextChallenge(challenge.id, selectedLanguage)
+            const completionDataObj: {
+              xpEarned: number
+              totalXp: number
+              currentLevel: number
+              isLevelUp: boolean
+              nextChallenge?: { id: number; title: string; difficulty: string }
+              allChallengesCompleted: boolean
+            } = {
+              xpEarned: isCompleted ? 0 : result.xpEarned,
               totalXp: result.progress.xp,
               currentLevel: result.progress.level,
-              isLevelUp: !isCompleted && result.isLevelUp, // Only level up if not previously completed
+              isLevelUp: !isCompleted && result.isLevelUp,
               nextChallenge: nextChallenge || undefined,
+              allChallengesCompleted: !nextChallenge && result.progress.completedChallenges.length === Object.values(challengeData).filter((c: { language: string }) => c.language === selectedLanguage).length
             }
 
             console.log("[v0] Setting completion data:", completionDataObj)
@@ -967,6 +978,378 @@ const getStarterCode = (c: Challenge): string => {
       }
     }, 500)
   }
+
+  // const handleRunCode = () => {
+  //   if (!challenge) return
+
+  //   setIsRunning(true)
+  //   setOutput("Running code...")
+
+  //   setTimeout(() => {
+  //     try {
+  //       if (challenge.language === "javascript") {
+  //         const challengeTests = testCases[challengeId]
+  //         if (!challengeTests) {
+  //           setOutput("❌ No test cases available for this challenge yet.")
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         const fnName = challengeTests.functionName
+
+  //         let userFunction: (...args: any[]) => any
+  //         try {
+  //           // If the user defined the named function, return it; otherwise treat the code as an expression returning a function
+  //           if (new RegExp(`\\bfunction\\s+${fnName}\\b`).test(code) || code.includes(`${fnName} =`)) {
+  //             userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any
+  //           } else {
+  //             userFunction = new Function(`return (${code});`)() as (...a: any[]) => any
+  //           }
+  //         } catch (e) {
+  //           setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`)
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         if (typeof userFunction !== "function") {
+  //           setOutput("❌ Your code should define and return a function.")
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = []
+  //         let passedTests = 0
+
+  //         for (const t of challengeTests.tests) {
+  //           try {
+  //             const actual = userFunction(...t.inputs)
+  //             const passed = JSON.stringify(actual) === JSON.stringify(t.expected)
+  //             if (passed) passedTests++
+  //             results.push({ inputs: t.inputs, expected: t.expected, actual, passed })
+  //           } catch (err) {
+  //             results.push({
+  //               inputs: t.inputs,
+  //               expected: t.expected,
+  //               actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
+  //               passed: false,
+  //             })
+  //           }
+  //         }
+
+  //         let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
+  //         results.forEach((r, idx) => {
+  //           const inputStr = r.inputs.map((v) => (typeof v === "string" ? `"${v}"` : JSON.stringify(v))).join(", ")
+  //           out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`
+  //           out += `   Expected: ${JSON.stringify(r.expected)}\n`
+  //           out += `   Got:      ${JSON.stringify(r.actual)}\n\n`
+  //         })
+
+  //         if (passedTests === challengeTests.tests.length) {
+  //           out += "🎉 All tests passed! Challenge completed!"
+  //           console.log("[v0] All tests passed, triggering modal")
+  //           const result = markChallengeComplete(challenge.id, getDifficultyFromId(challenge.id))
+
+  //           // Update completion status if it wasn't completed before
+  //           if (!isCompleted) {
+  //             setIsCompleted(true)
+  //           }
+
+  //           const nextChallenge = getNextChallenge(challenge.id)
+  //           const completionDataObj = {
+  //             xpEarned: isCompleted ? 0 : result.xpEarned, // No XP for already completed challenges
+  //             totalXp: result.progress.xp,
+  //             currentLevel: result.progress.level,
+  //             isLevelUp: !isCompleted && result.isLevelUp, // Only level up if not previously completed
+  //             nextChallenge: nextChallenge || undefined,
+  //           }
+
+  //           console.log("[v0] Setting completion data:", completionDataObj)
+  //           setCompletionData(completionDataObj)
+
+  //           console.log("[v0] Setting showCompletionModal to true")
+  //           setShowCompletionModal(true)
+
+  //           if (typeof window !== "undefined" && !isCompleted) {
+  //             window.dispatchEvent(new Event("progressUpdate"))
+  //           }
+  //         } else {
+  //           out += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`
+  //         }
+
+  //         setOutput(out)
+  //       } else {
+  //         // Non-JS languages: basic feedback only
+  //         if (code.trim().length < 10) {
+  //           setOutput("❌ Please write more code to implement the solution.")
+  //         } else if (challenge.language === "python" && !code.includes("def ")) {
+  //           setOutput("❌ Python code should define a function using 'def'.")
+  //         } else if (challenge.language === "java" && !code.includes("public ")) {
+  //           setOutput("❌ Java code should include a public method or class.")
+  //         } else {
+  //           setOutput(
+  //             `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join(
+  //               "\n",
+  //             )}`,
+  //           )
+  //         }
+  //       }
+  //     } catch (error) {
+  //       setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`)
+  //     } finally {
+  //       setIsRunning(false)
+  //     }
+  //   }, 500)
+  // }
+
+  // const handleRunCode = () => {
+  //   if (!challenge) return
+
+  //   setIsRunning(true)
+  //   setOutput("Running code...")
+
+  //   setTimeout(() => {
+  //     try {
+  //       if (challenge.language === "javascript") {
+  //         const challengeTests = testCases[challengeId]
+  //         if (!challengeTests) {
+  //           setOutput("❌ No test cases available for this challenge yet.")
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         const fnName = challengeTests.functionName
+
+  //         let userFunction: (...args: any[]) => any
+  //         try {
+  //           // If the user defined the named function, return it; otherwise treat the code as an expression returning a function
+  //           if (new RegExp(`\\bfunction\\s+${fnName}\\b`).test(code) || code.includes(`${fnName} =`)) {
+  //             userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any
+  //           } else {
+  //             userFunction = new Function(`return (${code});`)() as (...a: any[]) => any
+  //           }
+  //         } catch (e) {
+  //           setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`)
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         if (typeof userFunction !== "function") {
+  //           setOutput("❌ Your code should define and return a function.")
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = []
+  //         let passedTests = 0
+
+  //         for (const t of challengeTests.tests) {
+  //           try {
+  //             const actual = userFunction(...t.inputs)
+  //             const passed = JSON.stringify(actual) === JSON.stringify(t.expected)
+  //             if (passed) passedTests++
+  //             results.push({ inputs: t.inputs, expected: t.expected, actual, passed })
+  //           } catch (err) {
+  //             results.push({
+  //               inputs: t.inputs,
+  //               expected: t.expected,
+  //               actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
+  //               passed: false,
+  //             })
+  //           }
+  //         }
+
+  //         let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
+  //         results.forEach((r, idx) => {
+  //           const inputStr = r.inputs.map((v) => (typeof v === "string" ? `"${v}"` : JSON.stringify(v))).join(", ")
+  //           out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`
+  //           out += `   Expected: ${JSON.stringify(r.expected)}\n`
+  //           out += `   Got:      ${JSON.stringify(r.actual)}\n\n`
+  //         })
+
+  //         if (passedTests === challengeTests.tests.length) {
+  //           out += "🎉 All tests passed! Challenge completed!"
+  //           console.log("[v0] All tests passed, triggering modal")
+  //           const result = markChallengeComplete(challenge.id, getDifficultyFromId(challenge.id))
+
+  //           // Update completion status if it wasn't completed before
+  //           if (!isCompleted) {
+  //             setIsCompleted(true)
+  //           }
+
+  //           // Get the selected language from localStorage
+  //           const selectedLanguage = typeof window !== "undefined" ? localStorage.getItem('challengeLanguage') || challenge.language : challenge.language;
+  //           const nextChallenge = getNextChallenge(challenge.id, selectedLanguage)
+  //           const completionDataObj = {
+  //             xpEarned: isCompleted ? 0 : result.xpEarned, // No XP for already completed challenges
+  //             totalXp: result.progress.xp,
+  //             currentLevel: result.progress.level,
+  //             isLevelUp: !isCompleted && result.isLevelUp, // Only level up if not previously completed
+  //             nextChallenge: nextChallenge || undefined,
+  //             allChallengesCompleted: !nextChallenge && result.progress.completedChallenges.length === challenges.filter(c => c.language === selectedLanguage).length
+  //           }
+
+  //           console.log("[v0] Setting completion data:", completionDataObj)
+  //           setCompletionData(completionDataObj)
+
+  //           console.log("[v0] Setting showCompletionModal to true")
+  //           setShowCompletionModal(true)
+
+  //           if (typeof window !== "undefined" && !isCompleted) {
+  //             window.dispatchEvent(new Event("progressUpdate"))
+  //           }
+  //         } else {
+  //           out += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`
+  //         }
+
+  //         setOutput(out)
+  //       } else {
+  //         // Non-JS languages: basic feedback only
+  //         if (code.trim().length < 10) {
+  //           setOutput("❌ Please write more code to implement the solution.")
+  //         } else if (challenge.language === "python" && !code.includes("def ")) {
+  //           setOutput("❌ Python code should define a function using 'def'.")
+  //         } else if (challenge.language === "java" && !code.includes("public ")) {
+  //           setOutput("❌ Java code should include a public method or class.")
+  //         } else {
+  //           setOutput(
+  //             `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join(
+  //               "\n",
+  //             )}`,
+  //           )
+  //         }
+  //       }
+  //     } catch (error) {
+  //       setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`)
+  //     } finally {
+  //       setIsRunning(false)
+  //     }
+  //   }, 500)
+  // }
+
+  // const handleRunCode = () => {
+  //   if (!challenge) return
+
+  //   setIsRunning(true)
+  //   setOutput("Running code...")
+
+  //   setTimeout(() => {
+  //     try {
+  //       if (challenge.language === "javascript") {
+  //         const challengeTests = testCases[challengeId]
+  //         if (!challengeTests) {
+  //           setOutput("❌ No test cases available for this challenge yet.")
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         const fnName = challengeTests.functionName
+
+  //         let userFunction: (...args: any[]) => any
+  //         try {
+  //           // If the user defined the named function, return it; otherwise treat the code as an expression returning a function
+  //           if (new RegExp(`\\bfunction\\s+${fnName}\\b`).test(code) || code.includes(`${fnName} =`)) {
+  //             userFunction = new Function(`${code}; return ${fnName};`)() as (...a: any[]) => any
+  //           } else {
+  //             userFunction = new Function(`return (${code});`)() as (...a: any[]) => any
+  //           }
+  //         } catch (e) {
+  //           setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`)
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         if (typeof userFunction !== "function") {
+  //           setOutput("❌ Your code should define and return a function.")
+  //           setIsRunning(false)
+  //           return
+  //         }
+
+  //         const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = []
+  //         let passedTests = 0
+
+  //         for (const t of challengeTests.tests) {
+  //           try {
+  //             const actual = userFunction(...t.inputs)
+  //             const passed = JSON.stringify(actual) === JSON.stringify(t.expected)
+  //             if (passed) passedTests++
+  //             results.push({ inputs: t.inputs, expected: t.expected, actual, passed })
+  //           } catch (err) {
+  //             results.push({
+  //               inputs: t.inputs,
+  //               expected: t.expected,
+  //               actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
+  //               passed: false,
+  //             })
+  //           }
+  //         }
+
+  //         let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
+  //         results.forEach((r, idx) => {
+  //           const inputStr = r.inputs.map((v) => (typeof v === "string" ? `"${v}"` : JSON.stringify(v))).join(", ")
+  //           out += `${r.passed ? "✅" : "❌"} Test ${idx + 1}: ${fnName}(${inputStr})\n`
+  //           out += `   Expected: ${JSON.stringify(r.expected)}\n`
+  //           out += `   Got:      ${JSON.stringify(r.actual)}\n\n`
+  //         })
+
+  //         if (passedTests === challengeTests.tests.length) {
+  //           out += "🎉 All tests passed! Challenge completed!"
+  //           console.log("[v0] All tests passed, triggering modal")
+  //           const result = markChallengeComplete(challenge.id, getDifficultyFromId(challenge.id))
+
+  //           // Update completion status if it wasn't completed before
+  //           if (!isCompleted) {
+  //             setIsCompleted(true)
+  //           }
+
+  //           // Get the selected language from localStorage
+  //           const selectedLanguage = typeof window !== "undefined" ? localStorage.getItem('challengeLanguage') || challenge.language : challenge.language;
+  //           const nextChallenge = getNextChallenge(challenge.id, selectedLanguage)
+  //           const completionDataObj = {
+  //             xpEarned: isCompleted ? 0 : result.xpEarned, // No XP for already completed challenges
+  //             totalXp: result.progress.xp,
+  //             currentLevel: result.progress.level,
+  //             isLevelUp: !isCompleted && result.isLevelUp, // Only level up if not previously completed
+  //             nextChallenge: nextChallenge || undefined,
+  //             allChallengesCompleted: !nextChallenge && result.progress.completedChallenges.length === Object.values(challengeData).filter((c: { language: string }) => c.language === selectedLanguage).length
+  //           }
+
+  //           console.log("[v0] Setting completion data:", completionDataObj)
+  //           setCompletionData(completionDataObj)
+
+  //           console.log("[v0] Setting showCompletionModal to true")
+  //           setShowCompletionModal(true)
+
+  //           if (typeof window !== "undefined" && !isCompleted) {
+  //             window.dispatchEvent(new Event("progressUpdate"))
+  //           }
+  //         } else {
+  //           out += `💡 ${challengeTests.tests.length - passedTests} test(s) failed. Review your logic and try again.`
+  //         }
+
+  //         setOutput(out)
+  //       } else {
+  //         // Non-JS languages: basic feedback only
+  //         if (code.trim().length < 10) {
+  //           setOutput("❌ Please write more code to implement the solution.")
+  //         } else if (challenge.language === "python" && !code.includes("def ")) {
+  //           setOutput("❌ Python code should define a function using 'def'.")
+  //         } else if (challenge.language === "java" && !code.includes("public ")) {
+  //           setOutput("❌ Java code should include a public method or class.")
+  //         } else {
+  //           setOutput(
+  //             `✅ Code syntax looks good!\n\nNote: Full execution for ${challenge.language} will be available soon.\n\nExpected behavior:\n${challenge.examples.join(
+  //               "\n",
+  //             )}`,
+  //           )
+  //         }
+  //       }
+  //     } catch (error) {
+  //       setOutput(`❌ Unexpected error: ${error instanceof Error ? error.message : "Something went wrong"}`)
+  //     } finally {
+  //       setIsRunning(false)
+  //     }
+  //   }, 500)
+  // }
 
   const handleResetCode = () => {
     if (challenge) {
@@ -1180,7 +1563,6 @@ const getStarterCode = (c: Challenge): string => {
         <CompletionModal
           isOpen={showCompletionModal}
           onClose={() => {
-            console.log("[v0] Modal closing")
             setShowCompletionModal(false)
           }}
           challengeTitle={challenge.title}
@@ -1189,6 +1571,7 @@ const getStarterCode = (c: Challenge): string => {
           currentLevel={completionData.currentLevel}
           isLevelUp={completionData.isLevelUp}
           nextChallenge={completionData.nextChallenge}
+          allChallengesCompleted={completionData.allChallengesCompleted}
           allowBackgroundScroll={true}
         />
       )}

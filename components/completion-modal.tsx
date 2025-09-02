@@ -20,6 +20,7 @@ interface CompletionModalProps {
   }
   isLevelUp?: boolean
   allowBackgroundScroll?: boolean
+  allChallengesCompleted?: boolean
 }
 
 export function CompletionModal({
@@ -32,6 +33,7 @@ export function CompletionModal({
   nextChallenge,
   isLevelUp = false,
   allowBackgroundScroll = false,
+  allChallengesCompleted = false,
 }: CompletionModalProps) {
   const [showConfetti, setShowConfetti] = useState(false)
 
@@ -69,7 +71,7 @@ export function CompletionModal({
             )}
           </div>
           <DialogTitle className="text-2xl font-bold text-center">
-            {isRepeatCompletion ? "🎯 Great Practice!" : "🎉 Challenge Complete!"}
+            {isRepeatCompletion ? "🎯 Great Practice!" : allChallengesCompleted ? "🏆 All Challenges Conquered!" : "🎉 Challenge Complete!"}
           </DialogTitle>
         </DialogHeader>
 
@@ -91,6 +93,11 @@ export function CompletionModal({
               {isRepeatCompletion && (
                 <p className="text-sm text-muted-foreground mt-2">
                   You've already completed this challenge, but practice makes perfect!
+                </p>
+              )}
+              {allChallengesCompleted && !isRepeatCompletion && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Congratulations! You've completed all challenges in this language!
                 </p>
               )}
             </div>
@@ -124,7 +131,7 @@ export function CompletionModal({
               <div className="text-xs text-muted-foreground text-center">{100 - (totalXp % 100)} XP to next level</div>
             </div>
 
-            {/* {nextChallenge && (
+            {!allChallengesCompleted && nextChallenge && (
               <div className="border border-border rounded-lg p-4">
                 <h4 className="font-semibold mb-2">Next Challenge</h4>
                 <div className="flex items-center justify-between">
@@ -135,7 +142,18 @@ export function CompletionModal({
                   <ArrowRight className="w-4 h-4 text-muted-foreground" />
                 </div>
               </div>
-            )} */}
+            )}
+            {allChallengesCompleted && !isRepeatCompletion && (
+              <div className="border border-border rounded-lg p-4 text-center">
+                <h4 className="font-semibold mb-2">Master Coder!</h4>
+                <p className="text-sm text-muted-foreground">
+                  You've conquered all challenges in this language. Try a new language or check back for more challenges!
+                </p>
+                <Link href="/codearena/challenges" className="mt-3 inline-block">
+                  <Button variant="outline">Explore Other Challenges</Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -143,9 +161,14 @@ export function CompletionModal({
           <Button variant="outline" onClick={onClose} className="flex-1 bg-transparent">
             Continue
           </Button>
-          {nextChallenge && (
+          {!allChallengesCompleted && nextChallenge && (
             <Link href={`/codearena/challenge/${nextChallenge.id}`} className="flex-1">
               <Button className="w-full">Next Challenge</Button>
+            </Link>
+          )}
+          {allChallengesCompleted && !isRepeatCompletion && (
+            <Link href="/codearena/challenges" className="flex-1">
+              <Button className="w-full">Back to Challenges</Button>
             </Link>
           )}
         </div>

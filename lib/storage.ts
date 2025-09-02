@@ -171,10 +171,11 @@ export function isChallengeCompleted(challengeId: number): boolean {
 }
 
 /**
- * Filter challenges by the language of the current challenge and prioritize those with the same or similar difficulty, ensuring a smoother progression.
+ * Filter challenges by the language of the current challenge and prioritize those with the same or similar difficulty. Also ensure that completed challenges are skipped, ensuring a smoother progression.
  * @param currentChallengeId
  * @returns 
  */
+
 export function getNextChallenge(currentChallengeId: number, language: string = 'javascript'): { id: number; title: string; difficulty: string } | null {
   const challenges = [
     { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
@@ -195,6 +196,10 @@ export function getNextChallenge(currentChallengeId: number, language: string = 
     { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
   ];
 
+  // Get completed challenges from user progress
+  const progress = getUserProgress();
+  const completedChallenges = progress.completedChallenges;
+
   // Define difficulty hierarchy for fallback
   const difficultyOrder = ["very easy", "easy", "medium", "hard"];
   
@@ -205,8 +210,10 @@ export function getNextChallenge(currentChallengeId: number, language: string = 
   const currentDifficulty = currentChallenge.difficulty;
   const currentDifficultyIndex = difficultyOrder.indexOf(currentDifficulty);
 
-  // Filter challenges by the provided language
-  const languageFilteredChallenges = challenges.filter((c) => c.language === language);
+  // Filter challenges by the provided language and exclude completed challenges
+  const languageFilteredChallenges = challenges.filter(
+    (c) => c.language === language && !completedChallenges.includes(c.id)
+  );
 
   // Step 1: Find next challenge with the same difficulty and language
   const sameDifficultyChallenge = languageFilteredChallenges.find(
