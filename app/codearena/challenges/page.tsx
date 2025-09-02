@@ -89,7 +89,55 @@ const challenges = [
     tags: ["strings"],
     language: "javascript",
   },
-]
+  {
+    id: 11,
+    title: "Reverse a String",
+    description: "Write a function that takes a string and returns it reversed.",
+    difficulty: "Easy",
+    tags: ["strings"],
+    language: "javascript",
+  },
+  {
+    id: 12,
+    title: "Check for Prime Number",
+    description: "Write a function that checks if a given number is prime.",
+    difficulty: "Medium",
+    tags: ["maths", "numbers"],
+    language: "javascript",
+  },
+  {
+    id: 13,
+    title: "Sum of Array Elements",
+    description: "Write a function that returns the sum of all numbers in an array.",
+    difficulty: "Easy",
+    tags: ["arrays", "maths"],
+    language: "javascript",
+  },
+  {
+    id: 14,
+    title: "Check for Anagram",
+    description: "Write a function that checks if two strings are anagrams of each other.",
+    difficulty: "Medium",
+    tags: ["strings", "logic"],
+    language: "python",
+  },
+  {
+    id: 15,
+    title: "Find First Non-Repeated Character",
+    description: "Write a function that returns the first non-repeated character in a string.",
+    difficulty: "Medium",
+    tags: ["strings", "logic"],
+    language: "python",
+  },
+  {
+    id: 16,
+    title: "Power of a Number",
+    description: "Write a function that calculates the power of a number (base raised to exponent).",
+    difficulty: "Easy",
+    tags: ["maths", "numbers"],
+    language: "python",
+  },
+];
 
 export default function ChallengesPage() {
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])

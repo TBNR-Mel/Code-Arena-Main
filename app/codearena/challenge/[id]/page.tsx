@@ -915,29 +915,36 @@ Simulates a significant XP gain that triggers a level-up.
     loadParams()
   }, [params])
 
-  const getStarterCode = (c: Challenge): string => {
-    switch (c.language) {
-      case "javascript":
-        if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`
-        if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`
-        if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`
-        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`
-        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`
-        return `function solution() {\n  // Write your code here\n}`
-      case "python":
-        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`
-        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`
-        return `def solution():\n    # Write your code here\n    pass`
-      case "java":
-        if (c.id === 6)
-          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`
-        if (c.id === 9)
-          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`
-        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`
-      default:
-        return "// Write your code here"
-    }
+const getStarterCode = (c: Challenge): string => {
+  switch (c.language) {
+    case "javascript":
+      if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`;
+      if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`;
+      if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`;
+      if (c.id === 4) return `function findMax(arr) {\n  // Write your code here\n}`;
+      if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`;
+      if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`;
+      if (c.id === 11) return `function reverseString(str) {\n  // Write your code here\n}`;
+      if (c.id === 12) return `function isPrime(num) {\n  // Write your code here\n}`;
+      if (c.id === 13) return `function arraySum(arr) {\n  // Write your code here\n}`;
+      return `function solution() {\n  // Write your code here\n}`;
+    case "python":
+      if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`;
+      if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`;
+      if (c.id === 14) return `def isAnagram(s1, s2):\n    # Write your code here\n    pass`;
+      if (c.id === 15) return `def firstNonRepeated(s):\n    # Write your code here\n    pass`;
+      if (c.id === 16) return `def power(base, exponent):\n    # Write your code here\n    pass`;
+      return `def solution():\n    # Write your code here\n    pass`;
+    case "java":
+      if (c.id === 6)
+        return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`;
+      if (c.id === 9)
+        return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`;
+      return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`;
+    default:
+      return "// Write your code here";
   }
+};
 
   const handleRunCode = () => {
     if (!challenge) return
