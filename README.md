@@ -58,3 +58,10 @@ Check out the latest features: coming soon:
 - B. **Leaderboard** – Compete with others and see who’s leading with the highest XP.
 - C. **Daily Streaks** – Build streaks by using the app every day and track your progress.
 - D. **Streak Rewards** – Unlock special bonuses like 2x XP and extra rewards based on your streak length, all saved in local storage.
+
+# Assistant Considerations
+AI response: "The provided code snippet ``` ``` attempts to... However, ..."
+
+# Todo
+- Add console tab
+- Add Get Started / Continue btn, with the title, "Challenge" (/codearena/challenges)
