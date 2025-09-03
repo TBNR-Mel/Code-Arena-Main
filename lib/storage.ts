@@ -238,27 +238,3 @@ export function getNextChallenge(currentChallengeId: number, language: string = 
   const nextId = currentChallengeId + 1;
   return languageFilteredChallenges.find((c) => c.id === nextId) || null;
 }
-
-// export function getNextChallenge(currentChallengeId: number): { id: number; title: string; difficulty: string } | null {
-//   const challenges = [
-//     { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy" },
-//     { id: 2, title: "Area of a Triangle", difficulty: "very easy" },
-//     { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy" },
-//     { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy" },
-//     { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium" },
-//     { id: 6, title: "Factorial of a Number", difficulty: "easy" },
-//     { id: 7, title: "Fibonacci Sequence", difficulty: "medium" },
-//     { id: 8, title: "Sort an Array", difficulty: "medium" },
-//     { id: 9, title: "Binary Search", difficulty: "hard" },
-//     { id: 10, title: "Count Vowels in a String", difficulty: "very easy" },
-//     { id: 11, title: "Reverse a String", difficulty: "easy" },
-//     { id: 12, title: "Check for Prime Number", difficulty: "medium" },
-//     { id: 13, title: "Sum of Array Elements", difficulty: "easy" },
-//     { id: 14, title: "Check for Anagram", difficulty: "medium" },
-//     { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium" },
-//     { id: 16, title: "Power of a Number", difficulty: "easy" },
-//   ]
-
-//   const nextId = currentChallengeId + 1
-//   return challenges.find((c) => c.id === nextId) || null
-// }

@@ -68,5 +68,5 @@ AI response: "The provided code snippet ``` ``` attempts to... However, ..."
 - Ensure TypeScript compiles without errors by running tsc or your build command.
 - Check that getNextChallenge skips completed challenges and returns null when all challenges in the selected language are completed.
 
-- Add console tab in the code tab
-- Add Get Started / Continue btn, with the title, "Challenge" (/codearena/challenges)
+- Add console tab in the code tab together with the test
+- Add Get Started / Continue btn, with the title, "Challenges" (/codearena/challenges)
