@@ -773,7 +773,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   const [output, setOutput] = useState("")
   const [isRunning, setIsRunning] = useState(false)
   const [showCompletionModal, setShowCompletionModal] = useState(false)
-const [completionData, setCompletionData] = useState<{
+  const [completionData, setCompletionData] = useState<{
     xpEarned: number
     totalXp: number
     currentLevel: number
@@ -782,6 +782,7 @@ const [completionData, setCompletionData] = useState<{
     allChallengesCompleted: boolean
   } | null>(null)
   const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
+  const [activeTabct, setActiveTabct] = useState<"console" | "test">("console");
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [isMediumScreen, setIsMediumScreen] = useState(false)
 
@@ -1101,12 +1102,12 @@ const [completionData, setCompletionData] = useState<{
             {/* Code Editor Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2>
-                <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
+                {/* <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2> */}
+                {/* <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
                   {challenge.language}
-                </span>
+                </span> */}
               </div>
-              <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
+              {/* <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
@@ -1124,7 +1125,7 @@ const [completionData, setCompletionData] = useState<{
                   <Play className="h-4 w-4" />
                   <span>{isRunning ? "Running..." : "Run Code"}</span>
                 </Button>
-              </div>
+              </div> */}
             </div>
             <div
               className="
@@ -1137,32 +1138,126 @@ const [completionData, setCompletionData] = useState<{
               "
             >
               {/* Monaco Editor */}
-              <div className="border-border border rounded-sm p-2 md:p-4">
-                <MonacoEditor
-                  height={isSmallScreen ? "300px" : isMediumScreen ? "350px" : "400px"}
-                  language={challenge.language === "javascript" ? "javascript" : challenge.language}
-                  theme="vs-dark"
-                  value={code}
-                  onChange={(value) => setCode(value || "")}
-                  options={{
-                    minimap: { enabled: !isSmallScreen },
-                    fontSize: isSmallScreen ? 16 : 16,
-                    lineNumbers: "on",
-                    roundedSelection: false,
-                    scrollBeyondLastLine: false,
-                    automaticLayout: true,
-                    tabSize: 2,
-                    wordWrap: "off",
-                    folding: !isSmallScreen,
-                    lineDecorationsWidth: isSmallScreen ? 10 : 20,
-                    lineNumbersMinChars: isSmallScreen ? 2 : 3,
-                  }}
-                />
+              <div>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3 sm:gap-0 mb-2 md:mb-4">
+                  <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleResetCode}
+                      className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
+                    >
+                      <RotateCcw className="h-4 w-4" />
+                      <span>Reset</span>
+                    </Button>
+                    <Button
+                      onClick={handleRunCode}
+                      disabled={isRunning}
+                      className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
+                    >
+                      <Play className="h-4 w-4" />
+                      <span>{isRunning ? "Running..." : "Run Code"}</span>
+                    </Button>
+                  </div>
+                </div>
+                <div className="border-border border rounded-sm p-2 md:p-4">
+                  <div className="flex items-center gap-2 mb-2 w-fit">
+                    {/* <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2> */}
+                    <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 capitalize">
+                      {challenge.language}
+                    </span>
+                  </div>
+                  <MonacoEditor
+                    height={isSmallScreen ? "300px" : isMediumScreen ? "350px" : "400px"}
+                    language={challenge.language === "javascript" ? "javascript" : challenge.language}
+                    theme="vs-dark"
+                    value={code}
+                    onChange={(value) => setCode(value || "")}
+                    options={{
+                      minimap: { enabled: !isSmallScreen },
+                      fontSize: isSmallScreen ? 16 : 16,
+                      lineNumbers: "on",
+                      roundedSelection: false,
+                      scrollBeyondLastLine: false,
+                      automaticLayout: true,
+                      tabSize: 2,
+                      wordWrap: "off",
+                      folding: !isSmallScreen,
+                      lineDecorationsWidth: isSmallScreen ? 10 : 20,
+                      lineNumbersMinChars: isSmallScreen ? 2 : 3,
+                    }}
+                  />
+                </div>
               </div>
 
               {/* Output */}
               <div className="border-border border rounded-sm p-2 md:p-4">
-                {output ? (
+                <Tabs
+                  defaultValue="console"
+                  onValueChange={(value) => setActiveTabct(value as "console" | "test")}
+                  className="w-full px-3 sm:px-4">
+                  {/* Tab Navigation */}
+                  <div className="w-full flex justify-center items-center">
+                    <TabsList className="flex w-fit mb-8 h-9 gap-1 sm:max-w-[24rem]">
+                      <TabsTrigger value="console" className="py-1 max-w-20">Console</TabsTrigger>
+                      <TabsTrigger value="test" className="py-1 min-w-20">Test</TabsTrigger>
+                    </TabsList>
+                  </div>
+
+                  {/* Instructions Tab */}
+                  <TabsContent value="console" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] md:max-w-7xl m-auto">
+                    {/* Output */}
+                    <div className="border-border border rounded-sm p-2 md:p-4">
+                      {/* {output ? (
+                        <div className="space-y-2 h-full">
+                          <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                            <pre className="text-base whitespace-pre-wrap font-mono break-words">
+                              {output}
+                            </pre>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                          <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                            <p className="text-base text-center sm:text-sm text-foreground/25">
+                              Run Code: <br />You will see test outputs here.
+                            </p>
+                          </div>
+                        </div>
+                      )} */}
+                      console tab
+                    </div>
+                  </TabsContent>
+
+                  {/* Code Tab */}
+                  <TabsContent
+                    value="test"
+                    className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto"
+                  >
+
+                    {/* Output */}
+                    <div className="border-border border rounded-sm p-2 md:p-4">
+                      {output ? (
+                        <div className="space-y-2 h-full">
+                          <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                            <pre className="text-base whitespace-pre-wrap font-mono break-words">
+                              {output}
+                            </pre>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                          <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                            <p className="text-base text-center sm:text-sm text-foreground/25">
+                              Run Code: <br />You will see test outputs here.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+                {/* {output ? (
                   <div className="space-y-2 h-full">
                     <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
                       <pre className="text-base whitespace-pre-wrap font-mono break-words">
@@ -1178,7 +1273,7 @@ const [completionData, setCompletionData] = useState<{
                       </p>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </TabsContent>
