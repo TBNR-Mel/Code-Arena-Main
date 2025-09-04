@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { XPDisplay } from "@/components/xp-display"
-import { getUserProgress } from "@/lib/storage"
+import { getUserProgress, getTodaysDailyChallenge, isDailyChallengeCompleted } from "@/lib/storage"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 // Mock challenge data
@@ -93,13 +93,13 @@ const challenges = [
 
 export default function ChallengesPage() {
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
-  // Initialize with default values, not localStorage
+  const [dailyChallenge, setDailyChallenge] = useState<any>(null)
+  const [isDailyCompleted, setIsDailyCompleted] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState("javascript")
   const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
   const [filteredChallenges, setFilteredChallenges] = useState(challenges)
 
   useEffect(() => {
-    // Access localStorage only in the browser
     const storedLanguage =
       typeof window !== "undefined" ? localStorage.getItem("challengeLanguage") || "javascript" : "javascript"
     const storedDifficulty =
@@ -111,9 +111,16 @@ export default function ChallengesPage() {
     const progress = getUserProgress()
     setCompletedChallenges(progress.completedChallenges)
 
+    const daily = getTodaysDailyChallenge()
+    const dailyCompleted = isDailyChallengeCompleted()
+    setDailyChallenge(daily)
+    setIsDailyCompleted(dailyCompleted)
+
     const handleProgressUpdate = () => {
       const updatedProgress = getUserProgress()
       setCompletedChallenges(updatedProgress.completedChallenges)
+      const updatedDailyCompleted = isDailyChallengeCompleted()
+      setIsDailyCompleted(updatedDailyCompleted)
     }
 
     window.addEventListener("progressUpdate", handleProgressUpdate)
@@ -158,12 +165,6 @@ export default function ChallengesPage() {
           </Link>
         </div>
         <div className="flex items-center gap-6">
-          <Link
-            href="/codearena/daily"
-            className="text-yellow-500 hover:text-yellow-400 font-semibold transition-colors"
-          >
-            Daily Challenge
-          </Link>
           <Link
             href="/codearena/leaderboard"
             className="text-purple-500 hover:text-purple-400 font-semibold transition-colors"
@@ -219,6 +220,37 @@ export default function ChallengesPage() {
             <h1 className="text-2xl sm:text-3xl font-bold">Challenges</h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 sm:gap-8">
+            {dailyChallenge && (
+              <Link href="/codearena/daily/challenge">
+                <div className="border-b border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 p-6 sm:p-8 hover:from-yellow-500/20 hover:to-orange-500/20 transition-all cursor-pointer flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg sm:text-xl font-bold text-yellow-400 font-mono">{dailyChallenge.title}</h3>
+                  </div>
+                  <div className="flex gap-2 mb-4">
+                    <span className="text-xs text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded font-semibold">
+                      DAILY CHALLENGE
+                    </span>
+                    <span
+                      className={`text-xs px-2 py-1 rounded font-medium ${
+                        dailyChallenge.difficulty === "hard"
+                          ? "bg-orange-500/20 text-orange-400"
+                          : "bg-red-500/20 text-red-400"
+                      }`}
+                    >
+                      {dailyChallenge.difficulty.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="mt-auto flex justify-between items-end">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-yellow-400 font-semibold">{dailyChallenge.difficulty}</span>
+                      {isDailyCompleted && <span className="text-sm text-green-400 font-medium">Completed Today</span>}
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-yellow-400" />
+                  </div>
+                </div>
+              </Link>
+            )}
+
             {filteredChallenges.map((challenge) => {
               const isCompleted = completedChallenges.includes(challenge.id)
               return (
