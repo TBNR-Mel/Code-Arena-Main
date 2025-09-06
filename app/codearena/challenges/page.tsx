@@ -213,10 +213,17 @@ export default function ChallengesPage() {
     })
 
     const dailyChallengeIds = dailyChallenges.map((dc) => dc.id)
-    const dailyChallengesFromList = challenges.filter((c) => dailyChallengeIds.includes(c.id))
+
+    let dailyChallengesFromList: typeof challenges = []
+    if (selectedLanguage !== "all") {
+      dailyChallengesFromList = challenges.filter(
+        (c) => dailyChallengeIds.includes(c.id) && c.language.toLowerCase() === selectedLanguage,
+      )
+    }
+
     const nonDailyChallenges = filtered.filter((c) => !dailyChallengeIds.includes(c.id))
 
-    // Put daily challenges first, then regular filtered challenges
+    // Put daily challenges first (only when specific language selected), then regular filtered challenges
     setFilteredChallenges([...dailyChallengesFromList, ...nonDailyChallenges])
   }, [selectedLanguage, selectedDifficulty, dailyChallenges])
 
