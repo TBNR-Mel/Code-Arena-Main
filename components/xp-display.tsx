@@ -1,37 +1,57 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { getUserProgress } from "@/lib/storage"
 import { Flame } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import { getUserProgress } from "@/lib/challenges"
 
 export function XPDisplay() {
   const [xp, setXP] = useState(0)
   const [level, setLevel] = useState(1)
   const [currentStreak, setCurrentStreak] = useState(0)
+  const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    const progress = getUserProgress()
-    setXP(progress.xp)
-    setLevel(progress.level)
-    setCurrentStreak(progress.currentStreak)
+    const supabase = createClient()
 
-    // Listen for storage changes to update XP in real-time
-    const handleStorageChange = () => {
-      const updatedProgress = getUserProgress()
-      setXP(updatedProgress.xp)
-      setLevel(updatedProgress.level)
-      setCurrentStreak(updatedProgress.currentStreak)
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      setUser(user)
+
+      if (user) {
+        const progress = await getUserProgress(user.id)
+        if (progress) {
+          setXP(progress.total_points)
+          setLevel(Math.floor(progress.total_points / 100) + 1)
+          setCurrentStreak(progress.current_streak)
+        }
+      }
     }
 
-    window.addEventListener("storage", handleStorageChange)
-    // Custom event for same-tab updates
-    window.addEventListener("progressUpdate", handleStorageChange)
+    getUser()
 
-    return () => {
-      window.removeEventListener("storage", handleStorageChange)
-      window.removeEventListener("progressUpdate", handleStorageChange)
-    }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user)
+        getUser()
+      } else {
+        setUser(null)
+        setXP(0)
+        setLevel(1)
+        setCurrentStreak(0)
+      }
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
+
+  if (!user) {
+    return null
+  }
 
   return (
     <div className="flex items-center gap-4">

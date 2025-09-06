@@ -7,9 +7,16 @@ export default function HomePage() {
       {/* Header */}
       <header className="flex items-center justify-between p-6">
         <h1 className="text-xl font-semibold">C_Arena</h1>
-        <Link href="/about" className="text-foreground hover:text-foreground/80 underline underline-offset-4">
-          About
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/auth/login" className="text-foreground hover:text-foreground/80 underline underline-offset-4">
+            Login
+          </Link>
+          <Link href="/auth/sign-up">
+            <Button variant="outline" size="sm">
+              Sign Up
+            </Button>
+          </Link>
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -38,7 +45,7 @@ export default function HomePage() {
                 Get Started
               </Button>
             </Link>
-            <p className="text-sm text-muted-foreground">No email or password required.</p>
+            <p className="text-sm text-muted-foreground">Sign up to track your progress and compete with others.</p>
           </div>
         </div>
       </main>
