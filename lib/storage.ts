@@ -7,9 +7,11 @@ export interface UserProgress {
   level: number
   achievements: string[]
   lastCompletedDate?: string
-  dailyChallenge?: {
-    challengeId: number
-    date: string
+  dailyChallenges?: {
+    [language: string]: {
+      challengeId: number
+      date: string
+    }
   }
 }
 
@@ -60,7 +62,8 @@ export function getUserProgress(): UserProgress {
         level: progress.level || calculateLevel(progress.xp || 0),
         achievements: progress.achievements || [],
         lastCompletedDate: progress.lastCompletedDate,
-        dailyChallenge: progress.dailyChallenge,
+        dailyChallenges:
+          progress.dailyChallenges || (progress.dailyChallenge ? { javascript: progress.dailyChallenge } : {}),
       }
     }
   } catch (error) {
@@ -202,6 +205,9 @@ export function getNextChallenge(
     { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
     { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
     { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
+    { id: 17, title: "Hello World", difficulty: "very easy", language: "c++" },
+    { id: 18, title: "Simple Calculator", difficulty: "easy", language: "c++" },
+    { id: 19, title: "Array Manipulation", difficulty: "medium", language: "c++" },
   ]
 
   // Get completed challenges from user progress
@@ -245,7 +251,7 @@ export function getNextChallenge(
   return languageFilteredChallenges.find((c) => c.id === nextId) || null
 }
 
-export function getDailyChallenge(): { id: number; title: string; difficulty: string; language: string } | null {
+export function getDailyChallenges(): { id: number; title: string; difficulty: string; language: string }[] {
   const challenges = [
     { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
     { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
@@ -263,44 +269,70 @@ export function getDailyChallenge(): { id: number; title: string; difficulty: st
     { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
     { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
     { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
+    { id: 17, title: "Hello World", difficulty: "very easy", language: "c++" },
+    { id: 18, title: "Simple Calculator", difficulty: "easy", language: "c++" },
+    { id: 19, title: "Array Manipulation", difficulty: "medium", language: "c++" },
   ]
 
   const progress = getUserProgress()
   const today = new Date().toDateString()
+  const languages = ["javascript", "python", "java", "c++"]
+  const dailyChallenges: { id: number; title: string; difficulty: string; language: string }[] = []
 
-  // Check if we already have a daily challenge for today
-  if (progress.dailyChallenge && progress.dailyChallenge.date === today) {
-    const challenge = challenges.find((c) => c.id === progress.dailyChallenge!.challengeId)
-    return challenge || null
-  }
+  languages.forEach((language) => {
+    // Check if we already have a daily challenge for this language today
+    const existingDaily = progress.dailyChallenges?.[language]
+    if (existingDaily && existingDaily.date === today) {
+      const challenge = challenges.find((c) => c.id === existingDaily.challengeId)
+      if (challenge) {
+        dailyChallenges.push(challenge)
+        return
+      }
+    }
 
-  // Select a new daily challenge from uncompleted challenges
-  const uncompletedChallenges = challenges.filter((challenge) => !progress.completedChallenges.includes(challenge.id))
+    // Select a new daily challenge for this language
+    const languageChallenges = challenges.filter((c) => c.language === language)
+    const uncompletedChallenges = languageChallenges.filter(
+      (challenge) => !progress.completedChallenges.includes(challenge.id),
+    )
 
-  if (uncompletedChallenges.length === 0) {
-    return null // All challenges completed
-  }
+    if (uncompletedChallenges.length > 0) {
+      // Use date and language as seed for consistent daily selection
+      const dateNumber = new Date().getDate() + new Date().getMonth() * 31 + new Date().getFullYear() * 365
+      const languageHash = language.split("").reduce((a, b) => a + b.charCodeAt(0), 0)
+      const selectedChallenge = uncompletedChallenges[(dateNumber + languageHash) % uncompletedChallenges.length]
 
-  // Use date as seed for consistent daily selection
-  const dateNumber = new Date().getDate() + new Date().getMonth() * 31 + new Date().getFullYear() * 365
-  const selectedChallenge = uncompletedChallenges[dateNumber % uncompletedChallenges.length]
+      // Save the daily challenge for this language
+      const updatedProgress = {
+        ...progress,
+        dailyChallenges: {
+          ...progress.dailyChallenges,
+          [language]: {
+            challengeId: selectedChallenge.id,
+            date: today,
+          },
+        },
+      }
+      saveUserProgress(updatedProgress)
+      dailyChallenges.push(selectedChallenge)
+    }
+  })
 
-  // Save the daily challenge
-  const updatedProgress = {
-    ...progress,
-    dailyChallenge: {
-      challengeId: selectedChallenge.id,
-      date: today,
-    },
-  }
-  saveUserProgress(updatedProgress)
-
-  return selectedChallenge
+  return dailyChallenges
 }
 
 export function isDailyChallenge(challengeId: number): boolean {
   const progress = getUserProgress()
   const today = new Date().toDateString()
 
-  return progress.dailyChallenge?.challengeId === challengeId && progress.dailyChallenge?.date === today
+  if (!progress.dailyChallenges) return false
+
+  return Object.values(progress.dailyChallenges).some(
+    (daily) => daily.challengeId === challengeId && daily.date === today,
+  )
+}
+
+export function getDailyChallenge(): { id: number; title: string; difficulty: string; language: string } | null {
+  const dailyChallenges = getDailyChallenges()
+  return dailyChallenges.find((c) => c.language === "javascript") || dailyChallenges[0] || null
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { XPDisplay } from "@/components/xp-display"
-import { getUserProgress, getDailyChallenge, isDailyChallenge } from "@/lib/storage"
+import { getUserProgress, getDailyChallenges, isDailyChallenge } from "@/lib/storage"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -138,16 +138,42 @@ const challenges = [
     tags: ["maths", "numbers"],
     language: "python",
   },
+  {
+    id: 17,
+    title: "Hello World",
+    description: "Write a program that outputs 'Hello, World!' to the console.",
+    difficulty: "Very easy",
+    tags: ["basics", "output"],
+    language: "c++",
+  },
+  {
+    id: 18,
+    title: "Simple Calculator",
+    description: "Create a basic calculator that can perform addition, subtraction, multiplication, and division.",
+    difficulty: "Easy",
+    tags: ["maths", "input"],
+    language: "c++",
+  },
+  {
+    id: 19,
+    title: "Array Manipulation",
+    description: "Write a program that finds the largest and smallest elements in an array.",
+    difficulty: "Medium",
+    tags: ["arrays", "logic"],
+    language: "c++",
+  },
 ]
 
 export default function ChallengesPage() {
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
-  const [dailyChallenge, setDailyChallenge] = useState<{
-    id: number
-    title: string
-    difficulty: string
-    language: string
-  } | null>(null)
+  const [dailyChallenges, setDailyChallenges] = useState<
+    {
+      id: number
+      title: string
+      difficulty: string
+      language: string
+    }[]
+  >([])
   const [selectedLanguage, setSelectedLanguage] = useState("javascript")
   const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
   const [filteredChallenges, setFilteredChallenges] = useState(challenges)
@@ -164,14 +190,14 @@ export default function ChallengesPage() {
     const progress = getUserProgress()
     setCompletedChallenges(progress.completedChallenges)
 
-    const daily = getDailyChallenge()
-    setDailyChallenge(daily)
+    const dailies = getDailyChallenges()
+    setDailyChallenges(dailies)
 
     const handleProgressUpdate = () => {
       const updatedProgress = getUserProgress()
       setCompletedChallenges(updatedProgress.completedChallenges)
-      const updatedDaily = getDailyChallenge()
-      setDailyChallenge(updatedDaily)
+      const updatedDailies = getDailyChallenges()
+      setDailyChallenges(updatedDailies)
     }
 
     window.addEventListener("progressUpdate", handleProgressUpdate)
@@ -179,22 +205,20 @@ export default function ChallengesPage() {
   }, [])
 
   useEffect(() => {
-    let filtered = challenges.filter((challenge) => {
+    const filtered = challenges.filter((challenge) => {
       const langMatch = selectedLanguage === "all" || challenge.language.toLowerCase() === selectedLanguage
       const diffMatch =
         selectedDifficulty === "all" || challenge.difficulty.toLowerCase() === selectedDifficulty.replace("-", " ")
       return langMatch && diffMatch
     })
 
-    if (dailyChallenge) {
-      const dailyChallengeInFiltered = filtered.find((c) => c.id === dailyChallenge.id)
-      if (dailyChallengeInFiltered) {
-        filtered = [dailyChallengeInFiltered, ...filtered.filter((c) => c.id !== dailyChallenge.id)]
-      }
-    }
+    const dailyChallengeIds = dailyChallenges.map((dc) => dc.id)
+    const dailyChallengesFromList = challenges.filter((c) => dailyChallengeIds.includes(c.id))
+    const nonDailyChallenges = filtered.filter((c) => !dailyChallengeIds.includes(c.id))
 
-    setFilteredChallenges(filtered)
-  }, [selectedLanguage, selectedDifficulty, dailyChallenge])
+    // Put daily challenges first, then regular filtered challenges
+    setFilteredChallenges([...dailyChallengesFromList, ...nonDailyChallenges])
+  }, [selectedLanguage, selectedDifficulty, dailyChallenges])
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
@@ -241,6 +265,7 @@ export default function ChallengesPage() {
                   <SelectItem value="javascript">JavaScript</SelectItem>
                   <SelectItem value="python">Python</SelectItem>
                   <SelectItem value="java">Java</SelectItem>
+                  <SelectItem value="c++">C++</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={selectedDifficulty} onValueChange={handleDifficultyChange}>
@@ -280,7 +305,7 @@ export default function ChallengesPage() {
                       {isDaily && (
                         <div className="flex items-center gap-1 bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
                           <Calendar className="w-3 h-3" />
-                          Daily Challenge
+                          Daily Challenge - {challenge.language.toUpperCase()}
                         </div>
                       )}
                       <h3 className="text-lg sm:text-xl font-semibold">{challenge.title}</h3>
