@@ -4,104 +4,197 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { XPDisplay } from "@/components/xp-display"
-import { ChevronLeft, ChevronRight, Calendar, Star } from "lucide-react"
+import { getUserProgress, getDailyChallenge, isDailyChallenge } from "@/lib/storage"
+import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/lib/supabase/client"
 
-interface Challenge {
-  id: number
-  title: string
-  description: string
-  difficulty: string
-  tags: string[]
-  language: string
-}
-
-interface DailyChallenge {
-  id: string
-  challenge_id: number
-  assigned_date: string
-  completed: boolean
-  challenges: Challenge
-}
+// Mock challenge data
+const challenges = [
+  {
+    id: 1,
+    title: "Return the Sum of Two Numbers",
+    description: "Create a function that takes two numbers as arguments and returns their sum.",
+    difficulty: "Very easy",
+    tags: ["geometry", "maths", "numbers"],
+    language: "javascript",
+  },
+  {
+    id: 2,
+    title: "Area of a Triangle",
+    description: "Write a function that takes the base and height of a triangle and return its area.",
+    difficulty: "Very easy",
+    tags: ["geometry", "maths", "numbers"],
+    language: "javascript",
+  },
+  {
+    id: 3,
+    title: "Convert Minutes into Seconds",
+    description: "Write a function that takes an integer minutes and converts it to seconds.",
+    difficulty: "Very easy",
+    tags: ["maths", "numbers"],
+    language: "javascript",
+  },
+  {
+    id: 4,
+    title: "Find the Maximum Number in an Array",
+    description: "Create a function that finds and returns the maximum number in a given array.",
+    difficulty: "Easy",
+    tags: ["arrays", "maths"],
+    language: "javascript",
+  },
+  {
+    id: 5,
+    title: "Check if a String is a Palindrome",
+    description: "Write a function that checks if a given string is a palindrome.",
+    difficulty: "Medium",
+    tags: ["strings", "logic"],
+    language: "python",
+  },
+  {
+    id: 6,
+    title: "Factorial of a Number",
+    description: "Compute the factorial of a given number.",
+    difficulty: "Easy",
+    tags: ["maths", "recursion"],
+    language: "java",
+  },
+  {
+    id: 7,
+    title: "Fibonacci Sequence",
+    description: "Generate the Fibonacci sequence up to a given number.",
+    difficulty: "Medium",
+    tags: ["maths", "sequences"],
+    language: "javascript",
+  },
+  {
+    id: 8,
+    title: "Sort an Array",
+    description: "Implement a function to sort an array in ascending order.",
+    difficulty: "Medium",
+    tags: ["arrays", "sorting"],
+    language: "python",
+  },
+  {
+    id: 9,
+    title: "Binary Search",
+    description: "Implement binary search on a sorted array.",
+    difficulty: "Hard",
+    tags: ["arrays", "searching"],
+    language: "java",
+  },
+  {
+    id: 10,
+    title: "Count Vowels in a String",
+    description: "Count the number of vowels in a given string.",
+    difficulty: "Very easy",
+    tags: ["strings"],
+    language: "javascript",
+  },
+  {
+    id: 11,
+    title: "Reverse a String",
+    description: "Write a function that takes a string and returns it reversed.",
+    difficulty: "Easy",
+    tags: ["strings"],
+    language: "javascript",
+  },
+  {
+    id: 12,
+    title: "Check for Prime Number",
+    description: "Write a function that checks if a given number is prime.",
+    difficulty: "Medium",
+    tags: ["maths", "numbers"],
+    language: "javascript",
+  },
+  {
+    id: 13,
+    title: "Sum of Array Elements",
+    description: "Write a function that returns the sum of all numbers in an array.",
+    difficulty: "Easy",
+    tags: ["arrays", "maths"],
+    language: "javascript",
+  },
+  {
+    id: 14,
+    title: "Check for Anagram",
+    description: "Write a function that checks if two strings are anagrams of each other.",
+    difficulty: "Medium",
+    tags: ["strings", "logic"],
+    language: "python",
+  },
+  {
+    id: 15,
+    title: "Find First Non-Repeated Character",
+    description: "Write a function that returns the first non-repeated character in a string.",
+    difficulty: "Medium",
+    tags: ["strings", "logic"],
+    language: "python",
+  },
+  {
+    id: 16,
+    title: "Power of a Number",
+    description: "Write a function that calculates the power of a number (base raised to exponent).",
+    difficulty: "Easy",
+    tags: ["maths", "numbers"],
+    language: "python",
+  },
+]
 
 export default function ChallengesPage() {
-  const [challenges, setChallenges] = useState<Challenge[]>([])
-  const [dailyChallenge, setDailyChallenge] = useState<DailyChallenge | null>(null)
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
-  const [selectedLanguage, setSelectedLanguage] = useState("all")
-  const [selectedDifficulty, setSelectedDifficulty] = useState("all")
-  const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([])
-  const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
-
-  const supabase = createClient()
+  const [dailyChallenge, setDailyChallenge] = useState<{
+    id: number
+    title: string
+    difficulty: string
+    language: string
+  } | null>(null)
+  const [selectedLanguage, setSelectedLanguage] = useState("javascript")
+  const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
+  const [filteredChallenges, setFilteredChallenges] = useState(challenges)
 
   useEffect(() => {
-    const checkUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setUser(user)
+    const storedLanguage =
+      typeof window !== "undefined" ? localStorage.getItem("challengeLanguage") || "javascript" : "javascript"
+    const storedDifficulty =
+      typeof window !== "undefined" ? localStorage.getItem("challengeDifficulty") || "very-easy" : "very-easy"
 
-      if (user) {
-        await Promise.all([fetchChallenges(), fetchDailyChallenge(), fetchUserProgress(user.id)])
-      } else {
-        // If no user, just fetch challenges
-        await fetchChallenges()
-      }
-      setLoading(false)
+    setSelectedLanguage(storedLanguage)
+    setSelectedDifficulty(storedDifficulty)
+
+    const progress = getUserProgress()
+    setCompletedChallenges(progress.completedChallenges)
+
+    const daily = getDailyChallenge()
+    setDailyChallenge(daily)
+
+    const handleProgressUpdate = () => {
+      const updatedProgress = getUserProgress()
+      setCompletedChallenges(updatedProgress.completedChallenges)
+      const updatedDaily = getDailyChallenge()
+      setDailyChallenge(updatedDaily)
     }
 
-    checkUser()
+    window.addEventListener("progressUpdate", handleProgressUpdate)
+    return () => window.removeEventListener("progressUpdate", handleProgressUpdate)
   }, [])
 
-  const fetchChallenges = async () => {
-    try {
-      const { data, error } = await supabase.from("challenges").select("*").order("id")
-
-      if (error) throw error
-      setChallenges(data || [])
-    } catch (error) {
-      console.error("Error fetching challenges:", error)
-    }
-  }
-
-  const fetchDailyChallenge = async () => {
-    try {
-      const response = await fetch("/api/daily-challenge")
-      if (response.ok) {
-        const { dailyChallenge } = await response.json()
-        setDailyChallenge(dailyChallenge)
-      }
-    } catch (error) {
-      console.error("Error fetching daily challenge:", error)
-    }
-  }
-
-  const fetchUserProgress = async (userId: string) => {
-    try {
-      const { data, error } = await supabase.from("user_progress").select("challenge_id").eq("user_id", userId)
-
-      if (error) throw error
-      const completed = data?.map((p) => p.challenge_id) || []
-      setCompletedChallenges(completed)
-    } catch (error) {
-      console.error("Error fetching user progress:", error)
-    }
-  }
-
   useEffect(() => {
-    const filtered = challenges.filter((challenge) => {
+    let filtered = challenges.filter((challenge) => {
       const langMatch = selectedLanguage === "all" || challenge.language.toLowerCase() === selectedLanguage
       const diffMatch =
         selectedDifficulty === "all" || challenge.difficulty.toLowerCase() === selectedDifficulty.replace("-", " ")
-      // Exclude daily challenge from main list
-      const notDailyChallenge = !dailyChallenge || challenge.id !== dailyChallenge.challenge_id
-      return langMatch && diffMatch && notDailyChallenge
+      return langMatch && diffMatch
     })
+
+    if (dailyChallenge) {
+      const dailyChallengeInFiltered = filtered.find((c) => c.id === dailyChallenge.id)
+      if (dailyChallengeInFiltered) {
+        filtered = [dailyChallengeInFiltered, ...filtered.filter((c) => c.id !== dailyChallenge.id)]
+      }
+    }
+
     setFilteredChallenges(filtered)
-  }, [selectedLanguage, selectedDifficulty, challenges, dailyChallenge])
+  }, [selectedLanguage, selectedDifficulty, dailyChallenge])
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
@@ -117,24 +210,15 @@ export default function ChallengesPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-lg">Loading challenges...</div>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header */}
       <header className="flex items-center justify-between p-4 py-4 pr-4 pl-2 md:p-4 border-border border-b">
         <div className="flex items-center gap-4">
           <Link
             href="/"
             className="flex items-center hover:text-foreground/25 active:text-foreground/30 transition-colors duration-200"
           >
-            <ChevronLeft className="h-8 w-8 sm:h-7 sm:w-7" />
+            <ChevronLeft className="h-8 w-8 sm:h-7 sm:w-7sm:h-7 sm:w-7" />
             <span>Home</span>
           </Link>
         </div>
@@ -144,7 +228,6 @@ export default function ChallengesPage() {
       </header>
 
       <div className="flex flex-1 flex-col sm:flex-row">
-        {/* Filters */}
         <aside className="w-full sm:w-80 border-b sm:border-b-0 sm:border-r border-border p-4 sm:p-8 flex flex-col gap-8 min-h-fit sm:min-h-full">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">Filters</h2>
@@ -154,7 +237,7 @@ export default function ChallengesPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Languages</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="javascript">JavaScript</SelectItem>
                   <SelectItem value="python">Python</SelectItem>
                   <SelectItem value="java">Java</SelectItem>
@@ -165,7 +248,7 @@ export default function ChallengesPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Difficulties</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="very-easy">Very easy</SelectItem>
                   <SelectItem value="easy">Easy</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
@@ -176,55 +259,30 @@ export default function ChallengesPage() {
           </div>
         </aside>
 
-        {/* Main Content */}
         <main className="flex-1 py-6 sm:px-12 sm:py-10">
           <div className="flex items-center justify-between px-4 mb-6 sm:mb-8">
             <h1 className="text-2xl sm:text-3xl font-bold">Challenges</h1>
-            {!user && (
-              <Link href="/auth/login">
-                <Button>Sign In to Track Progress</Button>
-              </Link>
-            )}
+            <Button>Get Started</Button>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 sm:gap-8">
-            {user && dailyChallenge && (
-              <Link href={`/codearena/challenge/${dailyChallenge.challenge_id}`}>
-                <div className="border-b border-border p-6 sm:p-8 hover:bg-accent/40 transition-colors cursor-pointer flex flex-col h-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-l-4 border-l-blue-500">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Calendar className="h-5 w-5 text-blue-500" />
-                    <span className="text-sm font-medium text-blue-500">Daily Challenge</span>
-                    <Star className="h-4 w-4 text-yellow-500" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{dailyChallenge.challenges.title}</h3>
-                  <p className="text-muted-foreground text-base mb-4">{dailyChallenge.challenges.description}</p>
-                  <div className="flex gap-2 mb-4">
-                    {dailyChallenge.challenges.tags.map((tag) => (
-                      <span key={tag} className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-auto flex justify-between items-end">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-muted-foreground">{dailyChallenge.challenges.difficulty}</span>
-                      {dailyChallenge.completed && (
-                        <span className="text-sm text-green-400 font-medium">Completed</span>
-                      )}
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                </div>
-              </Link>
-            )}
-
-            {/* Regular Challenges */}
             {filteredChallenges.map((challenge) => {
               const isCompleted = completedChallenges.includes(challenge.id)
+              const isDaily = isDailyChallenge(challenge.id)
+
               return (
                 <Link key={challenge.id} href={`/codearena/challenge/${challenge.id}`}>
-                  <div className="border-b border-border p-6 sm:p-8 hover:bg-accent/40 transition-colors cursor-pointer flex flex-col h-full">
+                  <div
+                    className={`border-b border-border p-6 sm:p-8 hover:bg-accent/40 transition-colors cursor-pointer flex flex-col h-full ${
+                      isDaily ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20" : ""
+                    }`}
+                  >
                     <div className="flex items-center gap-3 mb-2">
+                      {isDaily && (
+                        <div className="flex items-center gap-1 bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
+                          <Calendar className="w-3 h-3" />
+                          Daily Challenge
+                        </div>
+                      )}
                       <h3 className="text-lg sm:text-xl font-semibold">{challenge.title}</h3>
                     </div>
                     <p className="text-muted-foreground text-base mb-4">{challenge.description}</p>
@@ -240,6 +298,7 @@ export default function ChallengesPage() {
                         <span className="text-sm text-muted-foreground">{challenge.difficulty}</span>
                         {isCompleted && <span className="text-sm text-green-400 font-medium">Completed</span>}
                       </div>
+
                       <ChevronRight className="w-5 h-5 text-muted-foreground" />
                     </div>
                   </div>

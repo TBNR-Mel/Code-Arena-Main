@@ -7,6 +7,10 @@ export interface UserProgress {
   level: number
   achievements: string[]
   lastCompletedDate?: string
+  dailyChallenge?: {
+    challengeId: number
+    date: string
+  }
 }
 
 const STORAGE_KEY = "codearena_progress"
@@ -56,6 +60,7 @@ export function getUserProgress(): UserProgress {
         level: progress.level || calculateLevel(progress.xp || 0),
         achievements: progress.achievements || [],
         lastCompletedDate: progress.lastCompletedDate,
+        dailyChallenge: progress.dailyChallenge,
       }
     }
   } catch (error) {
@@ -173,10 +178,13 @@ export function isChallengeCompleted(challengeId: number): boolean {
 /**
  * Filter challenges by the language of the current challenge and prioritize those with the same or similar difficulty. Also ensure that completed challenges are skipped, ensuring a smoother progression.
  * @param currentChallengeId
- * @returns 
+ * @returns
  */
 
-export function getNextChallenge(currentChallengeId: number, language: string = 'javascript'): { id: number; title: string; difficulty: string } | null {
+export function getNextChallenge(
+  currentChallengeId: number,
+  language = "javascript",
+): { id: number; title: string; difficulty: string } | null {
   const challenges = [
     { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
     { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
@@ -194,47 +202,105 @@ export function getNextChallenge(currentChallengeId: number, language: string = 
     { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
     { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
     { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
-  ];
+  ]
 
   // Get completed challenges from user progress
-  const progress = getUserProgress();
-  const completedChallenges = progress.completedChallenges;
+  const progress = getUserProgress()
+  const completedChallenges = progress.completedChallenges
 
   // Define difficulty hierarchy for fallback
-  const difficultyOrder = ["very easy", "easy", "medium", "hard"];
-  
-  // Find the current challenge
-  const currentChallenge = challenges.find((c) => c.id === currentChallengeId);
-  if (!currentChallenge) return null;
+  const difficultyOrder = ["very easy", "easy", "medium", "hard"]
 
-  const currentDifficulty = currentChallenge.difficulty;
-  const currentDifficultyIndex = difficultyOrder.indexOf(currentDifficulty);
+  // Find the current challenge
+  const currentChallenge = challenges.find((c) => c.id === currentChallengeId)
+  if (!currentChallenge) return null
+
+  const currentDifficulty = currentChallenge.difficulty
+  const currentDifficultyIndex = difficultyOrder.indexOf(currentDifficulty)
 
   // Filter challenges by the provided language and exclude completed challenges
   const languageFilteredChallenges = challenges.filter(
-    (c) => c.language === language && !completedChallenges.includes(c.id)
-  );
+    (c) => c.language === language && !completedChallenges.includes(c.id),
+  )
 
   // Step 1: Find next challenge with the same difficulty and language
   const sameDifficultyChallenge = languageFilteredChallenges.find(
-    (c) => c.id > currentChallengeId && c.difficulty === currentDifficulty
-  );
-  if (sameDifficultyChallenge) return sameDifficultyChallenge;
+    (c) => c.id > currentChallengeId && c.difficulty === currentDifficulty,
+  )
+  if (sameDifficultyChallenge) return sameDifficultyChallenge
 
   // Step 2: Find next challenge with closest difficulty and same language
   for (let i = 1; i < difficultyOrder.length; i++) {
-    const nextDifficultyUp = difficultyOrder[currentDifficultyIndex + i];
-    const nextDifficultyDown = difficultyOrder[currentDifficultyIndex - i];
-    
+    const nextDifficultyUp = difficultyOrder[currentDifficultyIndex + i]
+    const nextDifficultyDown = difficultyOrder[currentDifficultyIndex - i]
+
     const nextChallenge = languageFilteredChallenges.find(
-      (c) =>
-        c.id > currentChallengeId &&
-        (c.difficulty === nextDifficultyUp || c.difficulty === nextDifficultyDown)
-    );
-    if (nextChallenge) return nextChallenge;
+      (c) => c.id > currentChallengeId && (c.difficulty === nextDifficultyUp || c.difficulty === nextDifficultyDown),
+    )
+    if (nextChallenge) return nextChallenge
   }
 
   // Step 3: Fallback to next sequential challenge in the same language
-  const nextId = currentChallengeId + 1;
-  return languageFilteredChallenges.find((c) => c.id === nextId) || null;
+  const nextId = currentChallengeId + 1
+  return languageFilteredChallenges.find((c) => c.id === nextId) || null
+}
+
+export function getDailyChallenge(): { id: number; title: string; difficulty: string; language: string } | null {
+  const challenges = [
+    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
+    { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
+    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy", language: "javascript" },
+    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy", language: "javascript" },
+    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium", language: "python" },
+    { id: 6, title: "Factorial of a Number", difficulty: "easy", language: "java" },
+    { id: 7, title: "Fibonacci Sequence", difficulty: "medium", language: "javascript" },
+    { id: 8, title: "Sort an Array", difficulty: "medium", language: "python" },
+    { id: 9, title: "Binary Search", difficulty: "hard", language: "java" },
+    { id: 10, title: "Count Vowels in a String", difficulty: "very easy", language: "javascript" },
+    { id: 11, title: "Reverse a String", difficulty: "easy", language: "javascript" },
+    { id: 12, title: "Check for Prime Number", difficulty: "medium", language: "javascript" },
+    { id: 13, title: "Sum of Array Elements", difficulty: "easy", language: "javascript" },
+    { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
+    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
+    { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
+  ]
+
+  const progress = getUserProgress()
+  const today = new Date().toDateString()
+
+  // Check if we already have a daily challenge for today
+  if (progress.dailyChallenge && progress.dailyChallenge.date === today) {
+    const challenge = challenges.find((c) => c.id === progress.dailyChallenge!.challengeId)
+    return challenge || null
+  }
+
+  // Select a new daily challenge from uncompleted challenges
+  const uncompletedChallenges = challenges.filter((challenge) => !progress.completedChallenges.includes(challenge.id))
+
+  if (uncompletedChallenges.length === 0) {
+    return null // All challenges completed
+  }
+
+  // Use date as seed for consistent daily selection
+  const dateNumber = new Date().getDate() + new Date().getMonth() * 31 + new Date().getFullYear() * 365
+  const selectedChallenge = uncompletedChallenges[dateNumber % uncompletedChallenges.length]
+
+  // Save the daily challenge
+  const updatedProgress = {
+    ...progress,
+    dailyChallenge: {
+      challengeId: selectedChallenge.id,
+      date: today,
+    },
+  }
+  saveUserProgress(updatedProgress)
+
+  return selectedChallenge
+}
+
+export function isDailyChallenge(challengeId: number): boolean {
+  const progress = getUserProgress()
+  const today = new Date().toDateString()
+
+  return progress.dailyChallenge?.challengeId === challengeId && progress.dailyChallenge?.date === today
 }
