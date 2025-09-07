@@ -446,9 +446,10 @@ export default function ChallengesPage() {
 
     let dailyChallengesFromList: typeof challenges = []
     if (selectedLanguage !== "all" && dailyChallenges.length > 0) {
-      const dailyChallenge = dailyChallenges[0]
-      if (dailyChallenge.language.toLowerCase() === selectedLanguage) {
-        const fullDailyChallenge = challenges.find((c) => c.id === dailyChallenge.id)
+      const matchingDailyChallenge = dailyChallenges.find((dc) => dc.language.toLowerCase() === selectedLanguage)
+
+      if (matchingDailyChallenge) {
+        const fullDailyChallenge = challenges.find((c) => c.id === matchingDailyChallenge.id)
         if (fullDailyChallenge) {
           dailyChallengesFromList = [fullDailyChallenge]
         }
