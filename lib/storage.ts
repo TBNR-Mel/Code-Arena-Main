@@ -189,25 +189,91 @@ export function getNextChallenge(
   language = "javascript",
 ): { id: number; title: string; difficulty: string } | null {
   const challenges = [
-    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
-    { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
-    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy", language: "javascript" },
-    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy", language: "javascript" },
-    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium", language: "python" },
-    { id: 6, title: "Factorial of a Number", difficulty: "easy", language: "java" },
-    { id: 7, title: "Fibonacci Sequence", difficulty: "medium", language: "javascript" },
-    { id: 8, title: "Sort an Array", difficulty: "medium", language: "python" },
-    { id: 9, title: "Binary Search", difficulty: "hard", language: "java" },
-    { id: 10, title: "Count Vowels in a String", difficulty: "very easy", language: "javascript" },
-    { id: 11, title: "Reverse a String", difficulty: "easy", language: "javascript" },
-    { id: 12, title: "Check for Prime Number", difficulty: "medium", language: "javascript" },
-    { id: 13, title: "Sum of Array Elements", difficulty: "easy", language: "javascript" },
-    { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
-    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
-    { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
-    { id: 17, title: "Hello World", difficulty: "very easy", language: "c++" },
-    { id: 18, title: "Simple Calculator", difficulty: "easy", language: "c++" },
-    { id: 19, title: "Array Manipulation", difficulty: "medium", language: "c++" },
+    // JavaScript - Variables & Basic Operations (Concept 1)
+    {
+      id: 1,
+      title: "Declare and Use Variables",
+      difficulty: "very easy",
+      language: "javascript",
+      concept: "variables",
+    },
+    {
+      id: 2,
+      title: "Variable Assignment and Types",
+      difficulty: "very easy",
+      language: "javascript",
+      concept: "variables",
+    },
+    {
+      id: 3,
+      title: "Basic Arithmetic with Variables",
+      difficulty: "easy",
+      language: "javascript",
+      concept: "variables",
+    },
+    { id: 4, title: "Variable Scope Challenge", difficulty: "easy", language: "javascript", concept: "variables" },
+    { id: 5, title: "Complex Variable Operations", difficulty: "medium", language: "javascript", concept: "variables" },
+
+    // JavaScript - Functions (Concept 2)
+    {
+      id: 6,
+      title: "Create Your First Function",
+      difficulty: "very easy",
+      language: "javascript",
+      concept: "functions",
+    },
+    {
+      id: 7,
+      title: "Function Parameters and Return",
+      difficulty: "easy",
+      language: "javascript",
+      concept: "functions",
+    },
+    { id: 8, title: "Arrow Functions", difficulty: "easy", language: "javascript", concept: "functions" },
+    { id: 9, title: "Higher-Order Functions", difficulty: "medium", language: "javascript", concept: "functions" },
+    { id: 10, title: "Function Closures", difficulty: "hard", language: "javascript", concept: "functions" },
+
+    // JavaScript - Arrays (Concept 3)
+    { id: 11, title: "Array Basics", difficulty: "very easy", language: "javascript", concept: "arrays" },
+    { id: 12, title: "Array Methods - Push, Pop", difficulty: "easy", language: "javascript", concept: "arrays" },
+    { id: 13, title: "Array Iteration", difficulty: "easy", language: "javascript", concept: "arrays" },
+    { id: 14, title: "Array Filtering and Mapping", difficulty: "medium", language: "javascript", concept: "arrays" },
+    { id: 15, title: "Complex Array Algorithms", difficulty: "hard", language: "javascript", concept: "arrays" },
+
+    // JavaScript - Objects (Concept 4)
+    { id: 16, title: "Object Creation and Properties", difficulty: "easy", language: "javascript", concept: "objects" },
+    { id: 17, title: "Object Methods", difficulty: "easy", language: "javascript", concept: "objects" },
+    { id: 18, title: "Object Destructuring", difficulty: "medium", language: "javascript", concept: "objects" },
+    { id: 19, title: "Nested Objects", difficulty: "medium", language: "javascript", concept: "objects" },
+    { id: 20, title: "Object-Oriented Programming", difficulty: "hard", language: "javascript", concept: "objects" },
+
+    // Python - Variables & Basic Operations (Concept 1)
+    { id: 21, title: "Python Variables and Types", difficulty: "very easy", language: "python", concept: "variables" },
+    { id: 22, title: "String Operations", difficulty: "very easy", language: "python", concept: "variables" },
+    { id: 23, title: "Number Operations", difficulty: "easy", language: "python", concept: "variables" },
+    { id: 24, title: "Type Conversion", difficulty: "easy", language: "python", concept: "variables" },
+    { id: 25, title: "Advanced Variable Manipulation", difficulty: "medium", language: "python", concept: "variables" },
+
+    // Python - Control Flow (Concept 2)
+    { id: 26, title: "If Statements", difficulty: "very easy", language: "python", concept: "control-flow" },
+    { id: 27, title: "For Loops", difficulty: "easy", language: "python", concept: "control-flow" },
+    { id: 28, title: "While Loops", difficulty: "easy", language: "python", concept: "control-flow" },
+    { id: 29, title: "Nested Loops", difficulty: "medium", language: "python", concept: "control-flow" },
+    { id: 30, title: "Complex Conditional Logic", difficulty: "hard", language: "python", concept: "control-flow" },
+
+    // Java - Basic Syntax (Concept 1)
+    { id: 31, title: "Hello World in Java", difficulty: "very easy", language: "java", concept: "basics" },
+    { id: 32, title: "Variables and Data Types", difficulty: "very easy", language: "java", concept: "basics" },
+    { id: 33, title: "Basic Input/Output", difficulty: "easy", language: "java", concept: "basics" },
+    { id: 34, title: "Method Creation", difficulty: "easy", language: "java", concept: "basics" },
+    { id: 35, title: "Class Structure", difficulty: "medium", language: "java", concept: "basics" },
+
+    // C++ - Fundamentals (Concept 1)
+    { id: 36, title: "Hello World in C++", difficulty: "very easy", language: "c++", concept: "basics" },
+    { id: 37, title: "Variables and Constants", difficulty: "very easy", language: "c++", concept: "basics" },
+    { id: 38, title: "Basic I/O Operations", difficulty: "easy", language: "c++", concept: "basics" },
+    { id: 39, title: "Functions in C++", difficulty: "easy", language: "c++", concept: "basics" },
+    { id: 40, title: "Pointers and References", difficulty: "medium", language: "c++", concept: "basics" },
   ]
 
   // Get completed challenges from user progress
@@ -253,25 +319,91 @@ export function getNextChallenge(
 
 export function getDailyChallenges(): { id: number; title: string; difficulty: string; language: string }[] {
   const challenges = [
-    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
-    { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
-    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy", language: "javascript" },
-    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy", language: "javascript" },
-    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium", language: "python" },
-    { id: 6, title: "Factorial of a Number", difficulty: "easy", language: "java" },
-    { id: 7, title: "Fibonacci Sequence", difficulty: "medium", language: "javascript" },
-    { id: 8, title: "Sort an Array", difficulty: "medium", language: "python" },
-    { id: 9, title: "Binary Search", difficulty: "hard", language: "java" },
-    { id: 10, title: "Count Vowels in a String", difficulty: "very easy", language: "javascript" },
-    { id: 11, title: "Reverse a String", difficulty: "easy", language: "javascript" },
-    { id: 12, title: "Check for Prime Number", difficulty: "medium", language: "javascript" },
-    { id: 13, title: "Sum of Array Elements", difficulty: "easy", language: "javascript" },
-    { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
-    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
-    { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
-    { id: 17, title: "Hello World", difficulty: "very easy", language: "c++" },
-    { id: 18, title: "Simple Calculator", difficulty: "easy", language: "c++" },
-    { id: 19, title: "Array Manipulation", difficulty: "medium", language: "c++" },
+    // JavaScript - Variables & Basic Operations (Concept 1)
+    {
+      id: 1,
+      title: "Declare and Use Variables",
+      difficulty: "very easy",
+      language: "javascript",
+      concept: "variables",
+    },
+    {
+      id: 2,
+      title: "Variable Assignment and Types",
+      difficulty: "very easy",
+      language: "javascript",
+      concept: "variables",
+    },
+    {
+      id: 3,
+      title: "Basic Arithmetic with Variables",
+      difficulty: "easy",
+      language: "javascript",
+      concept: "variables",
+    },
+    { id: 4, title: "Variable Scope Challenge", difficulty: "easy", language: "javascript", concept: "variables" },
+    { id: 5, title: "Complex Variable Operations", difficulty: "medium", language: "javascript", concept: "variables" },
+
+    // JavaScript - Functions (Concept 2)
+    {
+      id: 6,
+      title: "Create Your First Function",
+      difficulty: "very easy",
+      language: "javascript",
+      concept: "functions",
+    },
+    {
+      id: 7,
+      title: "Function Parameters and Return",
+      difficulty: "easy",
+      language: "javascript",
+      concept: "functions",
+    },
+    { id: 8, title: "Arrow Functions", difficulty: "easy", language: "javascript", concept: "functions" },
+    { id: 9, title: "Higher-Order Functions", difficulty: "medium", language: "javascript", concept: "functions" },
+    { id: 10, title: "Function Closures", difficulty: "hard", language: "javascript", concept: "functions" },
+
+    // JavaScript - Arrays (Concept 3)
+    { id: 11, title: "Array Basics", difficulty: "very easy", language: "javascript", concept: "arrays" },
+    { id: 12, title: "Array Methods - Push, Pop", difficulty: "easy", language: "javascript", concept: "arrays" },
+    { id: 13, title: "Array Iteration", difficulty: "easy", language: "javascript", concept: "arrays" },
+    { id: 14, title: "Array Filtering and Mapping", difficulty: "medium", language: "javascript", concept: "arrays" },
+    { id: 15, title: "Complex Array Algorithms", difficulty: "hard", language: "javascript", concept: "arrays" },
+
+    // JavaScript - Objects (Concept 4)
+    { id: 16, title: "Object Creation and Properties", difficulty: "easy", language: "javascript", concept: "objects" },
+    { id: 17, title: "Object Methods", difficulty: "easy", language: "javascript", concept: "objects" },
+    { id: 18, title: "Object Destructuring", difficulty: "medium", language: "javascript", concept: "objects" },
+    { id: 19, title: "Nested Objects", difficulty: "medium", language: "javascript", concept: "objects" },
+    { id: 20, title: "Object-Oriented Programming", difficulty: "hard", language: "javascript", concept: "objects" },
+
+    // Python - Variables & Basic Operations (Concept 1)
+    { id: 21, title: "Python Variables and Types", difficulty: "very easy", language: "python", concept: "variables" },
+    { id: 22, title: "String Operations", difficulty: "very easy", language: "python", concept: "variables" },
+    { id: 23, title: "Number Operations", difficulty: "easy", language: "python", concept: "variables" },
+    { id: 24, title: "Type Conversion", difficulty: "easy", language: "python", concept: "variables" },
+    { id: 25, title: "Advanced Variable Manipulation", difficulty: "medium", language: "python", concept: "variables" },
+
+    // Python - Control Flow (Concept 2)
+    { id: 26, title: "If Statements", difficulty: "very easy", language: "python", concept: "control-flow" },
+    { id: 27, title: "For Loops", difficulty: "easy", language: "python", concept: "control-flow" },
+    { id: 28, title: "While Loops", difficulty: "easy", language: "python", concept: "control-flow" },
+    { id: 29, title: "Nested Loops", difficulty: "medium", language: "python", concept: "control-flow" },
+    { id: 30, title: "Complex Conditional Logic", difficulty: "hard", language: "python", concept: "control-flow" },
+
+    // Java - Basic Syntax (Concept 1)
+    { id: 31, title: "Hello World in Java", difficulty: "very easy", language: "java", concept: "basics" },
+    { id: 32, title: "Variables and Data Types", difficulty: "very easy", language: "java", concept: "basics" },
+    { id: 33, title: "Basic Input/Output", difficulty: "easy", language: "java", concept: "basics" },
+    { id: 34, title: "Method Creation", difficulty: "easy", language: "java", concept: "basics" },
+    { id: 35, title: "Class Structure", difficulty: "medium", language: "java", concept: "basics" },
+
+    // C++ - Fundamentals (Concept 1)
+    { id: 36, title: "Hello World in C++", difficulty: "very easy", language: "c++", concept: "basics" },
+    { id: 37, title: "Variables and Constants", difficulty: "very easy", language: "c++", concept: "basics" },
+    { id: 38, title: "Basic I/O Operations", difficulty: "easy", language: "c++", concept: "basics" },
+    { id: 39, title: "Functions in C++", difficulty: "easy", language: "c++", concept: "basics" },
+    { id: 40, title: "Pointers and References", difficulty: "medium", language: "c++", concept: "basics" },
   ]
 
   const progress = getUserProgress()
@@ -298,9 +430,10 @@ export function getDailyChallenges(): { id: number; title: string; difficulty: s
 
     if (uncompletedChallenges.length > 0) {
       // Use date and language as seed for consistent daily selection
-      const dateNumber = new Date().getDate() + new Date().getMonth() * 31 + new Date().getFullYear() * 365
+      const daysSinceEpoch = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24))
       const languageHash = language.split("").reduce((a, b) => a + b.charCodeAt(0), 0)
-      const selectedChallenge = uncompletedChallenges[(dateNumber + languageHash) % uncompletedChallenges.length]
+      const seedValue = (daysSinceEpoch + languageHash) % uncompletedChallenges.length
+      const selectedChallenge = uncompletedChallenges[seedValue]
 
       // Save the daily challenge for this language
       const updatedProgress = {

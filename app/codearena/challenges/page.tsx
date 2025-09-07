@@ -8,159 +8,381 @@ import { getUserProgress, getDailyChallenges, isDailyChallenge } from "@/lib/sto
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-// Mock challenge data
 const challenges = [
+  // JavaScript - Variables & Basic Operations (Concept 1)
   {
     id: 1,
-    title: "Return the Sum of Two Numbers",
-    description: "Create a function that takes two numbers as arguments and returns their sum.",
+    title: "Declare and Use Variables",
+    description: "Learn how to declare variables using let, const, and var. Understand the differences between them.",
     difficulty: "Very easy",
-    tags: ["geometry", "maths", "numbers"],
+    tags: ["variables", "basics", "syntax"],
     language: "javascript",
+    concept: "variables",
   },
   {
     id: 2,
-    title: "Area of a Triangle",
-    description: "Write a function that takes the base and height of a triangle and return its area.",
+    title: "Variable Assignment and Types",
+    description: "Practice assigning different data types to variables and understanding type coercion.",
     difficulty: "Very easy",
-    tags: ["geometry", "maths", "numbers"],
+    tags: ["variables", "types", "assignment"],
     language: "javascript",
+    concept: "variables",
   },
   {
     id: 3,
-    title: "Convert Minutes into Seconds",
-    description: "Write a function that takes an integer minutes and converts it to seconds.",
-    difficulty: "Very easy",
-    tags: ["maths", "numbers"],
+    title: "Basic Arithmetic with Variables",
+    description: "Perform mathematical operations using variables and understand operator precedence.",
+    difficulty: "Easy",
+    tags: ["variables", "arithmetic", "operators"],
     language: "javascript",
+    concept: "variables",
   },
   {
     id: 4,
-    title: "Find the Maximum Number in an Array",
-    description: "Create a function that finds and returns the maximum number in a given array.",
+    title: "Variable Scope Challenge",
+    description: "Understand block scope, function scope, and global scope with practical examples.",
     difficulty: "Easy",
-    tags: ["arrays", "maths"],
+    tags: ["variables", "scope", "functions"],
     language: "javascript",
+    concept: "variables",
   },
   {
     id: 5,
-    title: "Check if a String is a Palindrome",
-    description: "Write a function that checks if a given string is a palindrome.",
+    title: "Complex Variable Operations",
+    description: "Master advanced variable manipulation including destructuring and spread operators.",
     difficulty: "Medium",
-    tags: ["strings", "logic"],
-    language: "python",
+    tags: ["variables", "destructuring", "advanced"],
+    language: "javascript",
+    concept: "variables",
   },
+
+  // JavaScript - Functions (Concept 2)
   {
     id: 6,
-    title: "Factorial of a Number",
-    description: "Compute the factorial of a given number.",
-    difficulty: "Easy",
-    tags: ["maths", "recursion"],
-    language: "java",
+    title: "Create Your First Function",
+    description: "Learn how to declare and call functions. Understand function syntax and basic usage.",
+    difficulty: "Very easy",
+    tags: ["functions", "basics", "syntax"],
+    language: "javascript",
+    concept: "functions",
   },
   {
     id: 7,
-    title: "Fibonacci Sequence",
-    description: "Generate the Fibonacci sequence up to a given number.",
-    difficulty: "Medium",
-    tags: ["maths", "sequences"],
+    title: "Function Parameters and Return",
+    description: "Practice using parameters and return statements to create reusable functions.",
+    difficulty: "Easy",
+    tags: ["functions", "parameters", "return"],
     language: "javascript",
+    concept: "functions",
   },
   {
     id: 8,
-    title: "Sort an Array",
-    description: "Implement a function to sort an array in ascending order.",
-    difficulty: "Medium",
-    tags: ["arrays", "sorting"],
-    language: "python",
+    title: "Arrow Functions",
+    description: "Master arrow function syntax and understand when to use them over regular functions.",
+    difficulty: "Easy",
+    tags: ["functions", "arrow-functions", "syntax"],
+    language: "javascript",
+    concept: "functions",
   },
   {
     id: 9,
-    title: "Binary Search",
-    description: "Implement binary search on a sorted array.",
-    difficulty: "Hard",
-    tags: ["arrays", "searching"],
-    language: "java",
+    title: "Higher-Order Functions",
+    description: "Learn to create and use functions that take other functions as parameters.",
+    difficulty: "Medium",
+    tags: ["functions", "higher-order", "callbacks"],
+    language: "javascript",
+    concept: "functions",
   },
   {
     id: 10,
-    title: "Count Vowels in a String",
-    description: "Count the number of vowels in a given string.",
-    difficulty: "Very easy",
-    tags: ["strings"],
+    title: "Function Closures",
+    description: "Understand closures and how functions can access variables from outer scopes.",
+    difficulty: "Hard",
+    tags: ["functions", "closures", "scope"],
     language: "javascript",
+    concept: "functions",
   },
+
+  // JavaScript - Arrays (Concept 3)
   {
     id: 11,
-    title: "Reverse a String",
-    description: "Write a function that takes a string and returns it reversed.",
-    difficulty: "Easy",
-    tags: ["strings"],
+    title: "Array Basics",
+    description: "Learn how to create arrays, access elements, and understand array indexing.",
+    difficulty: "Very easy",
+    tags: ["arrays", "basics", "indexing"],
     language: "javascript",
+    concept: "arrays",
   },
   {
     id: 12,
-    title: "Check for Prime Number",
-    description: "Write a function that checks if a given number is prime.",
-    difficulty: "Medium",
-    tags: ["maths", "numbers"],
+    title: "Array Methods - Push, Pop",
+    description: "Practice using basic array methods to add and remove elements.",
+    difficulty: "Easy",
+    tags: ["arrays", "methods", "manipulation"],
     language: "javascript",
+    concept: "arrays",
   },
   {
     id: 13,
-    title: "Sum of Array Elements",
-    description: "Write a function that returns the sum of all numbers in an array.",
+    title: "Array Iteration",
+    description: "Learn different ways to loop through arrays using for loops and forEach.",
     difficulty: "Easy",
-    tags: ["arrays", "maths"],
+    tags: ["arrays", "iteration", "loops"],
     language: "javascript",
+    concept: "arrays",
   },
   {
     id: 14,
-    title: "Check for Anagram",
-    description: "Write a function that checks if two strings are anagrams of each other.",
+    title: "Array Filtering and Mapping",
+    description: "Master functional array methods like filter, map, and reduce.",
     difficulty: "Medium",
-    tags: ["strings", "logic"],
-    language: "python",
+    tags: ["arrays", "functional", "methods"],
+    language: "javascript",
+    concept: "arrays",
   },
   {
     id: 15,
-    title: "Find First Non-Repeated Character",
-    description: "Write a function that returns the first non-repeated character in a string.",
-    difficulty: "Medium",
-    tags: ["strings", "logic"],
-    language: "python",
+    title: "Complex Array Algorithms",
+    description: "Solve advanced array problems involving sorting, searching, and manipulation.",
+    difficulty: "Hard",
+    tags: ["arrays", "algorithms", "advanced"],
+    language: "javascript",
+    concept: "arrays",
   },
+
+  // JavaScript - Objects (Concept 4)
   {
     id: 16,
-    title: "Power of a Number",
-    description: "Write a function that calculates the power of a number (base raised to exponent).",
+    title: "Object Creation and Properties",
+    description: "Learn how to create objects and access their properties using dot and bracket notation.",
     difficulty: "Easy",
-    tags: ["maths", "numbers"],
-    language: "python",
+    tags: ["objects", "properties", "basics"],
+    language: "javascript",
+    concept: "objects",
   },
   {
     id: 17,
-    title: "Hello World",
-    description: "Write a program that outputs 'Hello, World!' to the console.",
-    difficulty: "Very easy",
-    tags: ["basics", "output"],
-    language: "c++",
+    title: "Object Methods",
+    description: "Add methods to objects and understand the 'this' keyword in object context.",
+    difficulty: "Easy",
+    tags: ["objects", "methods", "this"],
+    language: "javascript",
+    concept: "objects",
   },
   {
     id: 18,
-    title: "Simple Calculator",
-    description: "Create a basic calculator that can perform addition, subtraction, multiplication, and division.",
-    difficulty: "Easy",
-    tags: ["maths", "input"],
-    language: "c++",
+    title: "Object Destructuring",
+    description: "Master object destructuring to extract properties into variables efficiently.",
+    difficulty: "Medium",
+    tags: ["objects", "destructuring", "syntax"],
+    language: "javascript",
+    concept: "objects",
   },
   {
     id: 19,
-    title: "Array Manipulation",
-    description: "Write a program that finds the largest and smallest elements in an array.",
+    title: "Nested Objects",
+    description: "Work with complex nested object structures and deep property access.",
     difficulty: "Medium",
-    tags: ["arrays", "logic"],
+    tags: ["objects", "nested", "complex"],
+    language: "javascript",
+    concept: "objects",
+  },
+  {
+    id: 20,
+    title: "Object-Oriented Programming",
+    description: "Implement classes, inheritance, and encapsulation using JavaScript objects.",
+    difficulty: "Hard",
+    tags: ["objects", "oop", "classes"],
+    language: "javascript",
+    concept: "objects",
+  },
+
+  // Python - Variables & Basic Operations (Concept 1)
+  {
+    id: 21,
+    title: "Python Variables and Types",
+    description: "Learn Python variable declaration and understand dynamic typing.",
+    difficulty: "Very easy",
+    tags: ["variables", "types", "basics"],
+    language: "python",
+    concept: "variables",
+  },
+  {
+    id: 22,
+    title: "String Operations",
+    description: "Master string manipulation, concatenation, and formatting in Python.",
+    difficulty: "Very easy",
+    tags: ["strings", "operations", "formatting"],
+    language: "python",
+    concept: "variables",
+  },
+  {
+    id: 23,
+    title: "Number Operations",
+    description: "Work with integers, floats, and mathematical operations in Python.",
+    difficulty: "Easy",
+    tags: ["numbers", "math", "operations"],
+    language: "python",
+    concept: "variables",
+  },
+  {
+    id: 24,
+    title: "Type Conversion",
+    description: "Learn how to convert between different data types in Python.",
+    difficulty: "Easy",
+    tags: ["types", "conversion", "casting"],
+    language: "python",
+    concept: "variables",
+  },
+  {
+    id: 25,
+    title: "Advanced Variable Manipulation",
+    description: "Master complex variable operations including unpacking and multiple assignment.",
+    difficulty: "Medium",
+    tags: ["variables", "unpacking", "advanced"],
+    language: "python",
+    concept: "variables",
+  },
+
+  // Python - Control Flow (Concept 2)
+  {
+    id: 26,
+    title: "If Statements",
+    description: "Learn conditional logic using if, elif, and else statements.",
+    difficulty: "Very easy",
+    tags: ["conditionals", "if", "logic"],
+    language: "python",
+    concept: "control-flow",
+  },
+  {
+    id: 27,
+    title: "For Loops",
+    description: "Master for loops and iteration over sequences in Python.",
+    difficulty: "Easy",
+    tags: ["loops", "for", "iteration"],
+    language: "python",
+    concept: "control-flow",
+  },
+  {
+    id: 28,
+    title: "While Loops",
+    description: "Understand while loops and when to use them for repetitive tasks.",
+    difficulty: "Easy",
+    tags: ["loops", "while", "repetition"],
+    language: "python",
+    concept: "control-flow",
+  },
+  {
+    id: 29,
+    title: "Nested Loops",
+    description: "Work with nested loop structures and understand their complexity.",
+    difficulty: "Medium",
+    tags: ["loops", "nested", "complexity"],
+    language: "python",
+    concept: "control-flow",
+  },
+  {
+    id: 30,
+    title: "Complex Conditional Logic",
+    description: "Solve problems requiring advanced conditional statements and logical operators.",
+    difficulty: "Hard",
+    tags: ["conditionals", "logic", "advanced"],
+    language: "python",
+    concept: "control-flow",
+  },
+
+  // Java - Basic Syntax (Concept 1)
+  {
+    id: 31,
+    title: "Hello World in Java",
+    description: "Write your first Java program and understand the basic structure.",
+    difficulty: "Very easy",
+    tags: ["basics", "syntax", "hello-world"],
+    language: "java",
+    concept: "basics",
+  },
+  {
+    id: 32,
+    title: "Variables and Data Types",
+    description: "Learn Java's strongly-typed system and variable declarations.",
+    difficulty: "Very easy",
+    tags: ["variables", "types", "declarations"],
+    language: "java",
+    concept: "basics",
+  },
+  {
+    id: 33,
+    title: "Basic Input/Output",
+    description: "Handle user input and output using Scanner and System.out.",
+    difficulty: "Easy",
+    tags: ["input", "output", "scanner"],
+    language: "java",
+    concept: "basics",
+  },
+  {
+    id: 34,
+    title: "Method Creation",
+    description: "Create and use methods with parameters and return types.",
+    difficulty: "Easy",
+    tags: ["methods", "functions", "parameters"],
+    language: "java",
+    concept: "basics",
+  },
+  {
+    id: 35,
+    title: "Class Structure",
+    description: "Understand Java classes, objects, and object-oriented principles.",
+    difficulty: "Medium",
+    tags: ["classes", "objects", "oop"],
+    language: "java",
+    concept: "basics",
+  },
+
+  // C++ - Fundamentals (Concept 1)
+  {
+    id: 36,
+    title: "Hello World in C++",
+    description: "Write your first C++ program and understand compilation.",
+    difficulty: "Very easy",
+    tags: ["basics", "hello-world", "compilation"],
     language: "c++",
+    concept: "basics",
+  },
+  {
+    id: 37,
+    title: "Variables and Constants",
+    description: "Learn C++ variable declarations and the const keyword.",
+    difficulty: "Very easy",
+    tags: ["variables", "constants", "declarations"],
+    language: "c++",
+    concept: "basics",
+  },
+  {
+    id: 38,
+    title: "Basic I/O Operations",
+    description: "Use cin and cout for input and output operations.",
+    difficulty: "Easy",
+    tags: ["input", "output", "streams"],
+    language: "c++",
+    concept: "basics",
+  },
+  {
+    id: 39,
+    title: "Functions in C++",
+    description: "Create functions with parameters, return types, and function overloading.",
+    difficulty: "Easy",
+    tags: ["functions", "parameters", "overloading"],
+    language: "c++",
+    concept: "basics",
+  },
+  {
+    id: 40,
+    title: "Pointers and References",
+    description: "Understand memory management with pointers and reference variables.",
+    difficulty: "Medium",
+    tags: ["pointers", "references", "memory"],
+    language: "c++",
+    concept: "basics",
   },
 ]
 
@@ -176,6 +398,7 @@ export default function ChallengesPage() {
   >([])
   const [selectedLanguage, setSelectedLanguage] = useState("javascript")
   const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
+  const [selectedConcept, setSelectedConcept] = useState("all")
   const [filteredChallenges, setFilteredChallenges] = useState(challenges)
 
   useEffect(() => {
@@ -183,9 +406,11 @@ export default function ChallengesPage() {
       typeof window !== "undefined" ? localStorage.getItem("challengeLanguage") || "javascript" : "javascript"
     const storedDifficulty =
       typeof window !== "undefined" ? localStorage.getItem("challengeDifficulty") || "very-easy" : "very-easy"
+    const storedConcept = typeof window !== "undefined" ? localStorage.getItem("challengeConcept") || "all" : "all"
 
     setSelectedLanguage(storedLanguage)
     setSelectedDifficulty(storedDifficulty)
+    setSelectedConcept(storedConcept)
 
     const progress = getUserProgress()
     setCompletedChallenges(progress.completedChallenges)
@@ -209,7 +434,8 @@ export default function ChallengesPage() {
       const langMatch = selectedLanguage === "all" || challenge.language.toLowerCase() === selectedLanguage
       const diffMatch =
         selectedDifficulty === "all" || challenge.difficulty.toLowerCase() === selectedDifficulty.replace("-", " ")
-      return langMatch && diffMatch
+      const conceptMatch = selectedConcept === "all" || challenge.concept.toLowerCase() === selectedConcept
+      return langMatch && diffMatch && conceptMatch
     })
 
     const dailyChallengeIds = dailyChallenges.map((dc) => dc.id)
@@ -225,7 +451,7 @@ export default function ChallengesPage() {
 
     // Put daily challenges first (only when specific language selected), then regular filtered challenges
     setFilteredChallenges([...dailyChallengesFromList, ...nonDailyChallenges])
-  }, [selectedLanguage, selectedDifficulty, dailyChallenges])
+  }, [selectedLanguage, selectedDifficulty, selectedConcept, dailyChallenges])
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
@@ -238,6 +464,13 @@ export default function ChallengesPage() {
     setSelectedDifficulty(value)
     if (typeof window !== "undefined") {
       localStorage.setItem("challengeDifficulty", value)
+    }
+  }
+
+  const handleConceptChange = (value: string) => {
+    setSelectedConcept(value)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("challengeConcept", value)
     }
   }
 
@@ -285,6 +518,20 @@ export default function ChallengesPage() {
                   <SelectItem value="easy">Easy</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="hard">Hard</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={selectedConcept} onValueChange={handleConceptChange}>
+                <SelectTrigger className="w-full bg-muted">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="variables">Variables</SelectItem>
+                  <SelectItem value="functions">Functions</SelectItem>
+                  <SelectItem value="arrays">Arrays</SelectItem>
+                  <SelectItem value="objects">Objects</SelectItem>
+                  <SelectItem value="control-flow">Control Flow</SelectItem>
+                  <SelectItem value="basics">Basics</SelectItem>
                 </SelectContent>
               </Select>
             </div>
