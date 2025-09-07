@@ -13,7 +13,8 @@ const challenges = [
   {
     id: 1,
     title: "Declare and Use Variables",
-    description: "Learn how to declare variables using let, const, and var. Understand the differences between them.",
+    description:
+      "Variables Concept: Learn how to declare variables using let, const, and var. Understand the differences between them.",
     difficulty: "Very easy",
     tags: ["variables", "basics", "syntax"],
     language: "javascript",
@@ -22,7 +23,8 @@ const challenges = [
   {
     id: 2,
     title: "Variable Assignment and Types",
-    description: "Practice assigning different data types to variables and understanding type coercion.",
+    description:
+      "Variables Concept: Practice assigning different data types to variables and understanding type coercion.",
     difficulty: "Very easy",
     tags: ["variables", "types", "assignment"],
     language: "javascript",
@@ -31,7 +33,8 @@ const challenges = [
   {
     id: 3,
     title: "Basic Arithmetic with Variables",
-    description: "Perform mathematical operations using variables and understand operator precedence.",
+    description:
+      "Variables Concept: Perform mathematical operations using variables and understand operator precedence.",
     difficulty: "Easy",
     tags: ["variables", "arithmetic", "operators"],
     language: "javascript",
@@ -40,7 +43,7 @@ const challenges = [
   {
     id: 4,
     title: "Variable Scope Challenge",
-    description: "Understand block scope, function scope, and global scope with practical examples.",
+    description: "Variables Concept: Understand block scope, function scope, and global scope with practical examples.",
     difficulty: "Easy",
     tags: ["variables", "scope", "functions"],
     language: "javascript",
@@ -49,7 +52,8 @@ const challenges = [
   {
     id: 5,
     title: "Complex Variable Operations",
-    description: "Master advanced variable manipulation including destructuring and spread operators.",
+    description:
+      "Variables Concept: Master advanced variable manipulation including destructuring and spread operators.",
     difficulty: "Medium",
     tags: ["variables", "destructuring", "advanced"],
     language: "javascript",
@@ -60,7 +64,8 @@ const challenges = [
   {
     id: 6,
     title: "Create Your First Function",
-    description: "Learn how to declare and call functions. Understand function syntax and basic usage.",
+    description:
+      "Functions Concept: Learn how to declare and call functions. Understand function syntax and basic usage.",
     difficulty: "Very easy",
     tags: ["functions", "basics", "syntax"],
     language: "javascript",
@@ -69,7 +74,7 @@ const challenges = [
   {
     id: 7,
     title: "Function Parameters and Return",
-    description: "Practice using parameters and return statements to create reusable functions.",
+    description: "Functions Concept: Practice using parameters and return statements to create reusable functions.",
     difficulty: "Easy",
     tags: ["functions", "parameters", "return"],
     language: "javascript",
@@ -78,7 +83,8 @@ const challenges = [
   {
     id: 8,
     title: "Arrow Functions",
-    description: "Master arrow function syntax and understand when to use them over regular functions.",
+    description:
+      "Functions Concept: Master arrow function syntax and understand when to use them over regular functions.",
     difficulty: "Easy",
     tags: ["functions", "arrow-functions", "syntax"],
     language: "javascript",
@@ -87,7 +93,7 @@ const challenges = [
   {
     id: 9,
     title: "Higher-Order Functions",
-    description: "Learn to create and use functions that take other functions as parameters.",
+    description: "Functions Concept: Learn to create and use functions that take other functions as parameters.",
     difficulty: "Medium",
     tags: ["functions", "higher-order", "callbacks"],
     language: "javascript",
@@ -96,7 +102,7 @@ const challenges = [
   {
     id: 10,
     title: "Function Closures",
-    description: "Understand closures and how functions can access variables from outer scopes.",
+    description: "Functions Concept: Understand closures and how functions can access variables from outer scopes.",
     difficulty: "Hard",
     tags: ["functions", "closures", "scope"],
     language: "javascript",
@@ -107,7 +113,7 @@ const challenges = [
   {
     id: 11,
     title: "Array Basics",
-    description: "Learn how to create arrays, access elements, and understand array indexing.",
+    description: "Arrays Concept: Learn how to create arrays, access elements, and understand array indexing.",
     difficulty: "Very easy",
     tags: ["arrays", "basics", "indexing"],
     language: "javascript",
@@ -116,7 +122,7 @@ const challenges = [
   {
     id: 12,
     title: "Array Methods - Push, Pop",
-    description: "Practice using basic array methods to add and remove elements.",
+    description: "Arrays Concept: Practice using basic array methods to add and remove elements.",
     difficulty: "Easy",
     tags: ["arrays", "methods", "manipulation"],
     language: "javascript",
@@ -125,7 +131,7 @@ const challenges = [
   {
     id: 13,
     title: "Array Iteration",
-    description: "Learn different ways to loop through arrays using for loops and forEach.",
+    description: "Arrays Concept: Learn different ways to loop through arrays using for loops and forEach.",
     difficulty: "Easy",
     tags: ["arrays", "iteration", "loops"],
     language: "javascript",
@@ -134,7 +140,7 @@ const challenges = [
   {
     id: 14,
     title: "Array Filtering and Mapping",
-    description: "Master functional array methods like filter, map, and reduce.",
+    description: "Arrays Concept: Master functional array methods like filter, map, and reduce.",
     difficulty: "Medium",
     tags: ["arrays", "functional", "methods"],
     language: "javascript",
@@ -143,7 +149,7 @@ const challenges = [
   {
     id: 15,
     title: "Complex Array Algorithms",
-    description: "Solve advanced array problems involving sorting, searching, and manipulation.",
+    description: "Arrays Concept: Solve advanced array problems involving sorting, searching, and manipulation.",
     difficulty: "Hard",
     tags: ["arrays", "algorithms", "advanced"],
     language: "javascript",
@@ -154,7 +160,8 @@ const challenges = [
   {
     id: 16,
     title: "Object Creation and Properties",
-    description: "Learn how to create objects and access their properties using dot and bracket notation.",
+    description:
+      "Objects Concept: Learn how to create objects and access their properties using dot and bracket notation.",
     difficulty: "Easy",
     tags: ["objects", "properties", "basics"],
     language: "javascript",
@@ -163,7 +170,7 @@ const challenges = [
   {
     id: 17,
     title: "Object Methods",
-    description: "Add methods to objects and understand the 'this' keyword in object context.",
+    description: "Objects Concept: Add methods to objects and understand the 'this' keyword in object context.",
     difficulty: "Easy",
     tags: ["objects", "methods", "this"],
     language: "javascript",
@@ -172,7 +179,7 @@ const challenges = [
   {
     id: 18,
     title: "Object Destructuring",
-    description: "Master object destructuring to extract properties into variables efficiently.",
+    description: "Objects Concept: Master object destructuring to extract properties into variables efficiently.",
     difficulty: "Medium",
     tags: ["objects", "destructuring", "syntax"],
     language: "javascript",
@@ -181,7 +188,7 @@ const challenges = [
   {
     id: 19,
     title: "Nested Objects",
-    description: "Work with complex nested object structures and deep property access.",
+    description: "Objects Concept: Work with complex nested object structures and deep property access.",
     difficulty: "Medium",
     tags: ["objects", "nested", "complex"],
     language: "javascript",
@@ -190,7 +197,7 @@ const challenges = [
   {
     id: 20,
     title: "Object-Oriented Programming",
-    description: "Implement classes, inheritance, and encapsulation using JavaScript objects.",
+    description: "Objects Concept: Implement classes, inheritance, and encapsulation using JavaScript objects.",
     difficulty: "Hard",
     tags: ["objects", "oop", "classes"],
     language: "javascript",
@@ -201,7 +208,7 @@ const challenges = [
   {
     id: 21,
     title: "Python Variables and Types",
-    description: "Learn Python variable declaration and understand dynamic typing.",
+    description: "Variables Concept: Learn Python variable declaration and understand dynamic typing.",
     difficulty: "Very easy",
     tags: ["variables", "types", "basics"],
     language: "python",
@@ -210,7 +217,7 @@ const challenges = [
   {
     id: 22,
     title: "String Operations",
-    description: "Master string manipulation, concatenation, and formatting in Python.",
+    description: "Variables Concept: Master string manipulation, concatenation, and formatting in Python.",
     difficulty: "Very easy",
     tags: ["strings", "operations", "formatting"],
     language: "python",
@@ -219,7 +226,7 @@ const challenges = [
   {
     id: 23,
     title: "Number Operations",
-    description: "Work with integers, floats, and mathematical operations in Python.",
+    description: "Variables Concept: Work with integers, floats, and mathematical operations in Python.",
     difficulty: "Easy",
     tags: ["numbers", "math", "operations"],
     language: "python",
@@ -228,7 +235,7 @@ const challenges = [
   {
     id: 24,
     title: "Type Conversion",
-    description: "Learn how to convert between different data types in Python.",
+    description: "Variables Concept: Learn how to convert between different data types in Python.",
     difficulty: "Easy",
     tags: ["types", "conversion", "casting"],
     language: "python",
@@ -237,7 +244,7 @@ const challenges = [
   {
     id: 25,
     title: "Advanced Variable Manipulation",
-    description: "Master complex variable operations including unpacking and multiple assignment.",
+    description: "Variables Concept: Master complex variable operations including unpacking and multiple assignment.",
     difficulty: "Medium",
     tags: ["variables", "unpacking", "advanced"],
     language: "python",
@@ -248,7 +255,7 @@ const challenges = [
   {
     id: 26,
     title: "If Statements",
-    description: "Learn conditional logic using if, elif, and else statements.",
+    description: "Control Flow Concept: Learn conditional logic using if, elif, and else statements.",
     difficulty: "Very easy",
     tags: ["conditionals", "if", "logic"],
     language: "python",
@@ -257,7 +264,7 @@ const challenges = [
   {
     id: 27,
     title: "For Loops",
-    description: "Master for loops and iteration over sequences in Python.",
+    description: "Control Flow Concept: Master for loops and iteration over sequences in Python.",
     difficulty: "Easy",
     tags: ["loops", "for", "iteration"],
     language: "python",
@@ -266,7 +273,7 @@ const challenges = [
   {
     id: 28,
     title: "While Loops",
-    description: "Understand while loops and when to use them for repetitive tasks.",
+    description: "Control Flow Concept: Understand while loops and when to use them for repetitive tasks.",
     difficulty: "Easy",
     tags: ["loops", "while", "repetition"],
     language: "python",
@@ -275,7 +282,7 @@ const challenges = [
   {
     id: 29,
     title: "Nested Loops",
-    description: "Work with nested loop structures and understand their complexity.",
+    description: "Control Flow Concept: Work with nested loop structures and understand their complexity.",
     difficulty: "Medium",
     tags: ["loops", "nested", "complexity"],
     language: "python",
@@ -284,7 +291,8 @@ const challenges = [
   {
     id: 30,
     title: "Complex Conditional Logic",
-    description: "Solve problems requiring advanced conditional statements and logical operators.",
+    description:
+      "Control Flow Concept: Solve problems requiring advanced conditional statements and logical operators.",
     difficulty: "Hard",
     tags: ["conditionals", "logic", "advanced"],
     language: "python",
@@ -295,7 +303,7 @@ const challenges = [
   {
     id: 31,
     title: "Hello World in Java",
-    description: "Write your first Java program and understand the basic structure.",
+    description: "Basics Concept: Write your first Java program and understand the basic structure.",
     difficulty: "Very easy",
     tags: ["basics", "syntax", "hello-world"],
     language: "java",
@@ -304,7 +312,7 @@ const challenges = [
   {
     id: 32,
     title: "Variables and Data Types",
-    description: "Learn Java's strongly-typed system and variable declarations.",
+    description: "Basics Concept: Learn Java's strongly-typed system and variable declarations.",
     difficulty: "Very easy",
     tags: ["variables", "types", "declarations"],
     language: "java",
@@ -313,7 +321,7 @@ const challenges = [
   {
     id: 33,
     title: "Basic Input/Output",
-    description: "Handle user input and output using Scanner and System.out.",
+    description: "Basics Concept: Handle user input and output using Scanner and System.out.",
     difficulty: "Easy",
     tags: ["input", "output", "scanner"],
     language: "java",
@@ -322,7 +330,7 @@ const challenges = [
   {
     id: 34,
     title: "Method Creation",
-    description: "Create and use methods with parameters and return types.",
+    description: "Basics Concept: Create and use methods with parameters and return types.",
     difficulty: "Easy",
     tags: ["methods", "functions", "parameters"],
     language: "java",
@@ -331,7 +339,7 @@ const challenges = [
   {
     id: 35,
     title: "Class Structure",
-    description: "Understand Java classes, objects, and object-oriented principles.",
+    description: "Basics Concept: Understand Java classes, objects, and object-oriented principles.",
     difficulty: "Medium",
     tags: ["classes", "objects", "oop"],
     language: "java",
@@ -342,7 +350,7 @@ const challenges = [
   {
     id: 36,
     title: "Hello World in C++",
-    description: "Write your first C++ program and understand compilation.",
+    description: "Basics Concept: Write your first C++ program and understand compilation.",
     difficulty: "Very easy",
     tags: ["basics", "hello-world", "compilation"],
     language: "c++",
@@ -351,7 +359,7 @@ const challenges = [
   {
     id: 37,
     title: "Variables and Constants",
-    description: "Learn C++ variable declarations and the const keyword.",
+    description: "Basics Concept: Learn C++ variable declarations and the const keyword.",
     difficulty: "Very easy",
     tags: ["variables", "constants", "declarations"],
     language: "c++",
@@ -360,7 +368,7 @@ const challenges = [
   {
     id: 38,
     title: "Basic I/O Operations",
-    description: "Use cin and cout for input and output operations.",
+    description: "Basics Concept: Use cin and cout for input and output operations.",
     difficulty: "Easy",
     tags: ["input", "output", "streams"],
     language: "c++",
@@ -369,7 +377,7 @@ const challenges = [
   {
     id: 39,
     title: "Functions in C++",
-    description: "Create functions with parameters, return types, and function overloading.",
+    description: "Basics Concept: Create functions with parameters, return types, and function overloading.",
     difficulty: "Easy",
     tags: ["functions", "parameters", "overloading"],
     language: "c++",
@@ -378,7 +386,7 @@ const challenges = [
   {
     id: 40,
     title: "Pointers and References",
-    description: "Understand memory management with pointers and reference variables.",
+    description: "Basics Concept: Understand memory management with pointers and reference variables.",
     difficulty: "Medium",
     tags: ["pointers", "references", "memory"],
     language: "c++",
@@ -398,7 +406,6 @@ export default function ChallengesPage() {
   >([])
   const [selectedLanguage, setSelectedLanguage] = useState("javascript")
   const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
-  const [selectedConcept, setSelectedConcept] = useState("all")
   const [filteredChallenges, setFilteredChallenges] = useState(challenges)
 
   useEffect(() => {
@@ -406,11 +413,9 @@ export default function ChallengesPage() {
       typeof window !== "undefined" ? localStorage.getItem("challengeLanguage") || "javascript" : "javascript"
     const storedDifficulty =
       typeof window !== "undefined" ? localStorage.getItem("challengeDifficulty") || "very-easy" : "very-easy"
-    const storedConcept = typeof window !== "undefined" ? localStorage.getItem("challengeConcept") || "all" : "all"
 
     setSelectedLanguage(storedLanguage)
     setSelectedDifficulty(storedDifficulty)
-    setSelectedConcept(storedConcept)
 
     const progress = getUserProgress()
     setCompletedChallenges(progress.completedChallenges)
@@ -434,24 +439,24 @@ export default function ChallengesPage() {
       const langMatch = selectedLanguage === "all" || challenge.language.toLowerCase() === selectedLanguage
       const diffMatch =
         selectedDifficulty === "all" || challenge.difficulty.toLowerCase() === selectedDifficulty.replace("-", " ")
-      const conceptMatch = selectedConcept === "all" || challenge.concept.toLowerCase() === selectedConcept
-      return langMatch && diffMatch && conceptMatch
+      return langMatch && diffMatch
     })
 
     const dailyChallengeIds = dailyChallenges.map((dc) => dc.id)
 
     let dailyChallengesFromList: typeof challenges = []
-    if (selectedLanguage !== "all") {
-      dailyChallengesFromList = challenges.filter(
-        (c) => dailyChallengeIds.includes(c.id) && c.language.toLowerCase() === selectedLanguage,
-      )
+    if (selectedLanguage !== "all" && dailyChallenges.length > 0) {
+      const dailyChallenge = dailyChallenges[0]
+      if (dailyChallenge.language.toLowerCase() === selectedLanguage) {
+        dailyChallengesFromList = [challenges.find((c) => c.id === dailyChallenge.id)!].filter(Boolean)
+      }
     }
 
     const nonDailyChallenges = filtered.filter((c) => !dailyChallengeIds.includes(c.id))
 
-    // Put daily challenges first (only when specific language selected), then regular filtered challenges
+    // Put daily challenge first (only when specific language selected and matches), then regular filtered challenges
     setFilteredChallenges([...dailyChallengesFromList, ...nonDailyChallenges])
-  }, [selectedLanguage, selectedDifficulty, selectedConcept, dailyChallenges])
+  }, [selectedLanguage, selectedDifficulty, dailyChallenges])
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
@@ -464,13 +469,6 @@ export default function ChallengesPage() {
     setSelectedDifficulty(value)
     if (typeof window !== "undefined") {
       localStorage.setItem("challengeDifficulty", value)
-    }
-  }
-
-  const handleConceptChange = (value: string) => {
-    setSelectedConcept(value)
-    if (typeof window !== "undefined") {
-      localStorage.setItem("challengeConcept", value)
     }
   }
 
@@ -520,20 +518,6 @@ export default function ChallengesPage() {
                   <SelectItem value="hard">Hard</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={selectedConcept} onValueChange={handleConceptChange}>
-                <SelectTrigger className="w-full bg-muted">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="variables">Variables</SelectItem>
-                  <SelectItem value="functions">Functions</SelectItem>
-                  <SelectItem value="arrays">Arrays</SelectItem>
-                  <SelectItem value="objects">Objects</SelectItem>
-                  <SelectItem value="control-flow">Control Flow</SelectItem>
-                  <SelectItem value="basics">Basics</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
         </aside>
@@ -559,7 +543,7 @@ export default function ChallengesPage() {
                       {isDaily && (
                         <div className="flex items-center gap-1 bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
                           <Calendar className="w-3 h-3" />
-                          Daily Challenge - {challenge.language.toUpperCase()}
+                          Daily Challenge
                         </div>
                       )}
                       <h3 className="text-lg sm:text-xl font-semibold">{challenge.title}</h3>

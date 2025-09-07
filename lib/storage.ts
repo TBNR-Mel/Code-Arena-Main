@@ -8,7 +8,7 @@ export interface UserProgress {
   achievements: string[]
   lastCompletedDate?: string
   dailyChallenges?: {
-    [language: string]: {
+    daily: {
       challengeId: number
       date: string
     }
@@ -63,7 +63,7 @@ export function getUserProgress(): UserProgress {
         achievements: progress.achievements || [],
         lastCompletedDate: progress.lastCompletedDate,
         dailyChallenges:
-          progress.dailyChallenges || (progress.dailyChallenge ? { javascript: progress.dailyChallenge } : {}),
+          progress.dailyChallenges || (progress.dailyChallenge ? { daily: progress.dailyChallenge } : {}),
       }
     }
   } catch (error) {
@@ -317,7 +317,7 @@ export function getNextChallenge(
   return languageFilteredChallenges.find((c) => c.id === nextId) || null
 }
 
-export function getDailyChallenges(): { id: number; title: string; difficulty: string; language: string }[] {
+export function getDailyChallenge(): { id: number; title: string; difficulty: string; language: string } | null {
   const challenges = [
     // JavaScript - Variables & Basic Operations (Concept 1)
     {
@@ -408,64 +408,53 @@ export function getDailyChallenges(): { id: number; title: string; difficulty: s
 
   const progress = getUserProgress()
   const today = new Date().toDateString()
-  const languages = ["javascript", "python", "java", "c++"]
-  const dailyChallenges: { id: number; title: string; difficulty: string; language: string }[] = []
 
-  languages.forEach((language) => {
-    // Check if we already have a daily challenge for this language today
-    const existingDaily = progress.dailyChallenges?.[language]
-    if (existingDaily && existingDaily.date === today) {
-      const challenge = challenges.find((c) => c.id === existingDaily.challengeId)
-      if (challenge) {
-        dailyChallenges.push(challenge)
-        return
-      }
+  // Check if we already have a daily challenge for today
+  const existingDaily = progress.dailyChallenges?.daily
+  if (existingDaily && existingDaily.date === today) {
+    const challenge = challenges.find((c) => c.id === existingDaily.challengeId)
+    if (challenge) {
+      return challenge
     }
+  }
 
-    // Select a new daily challenge for this language
-    const languageChallenges = challenges.filter((c) => c.language === language)
-    const uncompletedChallenges = languageChallenges.filter(
-      (challenge) => !progress.completedChallenges.includes(challenge.id),
-    )
+  // Select a new daily challenge from all uncompleted challenges
+  const uncompletedChallenges = challenges.filter((challenge) => !progress.completedChallenges.includes(challenge.id))
 
-    if (uncompletedChallenges.length > 0) {
-      // Use date and language as seed for consistent daily selection
-      const daysSinceEpoch = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24))
-      const languageHash = language.split("").reduce((a, b) => a + b.charCodeAt(0), 0)
-      const seedValue = (daysSinceEpoch + languageHash) % uncompletedChallenges.length
-      const selectedChallenge = uncompletedChallenges[seedValue]
+  if (uncompletedChallenges.length > 0) {
+    // Use date as seed for consistent daily selection
+    const daysSinceEpoch = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24))
+    const seedValue = daysSinceEpoch % uncompletedChallenges.length
+    const selectedChallenge = uncompletedChallenges[seedValue]
 
-      // Save the daily challenge for this language
-      const updatedProgress = {
-        ...progress,
-        dailyChallenges: {
-          ...progress.dailyChallenges,
-          [language]: {
-            challengeId: selectedChallenge.id,
-            date: today,
-          },
+    // Save the daily challenge
+    const updatedProgress = {
+      ...progress,
+      dailyChallenges: {
+        ...progress.dailyChallenges,
+        daily: {
+          challengeId: selectedChallenge.id,
+          date: today,
         },
-      }
-      saveUserProgress(updatedProgress)
-      dailyChallenges.push(selectedChallenge)
+      },
     }
-  })
+    saveUserProgress(updatedProgress)
+    return selectedChallenge
+  }
 
-  return dailyChallenges
+  return null
+}
+
+export function getDailyChallenges(): { id: number; title: string; difficulty: string; language: string }[] {
+  const dailyChallenge = getDailyChallenge()
+  return dailyChallenge ? [dailyChallenge] : []
 }
 
 export function isDailyChallenge(challengeId: number): boolean {
   const progress = getUserProgress()
   const today = new Date().toDateString()
 
-  if (!progress.dailyChallenges) return false
+  if (!progress.dailyChallenges?.daily) return false
 
-  return Object.values(progress.dailyChallenges).some(
-    (daily) => daily.challengeId === challengeId && daily.date === today,
-  )
-}
-
-export function getDailyChallenge(): { id: number; title: string; difficulty: string; language: string } | null {
-  const dailyChallenges = getDailyChallenges()
-  return dailyChallenges.find((c) => c.language === "javascript") || dailyChallenges[0] || null
+  return progress.dailyChallenges.daily.challengeId === challengeId && progress.dailyChallenges.daily.date === today
 }
