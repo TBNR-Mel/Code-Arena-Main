@@ -1100,33 +1100,6 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto"
           >
             {/* Code Editor Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-              <div className="flex items-center gap-2">
-                {/* <h2 className="text-lg sm:text-xl font-semibold">Code Editor</h2> */}
-                {/* <span className="text-xs sm:text-sm text-muted-foreground bg-muted px-2 py-1 rounded capitalize">
-                  {challenge.language}
-                </span> */}
-              </div>
-              {/* <div className="grid grid-cols-[100px_minmax(200px,_1fr)] gap-2 w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleResetCode}
-                  className="flex items-center gap-2 bg-transparent flex-1 sm:flex-none h-11 sm:h-9"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  <span>Reset</span>
-                </Button>
-                <Button
-                  onClick={handleRunCode}
-                  disabled={isRunning}
-                  className="flex items-center gap-2 flex-1 sm:flex-none h-11 sm:h-9"
-                >
-                  <Play className="h-4 w-4" />
-                  <span>{isRunning ? "Running..." : "Run Code"}</span>
-                </Button>
-              </div> */}
-            </div>
             <div
               className="
                 grid
@@ -1195,7 +1168,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                 <Tabs
                   defaultValue="console"
                   onValueChange={(value) => setActiveTabct(value as "console" | "test")}
-                  className="w-full px-3 sm:px-4">
+                  className="w-full">
                   {/* Tab Navigation */}
                   <div className="w-full flex justify-center items-center">
                     <TabsList className="flex w-fit mb-8 h-9 gap-1 sm:max-w-[24rem]">
@@ -1205,26 +1178,9 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                   </div>
 
                   {/* Instructions Tab */}
-                  <TabsContent value="console" className="space-y-6 min-h-[70vh] sm:min-h-[60vh] md:max-w-7xl m-auto">
+                  <TabsContent value="console" className="space-y-6 h-[60vh] md:h-[40vh] md:max-w-7xl m-auto">
                     {/* Output */}
-                    <div className="border-border border rounded-sm p-2 md:p-4">
-                      {/* {output ? (
-                        <div className="space-y-2 h-full">
-                          <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                            <pre className="text-base whitespace-pre-wrap font-mono break-words">
-                              {output}
-                            </pre>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
-                          <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
-                            <p className="text-base text-center sm:text-sm text-foreground/25">
-                              Run Code: <br />You will see test outputs here.
-                            </p>
-                          </div>
-                        </div>
-                      )} */}
+                    <div className="border-border border md:p-4 h-full overflow-auto">
                       console tab
                     </div>
                   </TabsContent>
@@ -1232,14 +1188,14 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                   {/* Code Tab */}
                   <TabsContent
                     value="test"
-                    className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto"
+                    className="space-y-4 sm:space-y-6 h-[60vh] md:h-[40vh] max-w-7xl mx-auto"
                   >
 
                     {/* Output */}
-                    <div className="border-border border rounded-sm p-2 md:p-4">
+                    <div className="border-border border h-full overflow-auto">
                       {output ? (
                         <div className="space-y-2 h-full">
-                          <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
+                          <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-full sm:max-h-80 overflow-y-auto">
                             <pre className="text-base whitespace-pre-wrap font-mono break-words">
                               {output}
                             </pre>
@@ -1257,23 +1213,6 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     </div>
                   </TabsContent>
                 </Tabs>
-                {/* {output ? (
-                  <div className="space-y-2 h-full">
-                    <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                      <pre className="text-base whitespace-pre-wrap font-mono break-words">
-                        {output}
-                      </pre>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
-                    <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
-                      <p className="text-base text-center sm:text-sm text-foreground/25">
-                        Run Code: <br />You will see test outputs here.
-                      </p>
-                    </div>
-                  </div>
-                )} */}
               </div>
             </div>
           </TabsContent>
