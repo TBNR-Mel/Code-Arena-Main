@@ -848,7 +848,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
     }
   };
 
-  const handleRunCode = () => {
+const handleRunCode = () => {
     if (!challenge) return
 
     setIsRunning(true)
@@ -866,6 +866,12 @@ export default function ChallengePage({ params }: ChallengePageProps) {
 
           const fnName = challengeTests.functionName
 
+          let consoleLogs: string[] = []
+          const originalConsoleLog = console.log
+          console.log = (...args: any[]) => {
+            consoleLogs.push(args.map(arg => JSON.stringify(arg)).join(" "))
+          }
+
           let userFunction: (...args: any[]) => any
           try {
             // If the user defined the named function, return it; otherwise treat the code as an expression returning a function
@@ -875,9 +881,12 @@ export default function ChallengePage({ params }: ChallengePageProps) {
               userFunction = new Function(`return (${code});`)() as (...a: any[]) => any
             }
           } catch (e) {
+            console.log = originalConsoleLog
             setOutput(`❌ Syntax Error: ${e instanceof Error ? e.message : "Invalid code syntax"}`)
             setIsRunning(false)
             return
+          } finally {
+            console.log = originalConsoleLog
           }
 
           if (typeof userFunction !== "function") {
@@ -889,20 +898,28 @@ export default function ChallengePage({ params }: ChallengePageProps) {
           const results: { inputs: any[]; expected: any; actual: any; passed: boolean }[] = []
           let passedTests = 0
 
-          for (const t of challengeTests.tests) {
-            try {
-              const actual = userFunction(...t.inputs)
-              const passed = JSON.stringify(actual) === JSON.stringify(t.expected)
-              if (passed) passedTests++
-              results.push({ inputs: t.inputs, expected: t.expected, actual, passed })
-            } catch (err) {
-              results.push({
-                inputs: t.inputs,
-                expected: t.expected,
-                actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
-                passed: false,
-              })
+          console.log = (...args: any[]) => {
+            consoleLogs.push(args.map(arg => JSON.stringify(arg)).join(" "))
+          }
+
+          try {
+            for (const t of challengeTests.tests) {
+              try {
+                const actual = userFunction(...t.inputs)
+                const passed = JSON.stringify(actual) === JSON.stringify(t.expected)
+                if (passed) passedTests++
+                results.push({ inputs: t.inputs, expected: t.expected, actual, passed })
+              } catch (err) {
+                results.push({
+                  inputs: t.inputs,
+                  expected: t.expected,
+                  actual: `Error: ${err instanceof Error ? err.message : String(err)}`,
+                  passed: false,
+                })
+              }
             }
+          } finally {
+            console.log = originalConsoleLog
           }
 
           let out = `Test Results: ${passedTests}/${challengeTests.tests.length} passed\n\n`
@@ -912,6 +929,10 @@ export default function ChallengePage({ params }: ChallengePageProps) {
             out += `   Expected: ${JSON.stringify(r.expected)}\n`
             out += `   Got:      ${JSON.stringify(r.actual)}\n\n`
           })
+
+          if (consoleLogs.length > 0) {
+            out = `Console Output:\n${consoleLogs.join("\n")}\n\n${out}`
+          }
 
           if (passedTests === challengeTests.tests.length) {
             out += "🎉 All tests passed! Challenge completed!"
@@ -1177,11 +1198,27 @@ export default function ChallengePage({ params }: ChallengePageProps) {
                     </TabsList>
                   </div>
 
-                  {/* Instructions Tab */}
+{/* Console Tab */}
                   <TabsContent value="console" className="space-y-6 h-[60vh] md:h-[40vh] md:max-w-7xl m-auto">
                     {/* Output */}
                     <div className="border-border border md:p-4 h-full overflow-auto">
-                      console tab
+                      {output ? (
+                        <div className="space-y-2 h-full">
+                          <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-full sm:max-h-80 overflow-y-auto">
+                            <pre className="text-base whitespace-pre-wrap font-mono break-words">
+                              {output}
+                            </pre>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
+                          <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
+                            <p className="text-base text-center sm:text-sm text-foreground/25">
+                              Run Code: <br />You will see console output here.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </TabsContent>
 
