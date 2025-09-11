@@ -1,18 +1,20 @@
 "use client"
 
+import type React from "react"
+
 import { CompletionModal } from "@/components/completion-modal"
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, HelpCircle, Play, RotateCcw, SkipForward } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { XPDisplay } from "@/components/xp-display";
-import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage";
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { ChevronLeft, HelpCircle, Play, RotateCcw, SkipForward } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { XPDisplay } from "@/components/xp-display"
+import { isChallengeCompleted, markChallengeComplete } from "@/lib/storage"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
-import { useMediaQuery } from 'react-responsive'
-import dynamic from "next/dynamic";
-import { getNextChallenge } from "@/lib/storage";
+import { Drawer, DrawerContent } from "@/components/ui/drawer"
+import { useMediaQuery } from "react-responsive"
+import dynamic from "next/dynamic"
+import { getNextChallenge } from "@/lib/storage"
 
 // Dynamically import Monaco Editor to avoid SSR issues
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -35,6 +37,13 @@ type Challenge = {
   examples: string[]
   notes: string[]
   language: Language
+  concept?: string
+  difficulty?: string
+  help: {
+    quickTips: string[]
+    resources: { title: string; url: string; description: string }[]
+    furtherAssistance: string
+  }
 }
 
 type TestCase = {
@@ -49,720 +58,223 @@ interface ChallengePageProps {
 
 // ---------- Mock challenge data ----------
 const challengeData: Record<string, any> = {
-
+  // JavaScript - Variables & Basic Operations (Concept 1)
   "1": {
     id: 1,
-    title: "Return the Sum of Two Numbers",
-    description: "Create a function that takes two numbers as arguments and returns their sum.",
-    tags: ["geometry", "maths", "numbers"],
-    examples: ["addition(3, 2) → 5", "addition(-3, -6) → -9", "addition(7, 3) → 10"],
+    title: "Declare and Use Variables",
+    description:
+      "Variables Concept: Learn how to declare variables using let, const, and var. Understand the differences between them.",
+    tags: ["variables", "basics", "syntax"],
+    examples: [
+      "let name = 'John'; → Creates a variable that can be changed",
+      "const age = 25; → Creates a constant that cannot be changed",
+      "var city = 'NYC'; → Creates a variable with function scope",
+    ],
     notes: [
-      "Don't forget to return the result.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
+      "Use 'let' for variables that will change",
+      "Use 'const' for values that won't change",
+      "Avoid 'var' in modern JavaScript",
     ],
     language: "javascript",
+    concept: "variables",
+    difficulty: "Very easy",
     help: {
       quickTips: [
-        "Ensure your function accepts two parameters (e.g., `a` and `b`).",
-        "Use the `+` operator to add the numbers.",
-        "Return the result using the `return` statement.",
-        "Handle both positive and negative numbers as shown in the examples."
+        "Use 'let' to declare variables that can be reassigned",
+        "Use 'const' for values that won't change",
+        "Variable names should be descriptive",
+        "Follow camelCase naming convention",
       ],
       resources: [
         {
-          title: "JavaScript Functions",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
-          description: "Learn how to define and use functions in JavaScript."
+          title: "JavaScript Variables",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Grammar_and_types#Variables",
+          description: "Learn about variable declarations in JavaScript",
         },
-        {
-          title: "JavaScript Operators",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators",
-          description: "Understand arithmetic operators like `+` for addition."
-        }
       ],
-      furtherAssistance: "If you're still stuck, consider reviewing the examples in the Instructions tab or ask a question in the community forum on X."
-    }
+      furtherAssistance: "Practice declaring different types of variables and understanding their scope.",
+    },
   },
   "2": {
     id: 2,
-    title: "Area of a Triangle",
-    description: "Write a function that takes the base and height of a triangle and return its area.",
-    tags: ["geometry", "maths", "numbers"],
-    examples: ["triArea(2, 3) → 3", "triArea(7, 4) → 14", "triArea(10, 10) → 50"],
+    title: "Variable Assignment and Types",
+    description:
+      "Variables Concept: Practice assigning different data types to variables and understanding type coercion.",
+    tags: ["variables", "types", "assignment"],
+    examples: ["let num = 42; → Number type", "let text = 'Hello'; → String type", "let isTrue = true; → Boolean type"],
     notes: [
-      "The area of a triangle is: (base * height) / 2",
-      "Don't forget to return the result.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
+      "JavaScript is dynamically typed",
+      "Variables can hold different types of values",
+      "Type coercion happens automatically",
     ],
     language: "javascript",
+    concept: "variables",
+    difficulty: "Very easy",
     help: {
       quickTips: [
-        "Use the formula `(base * height) / 2` to calculate the area.",
-        "Ensure your function accepts two parameters: `base` and `height`.",
-        "Return the result using the `return` statement.",
-        "Handle positive numbers as inputs."
+        "JavaScript automatically determines variable types",
+        "Use typeof operator to check variable types",
+        "Understand how different types are converted",
+        "Practice with numbers, strings, and booleans",
       ],
       resources: [
         {
-          title: "JavaScript Arithmetic",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#arithmetic_operators",
-          description: "Learn about arithmetic operators for multiplication and division."
+          title: "JavaScript Data Types",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures",
+          description: "Understanding JavaScript's data types",
         },
-        {
-          title: "JavaScript Functions",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
-          description: "Understand how to create functions in JavaScript."
-        }
       ],
-      furtherAssistance: "If you're still stuck, review the formula in the notes or ask for help in the community forum on X."
-    }
+      furtherAssistance: "Experiment with different data types and see how they behave.",
+    },
   },
   "3": {
     id: 3,
-    title: "Convert Minutes into Seconds",
-    description: "Write a function that takes an integer minutes and converts it to seconds.",
-    tags: ["maths", "numbers"],
-    examples: ["convert(5) → 300", "convert(3) → 180", "convert(2) → 120"],
+    title: "Basic Arithmetic with Variables",
+    description:
+      "Variables Concept: Perform mathematical operations using variables and understand operator precedence.",
+    tags: ["variables", "arithmetic", "operators"],
+    examples: [
+      "let sum = a + b; → Addition",
+      "let product = x * y; → Multiplication",
+      "let result = (a + b) * c; → Using parentheses for precedence",
+    ],
     notes: [
-      "There are 60 seconds in a minute.",
-      "Don't forget to return the result.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
+      "Follow order of operations (PEMDAS)",
+      "Use parentheses to control precedence",
+      "Store results in variables for reuse",
     ],
     language: "javascript",
+    concept: "variables",
+    difficulty: "Easy",
     help: {
       quickTips: [
-        "Multiply the input minutes by 60 to convert to seconds.",
-        "Ensure your function accepts one parameter for minutes.",
-        "Return the result using the `return` statement.",
-        "Handle positive integers as inputs."
+        "Use +, -, *, / for basic arithmetic",
+        "Parentheses control order of operations",
+        "Store intermediate results in variables",
+        "Be careful with division by zero",
       ],
       resources: [
         {
-          title: "JavaScript Arithmetic",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#arithmetic_operators",
-          description: "Learn about multiplication in JavaScript."
+          title: "JavaScript Operators",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators",
+          description: "Learn about arithmetic and other operators",
         },
-        {
-          title: "JavaScript Functions",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
-          description: "Understand how to define functions in JavaScript."
-        }
       ],
-      furtherAssistance: "If you're still stuck, check the examples or ask a question in the community forum on X."
-    }
+      furtherAssistance: "Practice combining variables with different arithmetic operations.",
+    },
   },
   "4": {
     id: 4,
-    title: "Find the Maximum Number in an Array",
-    description: "Create a function that finds and returns the maximum number in a given array.",
-    tags: ["arrays", "maths"],
-    examples: ["findMax([1, 2, 3]) → 3", "findMax([-1, 0, 5]) → 5", "findMax([10]) → 10"],
-    notes: [
-      "You can use Math.max or iterate through the array.",
-      "Handle empty arrays if needed, but assume non-empty for simplicity.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
+    title: "Variable Scope Challenge",
+    description: "Variables Concept: Understand block scope, function scope, and global scope with practical examples.",
+    tags: ["variables", "scope", "functions"],
+    examples: [
+      "Global: var global = 'accessible everywhere';",
+      "Function: function test() { let local = 'only here'; }",
+      "Block: { let block = 'only in this block'; }",
     ],
+    notes: ["let and const have block scope", "var has function scope", "Global variables are accessible everywhere"],
     language: "javascript",
+    concept: "variables",
+    difficulty: "Easy",
     help: {
       quickTips: [
-        "Use `Math.max(...array)` or loop through the array to find the largest number.",
-        "Ensure your function accepts an array as a parameter.",
-        "Return the maximum value using the `return` statement.",
-        "Handle arrays with positive and negative numbers."
+        "Understand the difference between let, const, and var scope",
+        "Block scope is limited to { } brackets",
+        "Function scope is limited to the function",
+        "Avoid global variables when possible",
       ],
       resources: [
         {
-          title: "JavaScript Math Object",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max",
-          description: "Learn how to use Math.max to find the maximum value."
+          title: "JavaScript Scope",
+          url: "https://developer.mozilla.org/en-US/docs/Glossary/Scope",
+          description: "Understanding variable scope in JavaScript",
         },
-        {
-          title: "JavaScript Arrays",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-          description: "Understand how to work with arrays in JavaScript."
-        }
       ],
-      furtherAssistance: "If you're still stuck, try the examples or ask for help in the community forum on X."
-    }
+      furtherAssistance: "Practice with nested functions and blocks to understand scope.",
+    },
   },
   "5": {
     id: 5,
-    title: "Check if a String is a Palindrome",
-    description: "Write a function that checks if a given string is a palindrome.",
-    tags: ["strings", "logic"],
-    examples: ["is_palindrome('racecar') → True", "is_palindrome('hello') → False", "is_palindrome('a') → True"],
-    notes: [
-      "A palindrome reads the same forwards and backwards.",
-      "Ignore case and non-alphanumeric characters if advanced, but keep simple.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
+    title: "Complex Variable Operations",
+    description:
+      "Variables Concept: Master advanced variable manipulation including destructuring and spread operators.",
+    tags: ["variables", "destructuring", "advanced"],
+    examples: [
+      "let [a, b] = [1, 2]; → Array destructuring",
+      "let {name, age} = person; → Object destructuring",
+      "let newArray = [...oldArray]; → Spread operator",
     ],
-    language: "python",
-    help: {
-      quickTips: [
-        "Compare the string with its reverse using slicing (`string[::-1]`).",
-        "Return `True` if they match, `False` otherwise.",
-        "Handle single-character strings, which are always palindromes.",
-        "Consider converting the string to lowercase for simplicity."
-      ],
-      resources: [
-        {
-          title: "Python String Methods",
-          url: "https://docs.python.org/3/library/stdtypes.html#string-methods",
-          description: "Learn about string manipulation in Python."
-        },
-        {
-          title: "Python Slicing",
-          url: "https://docs.python.org/3/tutorial/introduction.html#strings",
-          description: "Understand how to use slicing to reverse a string."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "6": {
-    id: 6,
-    title: "Factorial of a Number",
-    description: "Compute the factorial of a given number.",
-    tags: ["maths", "recursion"],
-    examples: ["factorial(5) → 120", "factorial(0) → 1", "factorial(3) → 6"],
     notes: [
-      "Factorial of n is n * (n-1) * ... * 1.",
-      "Use recursion or a loop.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "java",
-    help: {
-      quickTips: [
-        "Use a loop or recursion to multiply numbers from 1 to n.",
-        "Handle the base case of 0, which returns 1.",
-        "Ensure your function returns an integer or long for larger factorials.",
-        "Test with the provided examples to verify correctness."
-      ],
-      resources: [
-        {
-          title: "Java Methods",
-          url: "https://docs.oracle.com/javase/tutorial/java/javaOO/methods.html",
-          description: "Learn how to define methods in Java."
-        },
-        {
-          title: "Java Recursion",
-          url: "https://www.w3schools.com/java/java_recursion.asp",
-          description: "Understand how to implement recursion in Java."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, try the examples or ask for help in the community forum on X."
-    }
-  },
-  "7": {
-    id: 7,
-    title: "Fibonacci Sequence",
-    description: "Generate the Fibonacci sequence up to a given number.",
-    tags: ["maths", "sequences"],
-    examples: ["fib(5) → [0, 1, 1, 2, 3, 5]", "fib(3) → [0, 1, 1, 2]", "fib(0) → []"],
-    notes: [
-      "Fibonacci: each number is the sum of the two preceding ones.",
-      "Start with 0 and 1.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
+      "Destructuring extracts values from arrays/objects",
+      "Spread operator copies array/object elements",
+      "These are ES6+ features",
     ],
     language: "javascript",
+    concept: "variables",
+    difficulty: "Medium",
     help: {
       quickTips: [
-        "Use a loop to generate numbers, starting with 0 and 1.",
-        "Add the last two numbers to get the next one.",
-        "Return an array containing the sequence.",
-        "Handle edge cases like n = 0, which returns an empty array."
+        "Use destructuring to extract multiple values at once",
+        "Spread operator creates shallow copies",
+        "Practice with both arrays and objects",
+        "These features make code more concise",
       ],
       resources: [
         {
-          title: "JavaScript Arrays",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-          description: "Learn how to work with arrays in JavaScript."
+          title: "Destructuring Assignment",
+          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment",
+          description: "Learn about destructuring in JavaScript",
         },
-        {
-          title: "JavaScript Loops",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration",
-          description: "Understand how to use loops to generate sequences."
-        }
       ],
-      furtherAssistance: "If you're still stuck, check the examples or ask for help in the community forum on X."
-    }
+      furtherAssistance: "Experiment with complex data structures and destructuring patterns.",
+    },
   },
-  "8": {
-    id: 8,
-    title: "Sort an Array",
-    description: "Implement a function to sort an array in ascending order.",
-    tags: ["arrays", "sorting"],
-    examples: ["sort_array([3, 1, 2]) → [1, 2, 3]", "sort_array([5]) → [5]", "sort_array([]) → []"],
-    notes: [
-      "You can use built-in sort or implement bubble/insertion sort.",
-      "Handle numbers or strings as needed.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "python",
-    help: {
-      quickTips: [
-        "Use Python's `sorted()` function or `list.sort()` for simplicity.",
-        "If implementing manually, try bubble sort or insertion sort.",
-        "Return the sorted array.",
-        "Handle empty arrays and single-element arrays as shown in examples."
-      ],
-      resources: [
-        {
-          title: "Python Sorting",
-          url: "https://docs.python.org/3/howto/sorting.html",
-          description: "Learn about sorting lists in Python."
-        },
-        {
-          title: "Python Lists",
-          url: "https://docs.python.org/3/tutorial/introduction.html#lists",
-          description: "Understand how to work with lists in Python."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "9": {
-    id: 9,
-    title: "Binary Search",
-    description: "Implement binary search on a sorted array.",
-    tags: ["arrays", "searching"],
-    examples: ["binarySearch([1,2,3,4], 3) → 2", "binarySearch([1,2], 5) → -1", "binarySearch([], 1) → -1"],
-    notes: [
-      "Binary search halves the search interval each time.",
-      "Assume the array is sorted.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "java",
-    help: {
-      quickTips: [
-        "Use two pointers (low, high) to track the search range.",
-        "Calculate the middle index and compare with the target.",
-        "Return the index if found, or -1 if not found.",
-        "Ensure the array is sorted before applying binary search."
-      ],
-      resources: [
-        {
-          title: "Java Arrays",
-          url: "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html",
-          description: "Learn how to work with arrays in Java."
-        },
-        {
-          title: "Binary Search in Java",
-          url: "https://www.geeksforgeeks.org/binary-search-in-java/",
-          description: "Understand how to implement binary search in Java."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, try the examples or ask for help in the community forum on X."
-    }
-  },
-  "10": {
-    id: 10,
-    title: "Count Vowels in a String",
-    description: "Count the number of vowels in a given string.",
-    tags: ["strings"],
-    examples: ["countVowels('hello') → 2", "countVowels('why') → 0", "countVowels('aeiou') → 5"],
-    notes: [
-      "Vowels are a, e, i, o, u (lowercase and uppercase).",
-      "Iterate through the string and count.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "javascript",
-    help: {
-      quickTips: [
-        "Loop through each character in the string.",
-        "Check if the character is in a list of vowels (e.g., ['a', 'e', 'i', 'o', 'u']).",
-        "Increment a counter for each vowel found.",
-        "Consider converting the string to lowercase to handle both cases."
-      ],
-      resources: [
-        {
-          title: "JavaScript String Methods",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-          description: "Learn how to manipulate strings in JavaScript."
-        },
-        {
-          title: "JavaScript Loops",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration",
-          description: "Understand how to iterate through strings."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "11": {
-    id: 11,
-    title: "Reverse a String",
-    description: "Write a function that takes a string and returns it reversed.",
-    tags: ["strings"],
-    examples: ["reverseString('hello') → 'olleh'", "reverseString('world') → 'dlrow'", "reverseString('') → ''"],
-    notes: [
-      "Iterate through the string or use built-in methods.",
-      "Handle empty strings.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "javascript",
-    help: {
-      quickTips: [
-        "Use `split('')`, `reverse()`, and `join('')` for a simple solution.",
-        "Alternatively, loop through the string from end to start.",
-        "Return the reversed string.",
-        "Handle empty strings as shown in the examples."
-      ],
-      resources: [
-        {
-          title: "JavaScript String Methods",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-          description: "Learn how to manipulate strings in JavaScript."
-        },
-        {
-          title: "JavaScript Array Methods",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-          description: "Understand array methods like reverse and join."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "12": {
-    id: 12,
-    title: "Check for Prime Number",
-    description: "Write a function that checks if a given number is prime.",
-    tags: ["maths", "numbers"],
-    examples: ["isPrime(11) → true", "isPrime(4) → false", "isPrime(1) → false"],
-    notes: [
-      "A prime number is only divisible by 1 and itself.",
-      "Numbers less than 2 are not prime.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "javascript",
-    help: {
-      quickTips: [
-        "Check divisibility from 2 to the square root of the number.",
-        "Return `true` if no divisors are found, `false` otherwise.",
-        "Handle edge cases like 1, 0, and negative numbers.",
-        "Use a loop to test divisibility."
-      ],
-      resources: [
-        {
-          title: "JavaScript Math Object",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math",
-          description: "Learn about Math functions like sqrt."
-        },
-        {
-          title: "JavaScript Loops",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Loops_and_iteration",
-          description: "Understand how to use loops for iteration."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "13": {
-    id: 13,
-    title: "Sum of Array Elements",
-    description: "Write a function that returns the sum of all numbers in an array.",
-    tags: ["arrays", "maths"],
-    examples: ["arraySum([1, 2, 3]) → 6", "arraySum([]) → 0", "arraySum([-1, 1]) → 0"],
-    notes: [
-      "Use a loop or array methods like reduce.",
-      "Handle empty arrays.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "javascript",
-    help: {
-      quickTips: [
-        "Use `reduce()` or a for loop to sum the array elements.",
-        "Return 0 for an empty array.",
-        "Handle both positive and negative numbers.",
-        "Ensure the function accepts an array as input."
-      ],
-      resources: [
-        {
-          title: "JavaScript Array Reduce",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce",
-          description: "Learn how to use reduce to sum array elements."
-        },
-        {
-          title: "JavaScript Arrays",
-          url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-          description: "Understand how to work with arrays in JavaScript."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "14": {
-    id: 14,
-    title: "Check for Anagram",
-    description: "Write a function that checks if two strings are anagrams of each other.",
-    tags: ["strings", "logic"],
-    examples: ["isAnagram('listen', 'silent') → True", "isAnagram('hello', 'world') → False", "isAnagram('rat', 'tar') → True"],
-    notes: [
-      "Anagrams are words with the same characters and frequency, ignoring order.",
-      "Ignore case for simplicity.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "python",
-    help: {
-      quickTips: [
-        "Convert strings to lowercase and sort their characters.",
-        "Compare the sorted strings for equality.",
-        "Handle empty strings or strings of different lengths.",
-        "Return True if anagrams, False otherwise."
-      ],
-      resources: [
-        {
-          title: "Python String Methods",
-          url: "https://docs.python.org/3/library/stdtypes.html#string-methods",
-          description: "Learn about string manipulation in Python."
-        },
-        {
-          title: "Python Sorting",
-          url: "https://docs.python.org/3/howto/sorting.html",
-          description: "Understand how to sort data in Python."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "15": {
-    id: 15,
-    title: "Find First Non-Repeated Character",
-    description: "Write a function that returns the first non-repeated character in a string.",
-    tags: ["strings", "logic"],
-    examples: ["firstNonRepeated('swiss') → 'w'", "firstNonRepeated('hello') → 'h'", "firstNonRepeated('aabb') → None"],
-    notes: [
-      "Use a dictionary or counter to track character frequencies.",
-      "Return None if no non-repeated character exists.",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "python",
-    help: {
-      quickTips: [
-        "Use a dictionary to count character occurrences.",
-        "Iterate through the string to find the first character with a count of 1.",
-        "Handle empty strings by returning None.",
-        "Consider case sensitivity as per examples."
-      ],
-      resources: [
-        {
-          title: "Python Dictionaries",
-          url: "https://docs.python.org/3/tutorial/datastructures.html#dictionaries",
-          description: "Learn how to use dictionaries in Python."
-        },
-        {
-          title: "Python Collections Counter",
-          url: "https://docs.python.org/3/library/collections.html#collections.Counter",
-          description: "Understand how to use Counter for frequency counting."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  },
-  "16": {
-    id: 16,
-    title: "Power of a Number",
-    description: "Write a function that calculates the power of a number (base raised to exponent).",
-    tags: ["maths", "numbers"],
-    examples: ["power(2, 3) → 8", "power(5, 0) → 1", "power(3, 2) → 9"],
-    notes: [
-      "Use a loop or recursion for calculation.",
-      "Handle zero exponent (returns 1).",
-      "If you get stuck on a challenge, find help by tapping the help button.",
-    ],
-    language: "python",
-    help: {
-      quickTips: [
-        "Use the ** operator or a loop for exponentiation.",
-        "Handle edge cases like exponent = 0.",
-        "Assume positive integers for simplicity.",
-        "Return the result as an integer."
-      ],
-      resources: [
-        {
-          title: "Python Operators",
-          url: "https://docs.python.org/3/reference/lexical_analysis.html#operators",
-          description: "Learn about Python's arithmetic operators."
-        },
-        {
-          title: "Python Loops",
-          url: "https://docs.python.org/3/tutorial/controlflow.html#for-statements",
-          description: "Understand how to use loops in Python."
-        }
-      ],
-      furtherAssistance: "If you're still stuck, review the examples or ask for help in the community forum on X."
-    }
-  }
-};
-
-// Updated interface to match Next.js 15 requirements
-interface ChallengePageProps {
-  params: Promise<{ id: string }>;
 }
 
 // ---------- Test cases ----------
 const testCases: Record<string, TestCase> = {
   "1": {
-    functionName: "addition",
+    functionName: "declareVariables",
     tests: [
-      { inputs: [3, 2], expected: 5 },
-      { inputs: [-3, -6], expected: -9 },
-      { inputs: [7, 3], expected: 10 },
-      { inputs: [0, 0], expected: 0 },
-      { inputs: [-1, 1], expected: 0 },
+      { inputs: [], expected: "Variables declared successfully" },
+      { inputs: [], expected: "Variables declared successfully" },
+      { inputs: [], expected: "Variables declared successfully" },
     ],
   },
   "2": {
-    functionName: "triArea",
+    functionName: "assignTypes",
     tests: [
-      { inputs: [2, 3], expected: 3 },
-      { inputs: [7, 4], expected: 14 },
-      { inputs: [10, 10], expected: 50 },
-      { inputs: [5, 6], expected: 15 },
-      { inputs: [1, 1], expected: 0.5 },
+      { inputs: [], expected: "Types assigned correctly" },
+      { inputs: [], expected: "Types assigned correctly" },
+      { inputs: [], expected: "Types assigned correctly" },
     ],
   },
   "3": {
-    functionName: "convert",
+    functionName: "calculateArithmetic",
     tests: [
-      { inputs: [5], expected: 300 },
-      { inputs: [3], expected: 180 },
-      { inputs: [2], expected: 120 },
-      { inputs: [1], expected: 60 },
-      { inputs: [0], expected: 0 },
+      { inputs: [5, 3], expected: 8 },
+      { inputs: [10, 2], expected: 12 },
+      { inputs: [7, 4], expected: 11 },
     ],
   },
   "4": {
-    functionName: "findMax",
+    functionName: "testScope",
     tests: [
-      { inputs: [[1, 2, 3]], expected: 3 },
-      { inputs: [[-1, 0, 5]], expected: 5 },
-      { inputs: [[10]], expected: 10 },
-      { inputs: [[-5, -10, -2]], expected: -2 },
-      { inputs: [[1, 1, 1]], expected: 1 },
+      { inputs: [], expected: "Scope understood" },
+      { inputs: [], expected: "Scope understood" },
+      { inputs: [], expected: "Scope understood" },
     ],
   },
   "5": {
-    functionName: "is_palindrome",
+    functionName: "advancedOperations",
     tests: [
-      { inputs: ["racecar"], expected: true },
-      { inputs: ["hello"], expected: false },
-      { inputs: ["a"], expected: true },
-      { inputs: [""], expected: true },
-      { inputs: ["Racecar"], expected: true },
+      { inputs: [[1, 2, 3]], expected: [1, 2, 3] },
+      { inputs: [{ name: "John", age: 25 }], expected: { name: "John", age: 25 } },
+      { inputs: [[4, 5, 6]], expected: [4, 5, 6] },
     ],
   },
-  "6": {
-    functionName: "factorial",
-    tests: [
-      { inputs: [5], expected: 120 },
-      { inputs: [0], expected: 1 },
-      { inputs: [3], expected: 6 },
-      { inputs: [1], expected: 1 },
-      { inputs: [4], expected: 24 },
-    ],
-  },
-  "7": {
-    functionName: "fib",
-    tests: [
-      { inputs: [5], expected: [0, 1, 1, 2, 3, 5] },
-      { inputs: [3], expected: [0, 1, 1, 2] },
-      { inputs: [0], expected: [] },
-      { inputs: [1], expected: [0, 1] },
-      { inputs: [2], expected: [0, 1, 1] },
-    ],
-  },
-  "8": {
-    functionName: "sort_array",
-    tests: [
-      { inputs: [[3, 1, 2]], expected: [1, 2, 3] },
-      { inputs: [[5]], expected: [5] },
-      { inputs: [[]], expected: [] },
-      { inputs: [[4, 4, 4]], expected: [4, 4, 4] },
-      { inputs: [[-1, 0, -5]], expected: [-5, -1, 0] },
-    ],
-  },
-  "9": {
-    functionName: "binarySearch",
-    tests: [
-      { inputs: [[1, 2, 3, 4], 3], expected: 2 },
-      { inputs: [[1, 2], 5], expected: -1 },
-      { inputs: [[], 1], expected: -1 },
-      { inputs: [[1], 1], expected: 0 },
-      { inputs: [[1, 2, 3], 1], expected: 0 },
-    ],
-  },
-  "10": {
-    functionName: "countVowels",
-    tests: [
-      { inputs: ["hello"], expected: 2 },
-      { inputs: ["why"], expected: 0 },
-      { inputs: ["aeiou"], expected: 5 },
-      { inputs: ["HELLO"], expected: 2 },
-      { inputs: [""], expected: 0 },
-    ],
-  },
-  "11": {
-    functionName: "reverseString",
-    tests: [
-      { inputs: ["hello"], expected: "olleh" },
-      { inputs: ["world"], expected: "dlrow" },
-      { inputs: [""], expected: "" },
-      { inputs: ["a"], expected: "a" },
-      { inputs: ["JavaScript"], expected: "tpircSavaJ" },
-    ],
-  },
-  "12": {
-    functionName: "isPrime",
-    tests: [
-      { inputs: [11], expected: true },
-      { inputs: [4], expected: false },
-      { inputs: [1], expected: false },
-      { inputs: [2], expected: true },
-      { inputs: [0], expected: false },
-    ],
-  },
-  "13": {
-    functionName: "arraySum",
-    tests: [
-      { inputs: [[1, 2, 3]], expected: 6 },
-      { inputs: [[]], expected: 0 },
-      { inputs: [[-1, 1]], expected: 0 },
-      { inputs: [[5, 5]], expected: 10 },
-      { inputs: [[-2, -3, -4]], expected: -9 },
-    ],
-  },
-  "14": {
-    functionName: "isAnagram",
-    tests: [
-      { inputs: ["listen", "silent"], expected: true },
-      { inputs: ["hello", "world"], expected: false },
-      { inputs: ["rat", "tar"], expected: true },
-      { inputs: ["", ""], expected: true },
-      { inputs: ["abc", "abcd"], expected: false },
-    ],
-  },
-  "15": {
-    functionName: "firstNonRepeated",
-    tests: [
-      { inputs: ["swiss"], expected: "w" },
-      { inputs: ["hello"], expected: "h" },
-      { inputs: ["aabb"], expected: null },
-      { inputs: [""], expected: null },
-      { inputs: ["aabbccde"], expected: "d" },
-    ],
-  },
-  "16": {
-    functionName: "power",
-    tests: [
-      { inputs: [2, 3], expected: 8 },
-      { inputs: [5, 0], expected: 1 },
-      { inputs: [3, 2], expected: 9 },
-      { inputs: [1, 5], expected: 1 },
-      { inputs: [4, 1], expected: 4 },
-    ],
-  },
-};
+}
 
 // ---------- Component ----------
 export default function ChallengePage({ params }: ChallengePageProps) {
@@ -773,7 +285,7 @@ export default function ChallengePage({ params }: ChallengePageProps) {
   const [output, setOutput] = useState("")
   const [isRunning, setIsRunning] = useState(false)
   const [showCompletionModal, setShowCompletionModal] = useState(false)
-const [completionData, setCompletionData] = useState<{
+  const [completionData, setCompletionData] = useState<{
     xpEarned: number
     totalXp: number
     currentLevel: number
@@ -781,7 +293,7 @@ const [completionData, setCompletionData] = useState<{
     nextChallenge?: { id: number; title: string; difficulty: string }
     allChallengesCompleted: boolean
   } | null>(null)
-  const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions");
+  const [activeTab, setActiveTab] = useState<"instructions" | "code">("instructions")
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const [isMediumScreen, setIsMediumScreen] = useState(false)
 
@@ -819,33 +331,34 @@ const [completionData, setCompletionData] = useState<{
   const getStarterCode = (c: Challenge): string => {
     switch (c.language) {
       case "javascript":
-        if (c.id === 1) return `function addition(a, b) {\n  // Write your code here\n}`;
-        if (c.id === 2) return `function triArea(base, height) {\n  // Write your code here\n}`;
-        if (c.id === 3) return `function convert(minutes) {\n  // Write your code here\n}`;
-        if (c.id === 4) return `function findMax(arr) {\n  // Write your code here\n}`;
-        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`;
-        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`;
-        if (c.id === 11) return `function reverseString(str) {\n  // Write your code here\n}`;
-        if (c.id === 12) return `function isPrime(num) {\n  // Write your code here\n}`;
-        if (c.id === 13) return `function arraySum(arr) {\n  // Write your code here\n}`;
-        return `function solution() {\n  // Write your code here\n}`;
+        if (c.id === 1) return `function declareVariables() {\n  // Write your code here\n}`
+        if (c.id === 2) return `function assignTypes() {\n  // Write your code here\n}`
+        if (c.id === 3) return `function calculateArithmetic(a, b) {\n  // Write your code here\n}`
+        if (c.id === 4) return `function testScope() {\n  // Write your code here\n}`
+        if (c.id === 5) return `function advancedOperations(arr) {\n  // Write your code here\n}`
+        if (c.id === 7) return `function fib(n) {\n  // Write your code here\n}`
+        if (c.id === 10) return `function countVowels(str) {\n  // Write your code here\n}`
+        if (c.id === 11) return `function reverseString(str) {\n  // Write your code here\n}`
+        if (c.id === 12) return `function isPrime(num) {\n  // Write your code here\n}`
+        if (c.id === 13) return `function arraySum(arr) {\n  // Write your code here\n}`
+        return `function solution() {\n  // Write your code here\n}`
       case "python":
-        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`;
-        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`;
-        if (c.id === 14) return `def isAnagram(s1, s2):\n    # Write your code here\n    pass`;
-        if (c.id === 15) return `def firstNonRepeated(s):\n    # Write your code here\n    pass`;
-        if (c.id === 16) return `def power(base, exponent):\n    # Write your code here\n    pass`;
-        return `def solution():\n    # Write your code here\n    pass`;
+        if (c.id === 5) return `def is_palindrome(s):\n    # Write your code here\n    pass`
+        if (c.id === 8) return `def sort_array(arr):\n    # Write your code here\n    pass`
+        if (c.id === 14) return `def isAnagram(s1, s2):\n    # Write your code here\n    pass`
+        if (c.id === 15) return `def firstNonRepeated(s):\n    # Write your code here\n    pass`
+        if (c.id === 16) return `def power(base, exponent):\n    # Write your code here\n    pass`
+        return `def solution():\n    # Write your code here\n    pass`
       case "java":
         if (c.id === 6)
-          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`;
+          return `public class Solution {\n    public static int factorial(int n) {\n        // Write your code here\n        return 0;\n    }\n}`
         if (c.id === 9)
-          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`;
-        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`;
+          return `public class Solution {\n    public static int binarySearch(int[] arr, int target) {\n        // Write your code here\n        return -1;\n    }\n}`
+        return `public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}`
       default:
-        return "// Write your code here";
+        return "// Write your code here"
     }
-  };
+  }
 
   const handleRunCode = () => {
     if (!challenge) return
@@ -923,7 +436,10 @@ const [completionData, setCompletionData] = useState<{
             }
 
             // Get the selected language from localStorage
-            const selectedLanguage = typeof window !== "undefined" ? localStorage.getItem('challengeLanguage') || challenge.language : challenge.language;
+            const selectedLanguage =
+              typeof window !== "undefined"
+                ? localStorage.getItem("challengeLanguage") || challenge.language
+                : challenge.language
             const nextChallenge = getNextChallenge(challenge.id, selectedLanguage)
             const completionDataObj: {
               xpEarned: number
@@ -938,7 +454,11 @@ const [completionData, setCompletionData] = useState<{
               currentLevel: result.progress.level,
               isLevelUp: !isCompleted && result.isLevelUp,
               nextChallenge: nextChallenge || undefined,
-              allChallengesCompleted: !nextChallenge && result.progress.completedChallenges.length === Object.values(challengeData).filter((c: { language: string }) => c.language === selectedLanguage).length
+              allChallengesCompleted:
+                !nextChallenge &&
+                result.progress.completedChallenges.length ===
+                  Object.values(challengeData).filter((c: { language: string }) => c.language === selectedLanguage)
+                    .length,
             }
 
             console.log("[v0] Setting completion data:", completionDataObj)
@@ -1033,7 +553,8 @@ const [completionData, setCompletionData] = useState<{
         <Tabs
           defaultValue="instructions"
           onValueChange={(value) => setActiveTab(value as "instructions" | "code")}
-          className="w-full px-3 sm:px-4">
+          className="w-full px-3 sm:px-4"
+        >
           {/* Tab Navigation */}
           <div className="w-full flex justify-center items-center">
             <TabsList className="grid w-full grid-cols-2 mb-8 gap-1 sm:max-w-[24rem]">
@@ -1094,10 +615,7 @@ const [completionData, setCompletionData] = useState<{
           </TabsContent>
 
           {/* Code Tab */}
-          <TabsContent
-            value="code"
-            className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto"
-          >
+          <TabsContent value="code" className="space-y-4 sm:space-y-6 min-h-[60vh] sm:min-h-[60vh] max-w-7xl mx-auto">
             {/* Code Editor Header */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
               <div className="flex items-center gap-2">
@@ -1165,16 +683,15 @@ const [completionData, setCompletionData] = useState<{
                 {output ? (
                   <div className="space-y-2 h-full">
                     <div className="bg-muted border border-border min-h-full p-3 sm:p-4 max-h-64 sm:max-h-80 overflow-y-auto">
-                      <pre className="text-base whitespace-pre-wrap font-mono break-words">
-                        {output}
-                      </pre>
+                      <pre className="text-base whitespace-pre-wrap font-mono break-words">{output}</pre>
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-2 min-h-full bg-muted flex justify-center items-center">
                     <div className="p-3 sm:p-4 max-h-64 min-h-full overflow-y-auto">
                       <p className="text-base text-center sm:text-sm text-foreground/25">
-                        Run Code: <br />You will see test outputs here.
+                        Run Code: <br />
+                        You will see test outputs here.
                       </p>
                     </div>
                   </div>
@@ -1226,7 +743,7 @@ const getDifficultyFromId = (id: number): string => {
 // Bottom Actions Component
 const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ activeTab, challenge }) => {
   const [isHelpOpen, setIsHelpOpen] = useState(false)
-  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" })
   const handleHelpClick = () => {
     setIsHelpOpen(true)
   }
@@ -1245,7 +762,7 @@ const BottomActions: React.FC<{ activeTab: string; challenge: any }> = ({ active
         <Button
           variant="outline"
           size="lg"
-          className="text-base text-foreground/50 hover:text-foreground flex items-center gap-2"
+          className="text-base text-foreground/50 hover:text-foreground flex items-center gap-2 bg-transparent"
           onClick={handleHelpClick}
         >
           <HelpCircle className="w-5 h-5" />
