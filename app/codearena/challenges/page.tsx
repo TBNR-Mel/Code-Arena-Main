@@ -7,162 +7,7 @@ import { XPDisplay } from "@/components/xp-display"
 import { getUserProgress, getDailyChallenges, isDailyChallenge } from "@/lib/storage"
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-// Mock challenge data
-const challenges = [
-  {
-    id: 1,
-    title: "Return the Sum of Two Numbers",
-    description: "Create a function that takes two numbers as arguments and returns their sum.",
-    difficulty: "Very easy",
-    tags: ["geometry", "maths", "numbers"],
-    language: "javascript",
-  },
-  {
-    id: 2,
-    title: "Area of a Triangle",
-    description: "Write a function that takes the base and height of a triangle and return its area.",
-    difficulty: "Very easy",
-    tags: ["geometry", "maths", "numbers"],
-    language: "javascript",
-  },
-  {
-    id: 3,
-    title: "Convert Minutes into Seconds",
-    description: "Write a function that takes an integer minutes and converts it to seconds.",
-    difficulty: "Very easy",
-    tags: ["maths", "numbers"],
-    language: "javascript",
-  },
-  {
-    id: 4,
-    title: "Find the Maximum Number in an Array",
-    description: "Create a function that finds and returns the maximum number in a given array.",
-    difficulty: "Easy",
-    tags: ["arrays", "maths"],
-    language: "javascript",
-  },
-  {
-    id: 5,
-    title: "Check if a String is a Palindrome",
-    description: "Write a function that checks if a given string is a palindrome.",
-    difficulty: "Medium",
-    tags: ["strings", "logic"],
-    language: "python",
-  },
-  {
-    id: 6,
-    title: "Factorial of a Number",
-    description: "Compute the factorial of a given number.",
-    difficulty: "Easy",
-    tags: ["maths", "recursion"],
-    language: "java",
-  },
-  {
-    id: 7,
-    title: "Fibonacci Sequence",
-    description: "Generate the Fibonacci sequence up to a given number.",
-    difficulty: "Medium",
-    tags: ["maths", "sequences"],
-    language: "javascript",
-  },
-  {
-    id: 8,
-    title: "Sort an Array",
-    description: "Implement a function to sort an array in ascending order.",
-    difficulty: "Medium",
-    tags: ["arrays", "sorting"],
-    language: "python",
-  },
-  {
-    id: 9,
-    title: "Binary Search",
-    description: "Implement binary search on a sorted array.",
-    difficulty: "Hard",
-    tags: ["arrays", "searching"],
-    language: "java",
-  },
-  {
-    id: 10,
-    title: "Count Vowels in a String",
-    description: "Count the number of vowels in a given string.",
-    difficulty: "Very easy",
-    tags: ["strings"],
-    language: "javascript",
-  },
-  {
-    id: 11,
-    title: "Reverse a String",
-    description: "Write a function that takes a string and returns it reversed.",
-    difficulty: "Easy",
-    tags: ["strings"],
-    language: "javascript",
-  },
-  {
-    id: 12,
-    title: "Check for Prime Number",
-    description: "Write a function that checks if a given number is prime.",
-    difficulty: "Medium",
-    tags: ["maths", "numbers"],
-    language: "javascript",
-  },
-  {
-    id: 13,
-    title: "Sum of Array Elements",
-    description: "Write a function that returns the sum of all numbers in an array.",
-    difficulty: "Easy",
-    tags: ["arrays", "maths"],
-    language: "javascript",
-  },
-  {
-    id: 14,
-    title: "Check for Anagram",
-    description: "Write a function that checks if two strings are anagrams of each other.",
-    difficulty: "Medium",
-    tags: ["strings", "logic"],
-    language: "python",
-  },
-  {
-    id: 15,
-    title: "Find First Non-Repeated Character",
-    description: "Write a function that returns the first non-repeated character in a string.",
-    difficulty: "Medium",
-    tags: ["strings", "logic"],
-    language: "python",
-  },
-  {
-    id: 16,
-    title: "Power of a Number",
-    description: "Write a function that calculates the power of a number (base raised to exponent).",
-    difficulty: "Easy",
-    tags: ["maths", "numbers"],
-    language: "python",
-  },
-  {
-    id: 17,
-    title: "Hello World",
-    description: "Write a program that outputs 'Hello, World!' to the console.",
-    difficulty: "Very easy",
-    tags: ["basics", "output"],
-    language: "c++",
-  },
-  {
-    id: 18,
-    title: "Simple Calculator",
-    description: "Create a basic calculator that can perform addition, subtraction, multiplication, and division.",
-    difficulty: "Easy",
-    tags: ["maths", "input"],
-    language: "c++",
-  },
-  {
-    id: 19,
-    title: "Array Manipulation",
-    description: "Write a program that finds the largest and smallest elements in an array.",
-    difficulty: "Medium",
-    tags: ["arrays", "logic"],
-    language: "c++",
-  },
-]
+import type { Challenge } from "@/lib/supabase/database.types"
 
 export default function ChallengesPage() {
   const [completedChallenges, setCompletedChallenges] = useState<number[]>([])
@@ -176,7 +21,27 @@ export default function ChallengesPage() {
   >([])
   const [selectedLanguage, setSelectedLanguage] = useState("javascript")
   const [selectedDifficulty, setSelectedDifficulty] = useState("very-easy")
-  const [filteredChallenges, setFilteredChallenges] = useState(challenges)
+  const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [filteredChallenges, setFilteredChallenges] = useState<Challenge[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const response = await fetch("/api/challenges")
+        const data = await response.json()
+        setChallenges(data)
+      } catch (error) {
+        console.error("Error fetching challenges:", error)
+        // Fallback to empty array if API fails
+        setChallenges([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchChallenges()
+  }, [])
 
   useEffect(() => {
     const storedLanguage =
@@ -205,6 +70,8 @@ export default function ChallengesPage() {
   }, [])
 
   useEffect(() => {
+    if (challenges.length === 0) return
+
     const filtered = challenges.filter((challenge) => {
       const langMatch = selectedLanguage === "all" || challenge.language.toLowerCase() === selectedLanguage
       const diffMatch =
@@ -214,7 +81,7 @@ export default function ChallengesPage() {
 
     const dailyChallengeIds = dailyChallenges.map((dc) => dc.id)
 
-    let dailyChallengesFromList: typeof challenges = []
+    let dailyChallengesFromList: Challenge[] = []
     if (selectedLanguage !== "all") {
       dailyChallengesFromList = challenges.filter(
         (c) => dailyChallengeIds.includes(c.id) && c.language.toLowerCase() === selectedLanguage,
@@ -225,7 +92,7 @@ export default function ChallengesPage() {
 
     // Put daily challenges first (only when specific language selected), then regular filtered challenges
     setFilteredChallenges([...dailyChallengesFromList, ...nonDailyChallenges])
-  }, [selectedLanguage, selectedDifficulty, dailyChallenges])
+  }, [selectedLanguage, selectedDifficulty, dailyChallenges, challenges])
 
   const handleLanguageChange = (value: string) => {
     setSelectedLanguage(value)
@@ -239,6 +106,14 @@ export default function ChallengesPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("challengeDifficulty", value)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-lg">Loading challenges...</div>
+      </div>
+    )
   }
 
   return (
@@ -315,11 +190,13 @@ export default function ChallengesPage() {
                           Daily Challenge - {challenge.language.toUpperCase()}
                         </div>
                       )}
-                      <h3 className="text-lg sm:text-xl font-semibold">{challenge.title}</h3>
+                      <h3 className="text-lg sm:text-xl font-semibold">
+                        {challenge.concept ? `${challenge.concept}: ${challenge.title}` : challenge.title}
+                      </h3>
                     </div>
                     <p className="text-muted-foreground text-base mb-4">{challenge.description}</p>
                     <div className="flex gap-2 mb-4">
-                      {challenge.tags.map((tag) => (
+                      {challenge.tags?.map((tag) => (
                         <span key={tag} className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
                           {tag}
                         </span>
