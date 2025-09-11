@@ -8,19 +8,7 @@ export interface UserProgress {
   achievements: string[]
   lastCompletedDate?: string
   dailyChallenges?: {
-    javascript?: {
-      challengeId: number
-      date: string
-    }
-    python?: {
-      challengeId: number
-      date: string
-    }
-    java?: {
-      challengeId: number
-      date: string
-    }
-    "c++"?: {
+    [language: string]: {
       challengeId: number
       date: string
     }
@@ -74,7 +62,8 @@ export function getUserProgress(): UserProgress {
         level: progress.level || calculateLevel(progress.xp || 0),
         achievements: progress.achievements || [],
         lastCompletedDate: progress.lastCompletedDate,
-        dailyChallenges: progress.dailyChallenges || {},
+        dailyChallenges:
+          progress.dailyChallenges || (progress.dailyChallenge ? { javascript: progress.dailyChallenge } : {}),
       }
     }
   } catch (error) {
@@ -200,265 +189,25 @@ export function getNextChallenge(
   language = "javascript",
 ): { id: number; title: string; difficulty: string } | null {
   const challenges = [
-    // JavaScript - Variables & Basic Operations (Concept 1)
-    {
-      id: 1,
-      title: "Variables Concept: Declare and Use Variables",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 2,
-      title: "Variables Concept: Variable Assignment and Types",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 3,
-      title: "Variables Concept: Basic Arithmetic with Variables",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 4,
-      title: "Variables Concept: Variable Scope Challenge",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 5,
-      title: "Variables Concept: Complex Variable Operations",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "variables",
-    },
-
-    // JavaScript - Functions (Concept 2)
-    {
-      id: 6,
-      title: "Functions Concept: Create Your First Function",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 7,
-      title: "Functions Concept: Function Parameters and Return",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 8,
-      title: "Functions Concept: Arrow Functions",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 9,
-      title: "Functions Concept: Higher-Order Functions",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 10,
-      title: "Functions Concept: Function Closures",
-      difficulty: "hard",
-      language: "javascript",
-      concept: "functions",
-    },
-
-    // JavaScript - Arrays (Concept 3)
-    {
-      id: 11,
-      title: "Arrays Concept: Array Basics",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "arrays",
-    },
-    {
-      id: 12,
-      title: "Arrays Concept: Array Methods - Push, Pop",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "arrays",
-    },
-    { id: 13, title: "Arrays Concept: Array Iteration", difficulty: "easy", language: "javascript", concept: "arrays" },
-    {
-      id: 14,
-      title: "Arrays Concept: Array Filtering and Mapping",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "arrays",
-    },
-    {
-      id: 15,
-      title: "Arrays Concept: Complex Array Algorithms",
-      difficulty: "hard",
-      language: "javascript",
-      concept: "arrays",
-    },
-
-    // JavaScript - Objects (Concept 4)
-    {
-      id: 16,
-      title: "Objects Concept: Object Creation and Properties",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 17,
-      title: "Objects Concept: Object Methods",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 18,
-      title: "Objects Concept: Object Destructuring",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 19,
-      title: "Objects Concept: Nested Objects",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 20,
-      title: "Objects Concept: Object-Oriented Programming",
-      difficulty: "hard",
-      language: "javascript",
-      concept: "objects",
-    },
-
-    // Python - Variables & Basic Operations (Concept 1)
-    {
-      id: 21,
-      title: "Variables Concept: Python Variables and Types",
-      difficulty: "very easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 22,
-      title: "Variables Concept: String Operations",
-      difficulty: "very easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 23,
-      title: "Variables Concept: Number Operations",
-      difficulty: "easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 24,
-      title: "Variables Concept: Type Conversion",
-      difficulty: "easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 25,
-      title: "Variables Concept: Advanced Variable Manipulation",
-      difficulty: "medium",
-      language: "python",
-      concept: "variables",
-    },
-
-    // Python - Control Flow (Concept 2)
-    {
-      id: 26,
-      title: "Control Flow Concept: If Statements",
-      difficulty: "very easy",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 27,
-      title: "Control Flow Concept: For Loops",
-      difficulty: "easy",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 28,
-      title: "Control Flow Concept: While Loops",
-      difficulty: "easy",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 29,
-      title: "Control Flow Concept: Nested Loops",
-      difficulty: "medium",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 30,
-      title: "Control Flow Concept: Complex Conditional Logic",
-      difficulty: "hard",
-      language: "python",
-      concept: "control-flow",
-    },
-
-    // Java - Basic Syntax (Concept 1)
-    {
-      id: 31,
-      title: "Basics Concept: Hello World in Java",
-      difficulty: "very easy",
-      language: "java",
-      concept: "basics",
-    },
-    {
-      id: 32,
-      title: "Basics Concept: Variables and Data Types",
-      difficulty: "very easy",
-      language: "java",
-      concept: "basics",
-    },
-    { id: 33, title: "Basics Concept: Basic Input/Output", difficulty: "easy", language: "java", concept: "basics" },
-    { id: 34, title: "Basics Concept: Method Creation", difficulty: "easy", language: "java", concept: "basics" },
-    { id: 35, title: "Basics Concept: Class Structure", difficulty: "medium", language: "java", concept: "basics" },
-
-    // C++ - Fundamentals (Concept 1)
-    {
-      id: 36,
-      title: "Basics Concept: Hello World in C++",
-      difficulty: "very easy",
-      language: "c++",
-      concept: "basics",
-    },
-    {
-      id: 37,
-      title: "Basics Concept: Variables and Constants",
-      difficulty: "very easy",
-      language: "c++",
-      concept: "basics",
-    },
-    { id: 38, title: "Basics Concept: Basic I/O Operations", difficulty: "easy", language: "c++", concept: "basics" },
-    { id: 39, title: "Basics Concept: Functions in C++", difficulty: "easy", language: "c++", concept: "basics" },
-    {
-      id: 40,
-      title: "Basics Concept: Pointers and References",
-      difficulty: "medium",
-      language: "c++",
-      concept: "basics",
-    },
+    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
+    { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
+    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy", language: "javascript" },
+    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy", language: "javascript" },
+    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium", language: "python" },
+    { id: 6, title: "Factorial of a Number", difficulty: "easy", language: "java" },
+    { id: 7, title: "Fibonacci Sequence", difficulty: "medium", language: "javascript" },
+    { id: 8, title: "Sort an Array", difficulty: "medium", language: "python" },
+    { id: 9, title: "Binary Search", difficulty: "hard", language: "java" },
+    { id: 10, title: "Count Vowels in a String", difficulty: "very easy", language: "javascript" },
+    { id: 11, title: "Reverse a String", difficulty: "easy", language: "javascript" },
+    { id: 12, title: "Check for Prime Number", difficulty: "medium", language: "javascript" },
+    { id: 13, title: "Sum of Array Elements", difficulty: "easy", language: "javascript" },
+    { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
+    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
+    { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
+    { id: 17, title: "Hello World", difficulty: "very easy", language: "c++" },
+    { id: 18, title: "Simple Calculator", difficulty: "easy", language: "c++" },
+    { id: 19, title: "Array Manipulation", difficulty: "medium", language: "c++" },
   ]
 
   // Get completed challenges from user progress
@@ -502,321 +251,70 @@ export function getNextChallenge(
   return languageFilteredChallenges.find((c) => c.id === nextId) || null
 }
 
-export function getDailyChallenge(
-  language: string,
-): { id: number; title: string; difficulty: string; language: string } | null {
+export function getDailyChallenges(): { id: number; title: string; difficulty: string; language: string }[] {
   const challenges = [
-    // JavaScript - Variables & Basic Operations (Concept 1)
-    {
-      id: 1,
-      title: "Variables Concept: Declare and Use Variables",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 2,
-      title: "Variables Concept: Variable Assignment and Types",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 3,
-      title: "Variables Concept: Basic Arithmetic with Variables",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 4,
-      title: "Variables Concept: Variable Scope Challenge",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "variables",
-    },
-    {
-      id: 5,
-      title: "Variables Concept: Complex Variable Operations",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "variables",
-    },
-
-    // JavaScript - Functions (Concept 2)
-    {
-      id: 6,
-      title: "Functions Concept: Create Your First Function",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 7,
-      title: "Functions Concept: Function Parameters and Return",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 8,
-      title: "Functions Concept: Arrow Functions",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 9,
-      title: "Functions Concept: Higher-Order Functions",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "functions",
-    },
-    {
-      id: 10,
-      title: "Functions Concept: Function Closures",
-      difficulty: "hard",
-      language: "javascript",
-      concept: "functions",
-    },
-
-    // JavaScript - Arrays (Concept 3)
-    {
-      id: 11,
-      title: "Arrays Concept: Array Basics",
-      difficulty: "very easy",
-      language: "javascript",
-      concept: "arrays",
-    },
-    {
-      id: 12,
-      title: "Arrays Concept: Array Methods - Push, Pop",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "arrays",
-    },
-    { id: 13, title: "Arrays Concept: Array Iteration", difficulty: "easy", language: "javascript", concept: "arrays" },
-    {
-      id: 14,
-      title: "Arrays Concept: Array Filtering and Mapping",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "arrays",
-    },
-    {
-      id: 15,
-      title: "Arrays Concept: Complex Array Algorithms",
-      difficulty: "hard",
-      language: "javascript",
-      concept: "arrays",
-    },
-
-    // JavaScript - Objects (Concept 4)
-    {
-      id: 16,
-      title: "Objects Concept: Object Creation and Properties",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 17,
-      title: "Objects Concept: Object Methods",
-      difficulty: "easy",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 18,
-      title: "Objects Concept: Object Destructuring",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 19,
-      title: "Objects Concept: Nested Objects",
-      difficulty: "medium",
-      language: "javascript",
-      concept: "objects",
-    },
-    {
-      id: 20,
-      title: "Objects Concept: Object-Oriented Programming",
-      difficulty: "hard",
-      language: "javascript",
-      concept: "objects",
-    },
-
-    // Python - Variables & Basic Operations (Concept 1)
-    {
-      id: 21,
-      title: "Variables Concept: Python Variables and Types",
-      difficulty: "very easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 22,
-      title: "Variables Concept: String Operations",
-      difficulty: "very easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 23,
-      title: "Variables Concept: Number Operations",
-      difficulty: "easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 24,
-      title: "Variables Concept: Type Conversion",
-      difficulty: "easy",
-      language: "python",
-      concept: "variables",
-    },
-    {
-      id: 25,
-      title: "Variables Concept: Advanced Variable Manipulation",
-      difficulty: "medium",
-      language: "python",
-      concept: "variables",
-    },
-
-    // Python - Control Flow (Concept 2)
-    {
-      id: 26,
-      title: "Control Flow Concept: If Statements",
-      difficulty: "very easy",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 27,
-      title: "Control Flow Concept: For Loops",
-      difficulty: "easy",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 28,
-      title: "Control Flow Concept: While Loops",
-      difficulty: "easy",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 29,
-      title: "Control Flow Concept: Nested Loops",
-      difficulty: "medium",
-      language: "python",
-      concept: "control-flow",
-    },
-    {
-      id: 30,
-      title: "Control Flow Concept: Complex Conditional Logic",
-      difficulty: "hard",
-      language: "python",
-      concept: "control-flow",
-    },
-
-    // Java - Basic Syntax (Concept 1)
-    {
-      id: 31,
-      title: "Basics Concept: Hello World in Java",
-      difficulty: "very easy",
-      language: "java",
-      concept: "basics",
-    },
-    {
-      id: 32,
-      title: "Basics Concept: Variables and Data Types",
-      difficulty: "very easy",
-      language: "java",
-      concept: "basics",
-    },
-    { id: 33, title: "Basics Concept: Basic Input/Output", difficulty: "easy", language: "java", concept: "basics" },
-    { id: 34, title: "Basics Concept: Method Creation", difficulty: "easy", language: "java", concept: "basics" },
-    { id: 35, title: "Basics Concept: Class Structure", difficulty: "medium", language: "java", concept: "basics" },
-
-    // C++ - Fundamentals (Concept 1)
-    {
-      id: 36,
-      title: "Basics Concept: Hello World in C++",
-      difficulty: "very easy",
-      language: "c++",
-      concept: "basics",
-    },
-    {
-      id: 37,
-      title: "Basics Concept: Variables and Constants",
-      difficulty: "very easy",
-      language: "c++",
-      concept: "basics",
-    },
-    { id: 38, title: "Basics Concept: Basic I/O Operations", difficulty: "easy", language: "c++", concept: "basics" },
-    { id: 39, title: "Basics Concept: Functions in C++", difficulty: "easy", language: "c++", concept: "basics" },
-    {
-      id: 40,
-      title: "Basics Concept: Pointers and References",
-      difficulty: "medium",
-      language: "c++",
-      concept: "basics",
-    },
+    { id: 1, title: "Return the Sum of Two Numbers", difficulty: "very easy", language: "javascript" },
+    { id: 2, title: "Area of a Triangle", difficulty: "very easy", language: "javascript" },
+    { id: 3, title: "Convert Minutes into Seconds", difficulty: "very easy", language: "javascript" },
+    { id: 4, title: "Find the Maximum Number in an Array", difficulty: "easy", language: "javascript" },
+    { id: 5, title: "Check if a String is a Palindrome", difficulty: "medium", language: "python" },
+    { id: 6, title: "Factorial of a Number", difficulty: "easy", language: "java" },
+    { id: 7, title: "Fibonacci Sequence", difficulty: "medium", language: "javascript" },
+    { id: 8, title: "Sort an Array", difficulty: "medium", language: "python" },
+    { id: 9, title: "Binary Search", difficulty: "hard", language: "java" },
+    { id: 10, title: "Count Vowels in a String", difficulty: "very easy", language: "javascript" },
+    { id: 11, title: "Reverse a String", difficulty: "easy", language: "javascript" },
+    { id: 12, title: "Check for Prime Number", difficulty: "medium", language: "javascript" },
+    { id: 13, title: "Sum of Array Elements", difficulty: "easy", language: "javascript" },
+    { id: 14, title: "Check for Anagram", difficulty: "medium", language: "python" },
+    { id: 15, title: "Find First Non-Repeated Character", difficulty: "medium", language: "python" },
+    { id: 16, title: "Power of a Number", difficulty: "easy", language: "python" },
+    { id: 17, title: "Hello World", difficulty: "very easy", language: "c++" },
+    { id: 18, title: "Simple Calculator", difficulty: "easy", language: "c++" },
+    { id: 19, title: "Array Manipulation", difficulty: "medium", language: "c++" },
   ]
 
   const progress = getUserProgress()
   const today = new Date().toDateString()
-
-  // Check if we already have a daily challenge for this language today
-  const existingDaily = progress.dailyChallenges?.[language as keyof typeof progress.dailyChallenges]
-  if (existingDaily && existingDaily.date === today) {
-    const challenge = challenges.find((c) => c.id === existingDaily.challengeId)
-    if (challenge) {
-      return challenge
-    }
-  }
-
-  // Select a new daily challenge from uncompleted challenges for this language
-  const languageChallenges = challenges.filter(
-    (challenge) => challenge.language === language && !progress.completedChallenges.includes(challenge.id),
-  )
-
-  if (languageChallenges.length > 0) {
-    // Use date and language as seed for consistent daily selection
-    const daysSinceEpoch = Math.floor(new Date().getTime() / (1000 * 60 * 60 * 24))
-    const languageHash = language.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    const seedValue = (daysSinceEpoch + languageHash) % languageChallenges.length
-    const selectedChallenge = languageChallenges[seedValue]
-
-    // Save the daily challenge for this language
-    const updatedProgress = {
-      ...progress,
-      dailyChallenges: {
-        ...progress.dailyChallenges,
-        [language]: {
-          challengeId: selectedChallenge.id,
-          date: today,
-        },
-      },
-    }
-    saveUserProgress(updatedProgress)
-    return selectedChallenge
-  }
-
-  return null
-}
-
-export function getDailyChallenges(): { id: number; title: string; difficulty: string; language: string }[] {
   const languages = ["javascript", "python", "java", "c++"]
   const dailyChallenges: { id: number; title: string; difficulty: string; language: string }[] = []
 
   languages.forEach((language) => {
-    const dailyChallenge = getDailyChallenge(language)
-    if (dailyChallenge) {
-      dailyChallenges.push(dailyChallenge)
+    // Check if we already have a daily challenge for this language today
+    const existingDaily = progress.dailyChallenges?.[language]
+    if (existingDaily && existingDaily.date === today) {
+      const challenge = challenges.find((c) => c.id === existingDaily.challengeId)
+      if (challenge) {
+        dailyChallenges.push(challenge)
+        return
+      }
+    }
+
+    // Select a new daily challenge for this language
+    const languageChallenges = challenges.filter((c) => c.language === language)
+    const uncompletedChallenges = languageChallenges.filter(
+      (challenge) => !progress.completedChallenges.includes(challenge.id),
+    )
+
+    if (uncompletedChallenges.length > 0) {
+      // Use date and language as seed for consistent daily selection
+      const dateNumber = new Date().getDate() + new Date().getMonth() * 31 + new Date().getFullYear() * 365
+      const languageHash = language.split("").reduce((a, b) => a + b.charCodeAt(0), 0)
+      const selectedChallenge = uncompletedChallenges[(dateNumber + languageHash) % uncompletedChallenges.length]
+
+      // Save the daily challenge for this language
+      const updatedProgress = {
+        ...progress,
+        dailyChallenges: {
+          ...progress.dailyChallenges,
+          [language]: {
+            challengeId: selectedChallenge.id,
+            date: today,
+          },
+        },
+      }
+      saveUserProgress(updatedProgress)
+      dailyChallenges.push(selectedChallenge)
     }
   })
 
@@ -829,10 +327,12 @@ export function isDailyChallenge(challengeId: number): boolean {
 
   if (!progress.dailyChallenges) return false
 
-  // Check if this challenge ID matches any of the daily challenges for today
-  const languages = ["javascript", "python", "java", "c++"]
-  return languages.some((language) => {
-    const dailyChallenge = progress.dailyChallenges?.[language as keyof typeof progress.dailyChallenges]
-    return dailyChallenge?.challengeId === challengeId && dailyChallenge?.date === today
-  })
+  return Object.values(progress.dailyChallenges).some(
+    (daily) => daily.challengeId === challengeId && daily.date === today,
+  )
+}
+
+export function getDailyChallenge(): { id: number; title: string; difficulty: string; language: string } | null {
+  const dailyChallenges = getDailyChallenges()
+  return dailyChallenges.find((c) => c.language === "javascript") || dailyChallenges[0] || null
 }
