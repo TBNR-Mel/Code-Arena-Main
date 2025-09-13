@@ -11,18 +11,20 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { X, Plus } from "lucide-react"
+import { X, Plus, CheckCircle } from "lucide-react"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
-import { toast } from "sonner"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SubmitChallengePage() {
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
   const [tags, setTags] = useState<string[]>(["algorithms", "data-structures", "beginner-friendly"])
   const [newTag, setNewTag] = useState("")
 
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     title: "Two Sum Problem",
     description:
       "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
@@ -36,7 +38,9 @@ export default function SubmitChallengePage() {
       "Try using a hash map to store numbers you've seen and their indices. For each number, check if its complement (target - current number) exists in the hash map.",
     resources:
       "https://leetcode.com/problems/two-sum/\nhttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
-  })
+  }
+
+  const [formData, setFormData] = useState(initialFormData)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -58,14 +62,22 @@ export default function SubmitChallengePage() {
     setIsSubmitting(true)
 
     try {
+      console.log("[v0] Starting challenge submission...")
+
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
       if (!user) {
-        toast.error("You must be logged in to submit a challenge")
+        toast({
+          title: "Authentication Required",
+          description: "You must be logged in to submit a challenge",
+          variant: "destructive",
+        })
         return
       }
+
+      console.log("[v0] User authenticated, preparing challenge data...")
 
       const challengeData = {
         ...formData,
@@ -75,18 +87,58 @@ export default function SubmitChallengePage() {
         submitted_at: new Date().toISOString(),
       }
 
+      console.log("[v0] Submitting challenge data:", challengeData)
+
       const { error } = await supabase.from("challenges").insert([challengeData])
 
-      if (error) throw error
+      if (error) {
+        console.error("[v0] Database error:", error)
+        throw error
+      }
 
-      toast.success("Challenge submitted successfully! It will be reviewed before being added to the app.")
-      router.push("/codearena/challenges")
+      console.log("[v0] Challenge submitted successfully!")
+
+      setIsSubmitted(true)
+      toast({
+        title: "Challenge Submitted Successfully!",
+        description: "Your challenge has been submitted for review. It will be added to the app once approved.",
+      })
+
+      setTimeout(() => {
+        setFormData(initialFormData)
+        setTags(["algorithms", "data-structures", "beginner-friendly"])
+        setIsSubmitted(false)
+        router.push("/codearena/challenges")
+      }, 3000)
     } catch (error) {
-      console.error("Error submitting challenge:", error)
-      toast.error("Failed to submit challenge. Please try again.")
+      console.error("[v0] Error submitting challenge:", error)
+      toast({
+        title: "Submission Failed",
+        description: "Failed to submit challenge. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 flex items-center justify-center">
+        <Card className="bg-slate-800/50 border-slate-700 max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+              <h2 className="text-2xl font-bold text-white">Challenge Submitted!</h2>
+              <p className="text-slate-300">
+                Your challenge has been submitted for review. It will be added to the app once approved.
+              </p>
+              <p className="text-sm text-slate-400">Redirecting you back to challenges...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
