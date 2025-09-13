@@ -19,20 +19,23 @@ export default function SubmitChallengePage() {
   const router = useRouter()
   const supabase = createClientComponentClient()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [tags, setTags] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>(["algorithms", "data-structures", "beginner-friendly"])
   const [newTag, setNewTag] = useState("")
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    language: "",
-    difficulty: "",
-    concept: "",
-    starter_code: "",
-    solution: "",
-    test_cases: "",
-    hints: "",
-    resources: "",
+    title: "Two Sum Problem",
+    description:
+      "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
+    language: "javascript",
+    difficulty: "easy",
+    concept: "Arrays, Hash Maps, Two Pointers",
+    starter_code: `function twoSum(nums, target) {\n    // Your code here\n    // Return an array of two indices\n}`,
+    solution: `function twoSum(nums, target) {\n    const numMap = new Map();\n    \n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        \n        if (numMap.has(complement)) {\n            return [numMap.get(complement), i];\n        }\n        \n        numMap.set(nums[i], i);\n    }\n    \n    return [];\n}`,
+    test_cases: `Input: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: Because nums[0] + nums[1] == 9, we return [0, 1].\n\nInput: nums = [3,2,4], target = 6\nOutput: [1,2]\n\nInput: nums = [3,3], target = 6\nOutput: [0,1]`,
+    hints:
+      "Try using a hash map to store numbers you've seen and their indices. For each number, check if its complement (target - current number) exists in the hash map.",
+    resources:
+      "https://leetcode.com/problems/two-sum/\nhttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
   })
 
   const handleInputChange = (field: string, value: string) => {
