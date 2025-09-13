@@ -9,11 +9,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Trash2, Plus } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Trash2, Plus, Check, X, Clock } from "lucide-react"
 import type { Challenge } from "@/lib/supabase/database.types"
 
 export default function AdminPage() {
   const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [pendingChallenges, setPendingChallenges] = useState<Challenge[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [formData, setFormData] = useState({
@@ -29,6 +31,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchChallenges()
+    fetchPendingChallenges()
   }, [])
 
   const fetchChallenges = async () => {
@@ -40,6 +43,47 @@ export default function AdminPage() {
       console.error("Error fetching challenges:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchPendingChallenges = async () => {
+    try {
+      const response = await fetch("/api/challenges?status=pending")
+      const data = await response.json()
+      setPendingChallenges(data)
+    } catch (error) {
+      console.error("Error fetching pending challenges:", error)
+    }
+  }
+
+  const handleApprove = async (id: number) => {
+    try {
+      const response = await fetch(`/api/challenges/${id}/approve`, {
+        method: "PATCH",
+      })
+
+      if (response.ok) {
+        await fetchChallenges()
+        await fetchPendingChallenges()
+      }
+    } catch (error) {
+      console.error("Error approving challenge:", error)
+    }
+  }
+
+  const handleReject = async (id: number) => {
+    if (!confirm("Are you sure you want to reject this challenge?")) return
+
+    try {
+      const response = await fetch(`/api/challenges/${id}/reject`, {
+        method: "PATCH",
+      })
+
+      if (response.ok) {
+        await fetchPendingChallenges()
+      }
+    } catch (error) {
+      console.error("Error rejecting challenge:", error)
     }
   }
 
@@ -225,42 +269,109 @@ export default function AdminPage() {
           </Card>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {challenges.map((challenge) => (
-            <Card key={challenge.id}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{challenge.title}</CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(challenge.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-3">{challenge.description}</p>
+        <Tabs defaultValue="approved" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="approved">Approved Challenges ({challenges.length})</TabsTrigger>
+            <TabsTrigger value="pending">Pending Approval ({pendingChallenges.length})</TabsTrigger>
+          </TabsList>
 
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <Badge variant="secondary">{challenge.difficulty}</Badge>
-                  <Badge variant="outline">{challenge.language}</Badge>
-                  {challenge.concept && <Badge variant="default">{challenge.concept}</Badge>}
-                </div>
+          <TabsContent value="approved">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {challenges.map((challenge) => (
+                <Card key={challenge.id}>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{challenge.title}</CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(challenge.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-3">{challenge.description}</p>
 
-                <div className="flex flex-wrap gap-1">
-                  {challenge.tags?.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <Badge variant="secondary">{challenge.difficulty}</Badge>
+                      <Badge variant="outline">{challenge.language}</Badge>
+                      {challenge.concept && <Badge variant="default">{challenge.concept}</Badge>}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1">
+                      {challenge.tags?.map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="pending">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pendingChallenges.map((challenge) => (
+                <Card key={challenge.id} className="border-yellow-200 bg-yellow-50/50">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-yellow-600" />
+                        {challenge.title}
+                      </CardTitle>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleApprove(challenge.id)}
+                          className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                        >
+                          <Check className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReject(challenge.id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground mb-3">{challenge.description}</p>
+
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      <Badge variant="secondary">{challenge.difficulty}</Badge>
+                      <Badge variant="outline">{challenge.language}</Badge>
+                      {challenge.concept && <Badge variant="default">{challenge.concept}</Badge>}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {challenge.tags?.map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {challenge.submitted_at && (
+                      <p className="text-xs text-muted-foreground">
+                        Submitted: {new Date(challenge.submitted_at).toLocaleDateString()}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )

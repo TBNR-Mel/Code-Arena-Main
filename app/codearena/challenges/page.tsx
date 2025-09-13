@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { XPDisplay } from "@/components/xp-display"
 import { getUserProgress, getDailyChallenges, isDailyChallenge } from "@/lib/storage"
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react"
+import { ChevronLeft, ChevronRight, Calendar, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Challenge } from "@/lib/supabase/database.types"
 
@@ -163,6 +163,15 @@ export default function ChallengesPage() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="mt-auto">
+            <Link href="/submit-challenge">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                <Plus className="w-4 h-4 mr-2" />
+                Submit Challenge
+              </Button>
+            </Link>
           </div>
         </aside>
 
