@@ -35,10 +35,15 @@ export async function POST(request: Request) {
     const supabase = await createClient()
     const challenge = await request.json()
 
+    const { id, ...challengeDataWithoutId } = challenge
+
     const challengeData = {
-      ...challenge,
+      ...challengeDataWithoutId,
       status: challenge.status || "approved",
+      submitted_at: new Date().toISOString(),
     }
+
+    console.log("[v0] Inserting challenge data:", challengeData)
 
     const { data, error } = await supabase.from("challenges").insert([challengeData]).select().single()
 
@@ -47,6 +52,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to create challenge" }, { status: 500 })
     }
 
+    console.log("[v0] Challenge created successfully:", data)
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error in challenges POST:", error)
